@@ -4,8 +4,9 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rimraf lib && tsc",
+    "develop": "nodemon --watch src --watch test",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,17 @@
   },
   "homepage": "https://github.com/ludwigschubi/shex-methods#readme",
   "devDependencies": {
+    "@babel/preset-env": "^7.13.12",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/jest": "^26.0.22",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "graphy": "^4.3.3",
+    "rdflib": "^2.2.0"
   }
 }
