@@ -50,18 +50,11 @@ async function findOne<ShapeType>(
   id: string
 ): Promise<QueryResult<ShapeType>> {
   await shape.fetcher.load(id);
-  const validation = await shape.validateShex(id);
-  let foundErrors: {};
-  let foundShapes: ShapeType;
-  foundErrors =
-    validation.type === "Failure" &&
-    shex.Util.errsToSimple(validation, id, shape.id);
-  foundShapes =
-    validation.type === "ShapeTest" && shex.Util.valToValues(validation);
+  const [data, errors] = await shape.validateShex(id);
   return {
     id,
-    data: foundShapes,
-    errors: foundErrors,
+    data,
+    errors,
   } as QueryResult<ShapeType>;
 }
 
@@ -69,14 +62,23 @@ async function validateShex<ShapeType>(
   shape: Shape<ShapeType>,
   baseUrl: string
 ) {
-  const nTriplesStore = (await createN3Store(shape.store, baseUrl)) as {
-    getTriplesByIRI: any;
-  };
+  const nTriplesStore = await createN3Store(shape.store, baseUrl);
   const db = shex.Util.makeN3DB(nTriplesStore);
   const validator = shex.Validator.construct(shape.schema, {
     results: "api",
   });
-  return validator.validate(db, baseUrl, shape.id);
+  const validation = validator.validate(db, [
+    { node: baseUrl, shape: shape.id },
+  ])[0];
+  let foundErrors: any;
+  let foundShapes: ShapeType;
+  foundErrors =
+    validation.status === "nonconformant" &&
+    shex.Util.errsToSimple(validation.appinfo, baseUrl, shape.id);
+  foundShapes =
+    validation.status === "conformant" &&
+    shex.Util.valToValues(validation.appinfo);
+  return [foundShapes, foundErrors];
 }
 
 function createN3Store(store: IndexedFormula, baseUrl: string) {
@@ -99,35 +101,6 @@ function createN3Store(store: IndexedFormula, baseUrl: string) {
       }
     });
   });
-}
-
-function proxifyShape(
-  shape: Record<string, any>,
-  context: Record<string, string>
-): Record<string, any> {
-  return new Proxy(shape, {
-    get: (target, key: string) => {
-      const directValue = proxyGetHandler(target, key, context);
-      if (directValue) return directValue;
-      const contextKey = Object.keys(context).find((contextKey: string) => {
-        const contextValue = context[contextKey];
-        return contextValue === key;
-      });
-      return proxyGetHandler(target, contextKey as string, context);
-    },
-  });
-}
-
-function proxyGetHandler(
-  target: any,
-  key: string,
-  context: Record<string, string>
-) {
-  if (typeof target[key] === "string") {
-    return target[key];
-  } else if (typeof target[key] === "object") {
-    return proxifyShape(target[key], context);
-  }
 }
 
 export default Shape;
