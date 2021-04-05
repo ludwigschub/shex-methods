@@ -5,7 +5,7 @@ export async function findOne<ShapeType>(
   id: string
 ): Promise<QueryResult<ShapeType>> {
   await shape.fetcher.load(id);
-  const [data, errors] = await shape.validateShex(id);
+  const [data, errors] = (await shape.validateShex([id]))[0];
   return {
     id,
     data,

@@ -1,6 +1,7 @@
 import { Shape } from "../lib";
 
 type SolidProfileShape = {
+  type: string;
   name: string;
   hasEmail: {
     value: string;
@@ -53,34 +54,38 @@ srs:EmailShape EXTRA a {
 }
 `;
 
-it("can find one shape", async () => {
-  const testIri = "https://lalatest.solidcommunity.net/profile/card#me";
-  const solidProfile = new Shape<SolidProfileShape>({
-    id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
-    shape: solidProfileShex,
-    context: SolidProfileContext,
+describe(".findOne()", () => {
+  it("can find one shape", async () => {
+    const testIri = "https://lalatest.solidcommunity.net/profile/card#me";
+    const solidProfile = new Shape<SolidProfileShape>({
+      id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
+      shape: solidProfileShex,
+      context: SolidProfileContext,
+    });
+    const shape = await solidProfile.findOne(testIri);
+    const { id, data } = shape;
+    expect(id).toBe(testIri);
+    expect(data.name[0]).toBe("Tester");
+    expect(data["foaf:name"][0]).toBe("Tester");
+    expect(data.hasEmail[0]["vcard:value"][0]).toBe(
+      "mailto:lalasepp@gmail.com"
+    );
   });
-  const shape = await solidProfile.findOne(testIri);
-  const { id, data } = shape;
-  expect(id).toBe(testIri);
-  expect(data.name[0]).toBe("Tester");
-  expect(data["foaf:name"][0]).toBe("Tester");
-  expect(data["vcard:hasEmail"][0]["vcard:value"][0]).toBe("mailto:lalasepp@gmail.com");
-});
 
-it("should return an error for finding the wrong shape", async () => {
-  const testIri = "https://lalatest.solidcommunity.net/profile";
-  const solidProfile = new Shape<SolidProfileShape>({
-    id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
-    shape: solidProfileShex,
-    context: SolidProfileContext,
+  it("should return an error for finding the wrong shape", async () => {
+    const testIri = "https://lalatest.solidcommunity.net/profile";
+    const solidProfile = new Shape<SolidProfileShape>({
+      id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
+      shape: solidProfileShex,
+      context: SolidProfileContext,
+    });
+    const { errors } = await solidProfile.findOne(testIri);
+    expect(errors).toBeDefined();
+    expect(errors).toStrictEqual([
+      "validating https://lalatest.solidcommunity.net/profile as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:",
+      "    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "  OR",
+      "  Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    ]);
   });
-  const { errors } = await solidProfile.findOne(testIri);
-  expect(errors).toBeDefined();
-  expect(errors).toStrictEqual([
-    "validating https://lalatest.solidcommunity.net/profile as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:",
-    "    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    "  OR",
-    "  Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-  ]);
 });

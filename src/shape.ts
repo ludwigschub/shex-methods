@@ -27,8 +27,8 @@ export class Shape<ShapeType> {
   fetcher: Fetcher;
   findAll: () => QueryResult<ShapeType>[];
   findOne: (id: string) => Promise<QueryResult<ShapeType>>;
-  validateShex: (baseUrl: string) => any;
-  validatedToDataResult: (validated: any, baseUrl: string) => ShapeType;
+  validateShex: (ids: string[]) => any;
+  validatedToDataResult: (validated: any, baseUrl: string, shapeUrl: string) => ShapeType;
   constructor({ id, shape, context }: ShapeConstructorArgs) {
     this.id = id;
     this.shape = shape;
@@ -47,15 +47,16 @@ export class Shape<ShapeType> {
     this.findOne = function (this: Shape<ShapeType>, id: string) {
       return findOne<ShapeType>(this, id);
     }.bind(this);
-    this.validateShex = function (this: Shape<ShapeType>, baseUrl: string) {
-      return validateShex<ShapeType>(this, baseUrl);
+    this.validateShex = function (this: Shape<ShapeType>, ids: string[]) {
+      return validateShex<ShapeType>(this, ids);
     }.bind(this);
     this.validatedToDataResult = function (
       this: Shape<ShapeType>,
       validated: any,
-      baseUrl: string
+      baseUrl: string,
+      shapeUrl: string
     ) {
-      return validatedToDataResult<ShapeType>(this, validated, baseUrl);
+      return validatedToDataResult<ShapeType>(this, validated, baseUrl, shapeUrl);
     }.bind(this);
   }
 }

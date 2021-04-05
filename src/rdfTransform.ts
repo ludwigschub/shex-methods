@@ -5,7 +5,8 @@ import { Shape } from "./shape";
 export function validatedToDataResult<ShapeType>(
   shape: Shape<ShapeType>,
   validated: any,
-  baseUrl: string
+  baseUrl: string,
+  shapeUrl: string
 ) {
   const absoluteData = validatedToAbsolute(validated, baseUrl);
   const data = absoluteToNormalized(
@@ -13,7 +14,10 @@ export function validatedToDataResult<ShapeType>(
     shape.context,
     shape.prefixes
   );
-  return proxifyShape(data, shape.context) as ShapeType;
+  return proxifyShape(
+    { __shapeName: shapeUrl, ...data },
+    shape.context
+  ) as ShapeType;
 }
 
 export function validatedToAbsolute(data: any, baseUrl: string): any {
