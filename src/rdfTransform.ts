@@ -15,7 +15,7 @@ export function validatedToDataResult<ShapeType>(
     shape.prefixes
   );
   return proxifyShape(
-    { __shapeName: shapeUrl, ...data },
+    { __shapeName: shapeUrl, id: validated.node, ...data },
     shape.context
   ) as ShapeType;
 }

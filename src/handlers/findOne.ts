@@ -13,7 +13,7 @@ export async function findOne<ShapeType>(
   await shape.fetcher.load(from);
   const [data, errors] = await shape.validateShex([id]);
   return {
-    from: id,
+    from,
     data: data ? data[0] : undefined,
     errors: errors,
   } as QueryResult<ShapeType>;

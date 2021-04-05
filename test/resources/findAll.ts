@@ -1,4 +1,5 @@
 export type BasicContainerShape = {
+  id: string
   type: string;
   modified: string;
   mtime: string;
@@ -15,6 +16,7 @@ export enum BasicContainerContext {
 }
 
 export type ResourceShape = {
+  id: string
   type: string | string[];
   modified: string;
   mtime: string;

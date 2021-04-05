@@ -7,23 +7,21 @@ export async function validateShex<ShapeType>(
   shape: Shape<ShapeType>,
   ids: string[]
 ) {
-  const nTriplesStore = await createN3Store(shape.store);
-  const db = shex.Util.makeN3DB(nTriplesStore);
   const validator = shex.Validator.construct(shape.schema, {
     results: "api",
   });
+  const db = await createN3DB(shape.store);
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
-  validator
-    .validate(
-      db,
-      ids.map((id) => ({ node: id, shape: shape.id }))
-    )
-    .forEach((validated: any) => {
-      const [foundShape, foundErrors] = mapValidationResult(shape, validated);
-      if (!foundErrors) allShapes = [...(allShapes ?? []), foundShape];
-      if (foundErrors) allErrors = [...(allErrors ?? []), ...foundErrors];
-    });
+  const validated = validator.validate(
+    db,
+    ids.map((id) => ({ node: id, shape: shape.id }))
+  );
+  validated.forEach((validation: any) => {
+    const [foundShape, foundErrors] = mapValidationResult(shape, validation);
+    if (!foundErrors) allShapes = [...(allShapes ?? []), foundShape];
+    if (foundErrors) allErrors = [...(allErrors ?? []), ...foundErrors];
+  });
   return [allShapes, allErrors];
 }
 
@@ -45,7 +43,7 @@ function mapValidationResult<ShapeType>(
   return [foundShapes, foundErrors];
 }
 
-function createN3Store(store: IndexedFormula) {
+function createN3DB(store: IndexedFormula) {
   const turtle = new Serializer(store).statementsToN3(
     store.statementsMatching()
   );
@@ -61,7 +59,7 @@ function createN3Store(store: IndexedFormula) {
       } else if (triple) {
         n3Store.addTriple(triple);
       } else {
-        resolve(n3Store);
+        resolve(shex.Util.makeN3DB(n3Store));
       }
     });
   });

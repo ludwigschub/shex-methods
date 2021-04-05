@@ -2,7 +2,7 @@ import { QueryResult, Shape } from "../shape";
 
 export interface FindAllArgs<ShapeType> {
   from: string | string[];
-  where?: { id?: string | string[] } & Partial<ShapeType>;
+  where?: { id?: string | string[] } & Partial<Omit<ShapeType, "id">>;
 }
 
 export async function findAll<ShapeType>(
@@ -13,7 +13,7 @@ export async function findAll<ShapeType>(
   await shape.fetcher.load(from);
   const [data, errors] = await shape.validateShex(ids as string[]);
   return {
-    from: ids,
+    from,
     data,
     errors,
   } as QueryResult<ShapeType[]>;

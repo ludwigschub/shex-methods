@@ -9,6 +9,7 @@ describe(".findAll()", () => {
   it("can find all instances of shape", async () => {
     const fromIri = "https://lalatest.solidcommunity.net/profile/";
     const testIri = "https://lalatest.solidcommunity.net/profile/card";
+    const secondIri = "https://lalatest.solidcommunity.net/profile/Button.png";
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
       shape: solidLdpShex,
@@ -16,12 +17,14 @@ describe(".findAll()", () => {
     });
     const shape = await resource.findAll({
       from: fromIri,
-      where: { id: [testIri] },
+      where: { id: [testIri, secondIri] },
     });
     const { from, data, errors } = shape;
-    console.debug(data, errors);
-    expect(from[0]).toBe(testIri);
-    expect(data.name[0]).toBe("Tester");
+    const card = data[0] as ResourceShape
+    expect(errors).toBeUndefined();
+    expect(from).toBe(fromIri);
+    expect(card.id).toBe(testIri);
+    expect(card.type[0]).toBe("http://www.w3.org/ns/ldp#Resource");
     // expect(data["foaf:name"][0]).toBe("Tester");
     // expect(data.hasEmail[0]["vcard:value"][0]).toBe(
     //   "mailto:lalasepp@gmail.com"
@@ -29,6 +32,7 @@ describe(".findAll()", () => {
   });
 
   it("should return an error for finding the wrong shape", async () => {
+    const fromIri = "https://lalatest.solidcommunity.net/profile/";
     const testIri = "https://lalatest.solidcommunity.net/profile/";
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#Resource",
@@ -36,7 +40,7 @@ describe(".findAll()", () => {
       context: ResourceContext,
     });
     const { errors } = await resource.findAll({
-      from: testIri,
+      from: fromIri,
       where: { id: [testIri] },
     });
     expect(errors).toBeDefined();
