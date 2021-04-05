@@ -1,4 +1,4 @@
-import { QueryResult, Shape } from "./shape";
+import { QueryResult, Shape } from "../shape";
 
 export async function findOne<ShapeType>(
   shape: Shape<ShapeType>,

@@ -8,6 +8,7 @@ type SolidProfileShape = {
 };
 
 enum SolidProfileContext {
+  "type" = "rdf:type",
   "name" = "foaf:name",
   "hasEmail" = "vcard:hasEmail",
   "value" = "vcard:value",
@@ -62,9 +63,9 @@ it("can find one shape", async () => {
   const shape = await solidProfile.findOne(testIri);
   const { id, data } = shape;
   expect(id).toBe(testIri);
-  expect(data.name).toBe("lala");
-  expect(data["foaf:name"]).toBe("lala");
-  expect(data["vcard:hasEmail"]["vcard:value"]).toBe("lala@lala.com");
+  expect(data.name[0]).toBe("Tester");
+  expect(data["foaf:name"][0]).toBe("Tester");
+  expect(data["vcard:hasEmail"][0]["vcard:value"][0]).toBe("mailto:lalasepp@gmail.com");
 });
 
 it("should return an error for finding the wrong shape", async () => {

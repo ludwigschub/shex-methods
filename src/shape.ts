@@ -1,6 +1,7 @@
 import { Fetcher, IndexedFormula } from "rdflib";
-import { findAll } from "./findAll";
-import { findOne } from "./findOne";
+import { findAll } from "./handlers/findAll";
+import { findOne } from "./handlers/findOne";
+import { validatedToDataResult } from "./rdfTransform";
 import { validateShex } from "./validate";
 const shex = require("shex");
 
@@ -19,17 +20,23 @@ export interface ShapeConstructorArgs {
 export class Shape<ShapeType> {
   id: string;
   shape: string;
-  schema: Record<string, any>[];
+  schema: any;
+  prefixes: any;
   context: Record<string, string>;
   store: IndexedFormula;
   fetcher: Fetcher;
   findAll: () => QueryResult<ShapeType>[];
   findOne: (id: string) => Promise<QueryResult<ShapeType>>;
   validateShex: (baseUrl: string) => any;
+  validatedToDataResult: (validated: any, baseUrl: string) => ShapeType;
   constructor({ id, shape, context }: ShapeConstructorArgs) {
     this.id = id;
     this.shape = shape;
     this.schema = shex.Parser.construct(this.id).parse(this.shape);
+    this.prefixes = {
+      rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      ...this.schema.prefixes,
+    };
     this.context = context;
     this.store = new IndexedFormula();
     this.fetcher = new Fetcher(this.store);
@@ -42,6 +49,13 @@ export class Shape<ShapeType> {
     }.bind(this);
     this.validateShex = function (this: Shape<ShapeType>, baseUrl: string) {
       return validateShex<ShapeType>(this, baseUrl);
+    }.bind(this);
+    this.validatedToDataResult = function (
+      this: Shape<ShapeType>,
+      validated: any,
+      baseUrl: string
+    ) {
+      return validatedToDataResult<ShapeType>(this, validated, baseUrl);
     }.bind(this);
   }
 }

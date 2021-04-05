@@ -20,9 +20,10 @@ export async function validateShex<ShapeType>(
   foundErrors =
     validation.status === "nonconformant" &&
     shex.Util.errsToSimple(validation.appinfo, baseUrl, shape.id);
-  foundShapes =
-    validation.status === "conformant" &&
-    shex.Util.valToValues(validation.appinfo);
+  foundShapes = (validation.status === "conformant" &&
+    shape.validatedToDataResult(
+      shex.Util.valToValues(validation.appinfo), baseUrl
+    )) as ShapeType;
   return [foundShapes, foundErrors];
 }
 
