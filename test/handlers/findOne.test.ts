@@ -1,5 +1,9 @@
 import { Shape } from "../../lib";
-import { SolidProfileShape, solidProfileShex, SolidProfileContext } from "../testResources";
+import {
+  SolidProfileShape,
+  solidProfileShex,
+  SolidProfileContext,
+} from "../resources/findOne";
 
 describe(".findOne()", () => {
   it("can find one shape", async () => {
@@ -9,9 +13,12 @@ describe(".findOne()", () => {
       shape: solidProfileShex,
       context: SolidProfileContext,
     });
-    const shape = await solidProfile.findOne({ where: { id: testIri } });
-    const { id, data } = shape;
-    expect(id).toBe(testIri);
+    const shape = await solidProfile.findOne({
+      from: testIri,
+      where: { id: testIri },
+    });
+    const { from, data } = shape;
+    expect(from).toBe(testIri);
     expect(data.name[0]).toBe("Tester");
     expect(data["foaf:name"][0]).toBe("Tester");
     expect(data.hasEmail[0]["vcard:value"][0]).toBe(
@@ -26,7 +33,10 @@ describe(".findOne()", () => {
       shape: solidProfileShex,
       context: SolidProfileContext,
     });
-    const { errors } = await solidProfile.findOne({ where: { id: testIri } });
+    const { errors } = await solidProfile.findOne({
+      from: testIri,
+      where: { id: testIri },
+    });
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
       "validating https://lalatest.solidcommunity.net/profile as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:",

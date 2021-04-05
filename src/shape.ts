@@ -8,7 +8,7 @@ const shex = require("shex");
 export interface QueryResult<Type> {
   errors: any;
   data: Type;
-  id: string;
+  from: string | string[];
 }
 
 export interface ShapeConstructorArgs {
@@ -25,7 +25,7 @@ export class Shape<ShapeType> {
   context: Record<string, string>;
   store: IndexedFormula;
   fetcher: Fetcher;
-  findAll: (args: FindAllArgs<ShapeType>) => QueryResult<ShapeType>[];
+  findAll: (args: FindAllArgs<ShapeType>) => Promise<QueryResult<ShapeType[]>>;
   findOne: (args: FindUniqueArgs) => Promise<QueryResult<ShapeType>>;
   validateShex: (ids: string[]) => any;
   validatedToDataResult: (
@@ -45,7 +45,10 @@ export class Shape<ShapeType> {
     this.store = new IndexedFormula();
     this.fetcher = new Fetcher(this.store);
 
-    this.findAll = function (this: Shape<ShapeType>, args: FindAllArgs<ShapeType>) {
+    this.findAll = function (
+      this: Shape<ShapeType>,
+      args: FindAllArgs<ShapeType>
+    ) {
       return findAll<ShapeType>(this, args);
     }.bind(this);
     this.findOne = function (this: Shape<ShapeType>, args: FindUniqueArgs) {

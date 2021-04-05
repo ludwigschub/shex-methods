@@ -12,13 +12,19 @@ export async function validateShex<ShapeType>(
   const validator = shex.Validator.construct(shape.schema, {
     results: "api",
   });
-  const validation = validator
+  let allErrors: string[] | undefined = undefined;
+  let allShapes: ShapeType[] | undefined = undefined;
+  validator
     .validate(
       db,
       ids.map((id) => ({ node: id, shape: shape.id }))
     )
-    .map((validated: any) => mapValidationResult(shape, validated));
-  return validation;
+    .forEach((validated: any) => {
+      const [foundShape, foundErrors] = mapValidationResult(shape, validated);
+      if (!foundErrors) allShapes = [...(allShapes ?? []), foundShape];
+      if (foundErrors) allErrors = [...(allErrors ?? []), ...foundErrors];
+    });
+  return [allShapes, allErrors];
 }
 
 function mapValidationResult<ShapeType>(
@@ -34,7 +40,7 @@ function mapValidationResult<ShapeType>(
     shape.validatedToDataResult(
       shex.Util.valToValues(validated.appinfo),
       validated.node,
-      validated.shape,
+      validated.shape
     )) as ShapeType;
   return [foundShapes, foundErrors];
 }
