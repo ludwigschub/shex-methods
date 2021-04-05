@@ -1,6 +1,6 @@
 import { Fetcher, IndexedFormula } from "rdflib";
-import { findAll } from "./handlers/findAll";
-import { findOne } from "./handlers/findOne";
+import { findAll, FindAllArgs } from "./handlers/findAll";
+import { findOne, FindUniqueArgs } from "./handlers/findOne";
 import { validatedToDataResult } from "./rdfTransform";
 import { validateShex } from "./validate";
 const shex = require("shex");
@@ -25,10 +25,14 @@ export class Shape<ShapeType> {
   context: Record<string, string>;
   store: IndexedFormula;
   fetcher: Fetcher;
-  findAll: () => QueryResult<ShapeType>[];
-  findOne: (id: string) => Promise<QueryResult<ShapeType>>;
+  findAll: (args: FindAllArgs<ShapeType>) => QueryResult<ShapeType>[];
+  findOne: (args: FindUniqueArgs) => Promise<QueryResult<ShapeType>>;
   validateShex: (ids: string[]) => any;
-  validatedToDataResult: (validated: any, baseUrl: string, shapeUrl: string) => ShapeType;
+  validatedToDataResult: (
+    validated: any,
+    baseUrl: string,
+    shapeUrl: string
+  ) => ShapeType;
   constructor({ id, shape, context }: ShapeConstructorArgs) {
     this.id = id;
     this.shape = shape;
@@ -41,11 +45,11 @@ export class Shape<ShapeType> {
     this.store = new IndexedFormula();
     this.fetcher = new Fetcher(this.store);
 
-    this.findAll = function (this: Shape<ShapeType>) {
-      return findAll<ShapeType>(this);
+    this.findAll = function (this: Shape<ShapeType>, args: FindAllArgs<ShapeType>) {
+      return findAll<ShapeType>(this, args);
     }.bind(this);
-    this.findOne = function (this: Shape<ShapeType>, id: string) {
-      return findOne<ShapeType>(this, id);
+    this.findOne = function (this: Shape<ShapeType>, args: FindUniqueArgs) {
+      return findOne<ShapeType>(this, args);
     }.bind(this);
     this.validateShex = function (this: Shape<ShapeType>, ids: string[]) {
       return validateShex<ShapeType>(this, ids);
@@ -56,7 +60,12 @@ export class Shape<ShapeType> {
       baseUrl: string,
       shapeUrl: string
     ) {
-      return validatedToDataResult<ShapeType>(this, validated, baseUrl, shapeUrl);
+      return validatedToDataResult<ShapeType>(
+        this,
+        validated,
+        baseUrl,
+        shapeUrl
+      );
     }.bind(this);
   }
 }

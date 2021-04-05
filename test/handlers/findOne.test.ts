@@ -1,4 +1,4 @@
-import { Shape } from "../lib";
+import { Shape } from "../../lib";
 
 type SolidProfileShape = {
   type: string;
@@ -62,7 +62,7 @@ describe(".findOne()", () => {
       shape: solidProfileShex,
       context: SolidProfileContext,
     });
-    const shape = await solidProfile.findOne(testIri);
+    const shape = await solidProfile.findOne({ where: { id: testIri } });
     const { id, data } = shape;
     expect(id).toBe(testIri);
     expect(data.name[0]).toBe("Tester");
@@ -79,7 +79,7 @@ describe(".findOne()", () => {
       shape: solidProfileShex,
       context: SolidProfileContext,
     });
-    const { errors } = await solidProfile.findOne(testIri);
+    const { errors } = await solidProfile.findOne({ where: { id: testIri } });
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
       "validating https://lalatest.solidcommunity.net/profile as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:",
