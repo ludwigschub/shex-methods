@@ -3,6 +3,7 @@ import {
   SolidProfileShape,
   solidProfileShex,
   SolidProfileContext,
+  SolidProfileShapeType,
 } from "../resources/findOne";
 
 describe(".findOne()", () => {
@@ -12,6 +13,7 @@ describe(".findOne()", () => {
       id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
       shape: solidProfileShex,
       context: SolidProfileContext,
+      type: SolidProfileShapeType,
     });
     const shape = await solidProfile.findOne({
       from: testIri,
@@ -32,6 +34,7 @@ describe(".findOne()", () => {
       id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
       shape: solidProfileShex,
       context: SolidProfileContext,
+      type: SolidProfileShapeType,
     });
     const { errors } = await solidProfile.findOne({
       from: testIri,

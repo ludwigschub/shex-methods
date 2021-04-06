@@ -6,7 +6,7 @@ import { validateShex } from "./validate";
 const shex = require("shex");
 
 export interface QueryResult<Type> {
-  errors: any;
+  errors: string[];
   data: Type;
   from: string | string[];
 }
@@ -15,6 +15,7 @@ export interface ShapeConstructorArgs {
   id: string;
   shape: string;
   context: Record<string, string>;
+  type: Record<string, string> | string[];
 }
 
 export class Shape<ShapeType> {
@@ -22,6 +23,7 @@ export class Shape<ShapeType> {
   shape: string;
   schema: any;
   prefixes: any;
+  type: string[];
   context: Record<string, string>;
   store: IndexedFormula;
   fetcher: Fetcher;
@@ -33,7 +35,7 @@ export class Shape<ShapeType> {
     baseUrl: string,
     shapeUrl: string
   ) => ShapeType;
-  constructor({ id, shape, context }: ShapeConstructorArgs) {
+  constructor({ id, shape, context, type }: ShapeConstructorArgs) {
     this.id = id;
     this.shape = shape;
     this.schema = shex.Parser.construct(this.id).parse(this.shape);
@@ -41,6 +43,7 @@ export class Shape<ShapeType> {
       rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
       ...this.schema.prefixes,
     };
+    this.type = Object.values(type);
     this.context = context;
     this.store = new IndexedFormula();
     this.fetcher = new Fetcher(this.store);

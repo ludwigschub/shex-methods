@@ -23,6 +23,10 @@ export type ResourceShape = {
   size: string;
 };
 
+export enum ResourceShapeType {
+  Resource = "http://www.w3.org/ns/ldp#Resource",
+}
+
 export enum ResourceContext {
   "type" = "rdf:type",
   "modified" = "terms:modified",
