@@ -20,7 +20,7 @@ describe(".findAll()", () => {
       where: { id: [testIri, secondIri] },
     });
     const { from, data, errors } = shape;
-    const card = data[0] as ResourceShape
+    const card = data[0] as ResourceShape;
     expect(errors).toBeUndefined();
     expect(from).toBe(fromIri);
     expect(card.id).toBe(testIri);
@@ -45,10 +45,9 @@ describe(".findAll()", () => {
     });
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
-      "validating https://lalatest.solidcommunity.net/profile as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:",
-      "    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-      "  OR",
-      "  Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "shape http://www.w3.org/ns/ldp#Resource not found in:\n  " +
+        "http://www.w3.org/ns/ldp#BasicContainerShape\n  " +
+        "http://www.w3.org/ns/ldp#ResourceShape",
     ]);
   });
 });

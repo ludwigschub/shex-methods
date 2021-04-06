@@ -13,16 +13,20 @@ export async function validateShex<ShapeType>(
   const db = await createN3DB(shape.store);
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
-  const validated = validator.validate(
-    db,
-    ids.map((id) => ({ node: id, shape: shape.id }))
-  );
-  validated.forEach((validation: any) => {
-    const [foundShape, foundErrors] = mapValidationResult(shape, validation);
-    if (!foundErrors) allShapes = [...(allShapes ?? []), foundShape];
-    if (foundErrors) allErrors = [...(allErrors ?? []), ...foundErrors];
-  });
-  return [allShapes, allErrors];
+  try {
+    const validated = validator.validate(
+      db,
+      ids.map((id) => ({ node: id, shape: shape.id }))
+    );
+    validated.forEach((validation: any) => {
+      const [foundShape, foundErrors] = mapValidationResult(shape, validation);
+      if (!foundErrors) allShapes = [...(allShapes ?? []), foundShape];
+      if (foundErrors) allErrors = [...(allErrors ?? []), ...foundErrors];
+    });
+    return [allShapes, allErrors];
+  } catch (err) {
+    return [undefined, [err.message]];
+  }
 }
 
 function mapValidationResult<ShapeType>(
