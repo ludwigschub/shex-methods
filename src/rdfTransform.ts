@@ -87,8 +87,6 @@ export function absoluteToNormalizedValue(
 ): any {
   if (typeof value === "object") {
     return absoluteToNormalized(value, context, prefixes);
-  } else if (typeof value === "string") {
-    return value;
   } else {
     return value;
   }

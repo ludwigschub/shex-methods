@@ -1,6 +1,6 @@
 {
   "ext": "*.ts",
   "events": {
-    "restart": "yarn build && yarn test findAll"
+    "restart": "yarn build && yarn test"
   }
 }
