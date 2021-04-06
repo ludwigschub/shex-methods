@@ -74,7 +74,7 @@ export function absoluteToNormalized(
           };
         }
       } else {
-        throw Error(`Unknown field found in data: ${key}`);
+        throw Error(`Could not find field name for: ${key}\nContext object used: \n${JSON.stringify(context)}`);
       }
     })
   );

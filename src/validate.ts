@@ -86,7 +86,7 @@ function getAllStatementsOfNode(
   const allSubjectStatements = store.statementsMatching(node);
   const allObjectStatements = allSubjectStatements.reduce(
     (allStatements, statement) => {
-      if (statement.object.termType === "BlankNode") {
+      if (statement.object.termType === "BlankNode" || statement.object.termType === "NamedNode") {
         const allObjectStatements = getAllStatementsOfNode(
           store,
           statement.object

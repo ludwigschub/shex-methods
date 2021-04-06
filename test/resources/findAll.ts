@@ -4,13 +4,17 @@ export type BasicContainerShape = {
   modified: string;
   mtime: string;
   size: string;
-  contains: string[];
+  contains: ResourceShape[];
 };
+
+export enum BasicContainerShapeType {
+  BasicContainer = "http://www.w3.org/ns/ldp#BasicContainer",
+}
 
 export enum BasicContainerContext {
   "type" = "rdf:type",
   "modified" = "terms:modified",
-  "mtime" = "st:mtmime",
+  "mtime" = "st:mtime",
   "size" = "st:size",
   "contains" = "ldp:contains",
 }

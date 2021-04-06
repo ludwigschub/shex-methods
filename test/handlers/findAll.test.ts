@@ -4,6 +4,9 @@ import {
   solidLdpShex,
   ResourceContext,
   ResourceShapeType,
+  BasicContainerShape,
+  BasicContainerShapeType,
+  BasicContainerContext,
 } from "../resources/findAll";
 
 describe(".findAll()", () => {
@@ -25,10 +28,29 @@ describe(".findAll()", () => {
     expect(from).toBe(fromIri);
     expect(card.id).toBe(testIri);
     expect(card.type[0]).toBe("http://www.w3.org/ns/ldp#Resource");
-    // expect(data["foaf:name"][0]).toBe("Tester");
-    // expect(data.hasEmail[0]["vcard:value"][0]).toBe(
-    //   "mailto:lalasepp@gmail.com"
-    // );
+  });
+
+  it("can find all instances of shape in multiple files", async () => {
+    const fromIri1 = "https://lalatest.solidcommunity.net/profile/";
+    const fromIri2 = "https://lalatest.solidcommunity.net/public/";
+    const testIri = "https://lalatest.solidcommunity.net/profile/";
+    const resource = new Shape<BasicContainerShape>({
+      id: "http://www.w3.org/ns/ldp#BasicContainerShape",
+      shape: solidLdpShex,
+      context: BasicContainerContext,
+      type: BasicContainerShapeType,
+    });
+    const shape = await resource.findAll({
+      from: [fromIri1, fromIri2],
+    });
+    const { from, data, errors } = shape;
+    const profileFolder = data?.find((folder) => folder.id === testIri);
+    const card = profileFolder?.contains[0];
+    expect(errors).toBeUndefined();
+    expect(data.length).toBe(2);
+    expect(from).toStrictEqual([fromIri1, fromIri2]);
+    expect(profileFolder.id).toBe(testIri);
+    expect(card.type[0]).toBe("http://www.w3.org/ns/ldp#Resource");
   });
 
   it("should return an error for finding the wrong shape", async () => {
@@ -39,7 +61,7 @@ describe(".findAll()", () => {
       context: ResourceContext,
       type: ResourceShapeType,
     });
-    const { errors, data } = await resource.findAll({
+    const { errors } = await resource.findAll({
       from: fromIri,
       where: { id: [fromIri] },
     });
