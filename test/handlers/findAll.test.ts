@@ -1,13 +1,13 @@
 import { Shape } from "../../lib";
 import {
   ResourceShape,
-  ldpShex,
-  ResourceContext,
+  ldpShapesShex,
+  ResourceShapeContext,
   ResourceShapeType,
   BasicContainerShape,
   BasicContainerShapeType,
-  BasicContainerContext,
-} from "../resources/ldpShapes";
+  BasicContainerShapeContext,
+} from "../resources/shex";
 
 describe(".findAll()", () => {
   it("can find all instances of shape", async () => {
@@ -15,8 +15,8 @@ describe(".findAll()", () => {
     const testIri = "https://lalatest.solidcommunity.net/profile/card";
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
-      shape: ldpShex,
-      context: ResourceContext,
+      shape: ldpShapesShex,
+      context: ResourceShapeContext,
       type: ResourceShapeType,
     });
     const shape = await resource.findAll({
@@ -36,8 +36,8 @@ describe(".findAll()", () => {
     const testIri = "https://lalatest.solidcommunity.net/profile/";
     const resource = new Shape<BasicContainerShape>({
       id: "http://www.w3.org/ns/ldp#BasicContainerShape",
-      shape: ldpShex,
-      context: BasicContainerContext,
+      shape: ldpShapesShex,
+      context: BasicContainerShapeContext,
       type: BasicContainerShapeType,
     });
     const shape = await resource.findAll({
@@ -57,8 +57,8 @@ describe(".findAll()", () => {
     const fromIri = "https://lalatest.solidcommunity.net/profile/";
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
-      shape: ldpShex,
-      context: ResourceContext,
+      shape: ldpShapesShex,
+      context: ResourceShapeContext,
       type: ResourceShapeType,
     });
     const { errors } = await resource.findAll({

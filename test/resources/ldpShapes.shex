@@ -1,44 +1,3 @@
-export type BasicContainerShape = {
-  id: string
-  type?: string;
-  modified?: string;
-  mtime?: string;
-  size?: string;
-  contains?: ResourceShape[];
-};
-
-export enum BasicContainerShapeType {
-  BasicContainer = "http://www.w3.org/ns/ldp#BasicContainer",
-}
-
-export enum BasicContainerContext {
-  "type" = "rdf:type",
-  "modified" = "terms:modified",
-  "mtime" = "st:mtime",
-  "size" = "st:size",
-  "contains" = "ldp:contains",
-}
-
-export type ResourceShape = {
-  id: string
-  type?: string | string[];
-  modified?: string;
-  mtime?: string;
-  size?: string;
-};
-
-export enum ResourceShapeType {
-  Resource = "http://www.w3.org/ns/ldp#Resource",
-}
-
-export enum ResourceContext {
-  "type" = "rdf:type",
-  "modified" = "terms:modified",
-  "mtime" = "st:mtime",
-  "size" = "st:size",
-}
-
-export const ldpShex = `
 PREFIX ldp: <http://www.w3.org/ns/ldp#>
 PREFIX st: <http://www.w3.org/ns/posix/stat#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -71,4 +30,3 @@ ldp:ResourceShape EXTRA a {
   terms:modified xsd:dateTime + 
     // rdfs:comment  "Time the Container was modified" ;
 }
-`;

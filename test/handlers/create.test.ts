@@ -1,24 +1,27 @@
 import { Shape } from "../../lib";
 import {
-  ldpShex,
-  BasicContainerShape,
-  BasicContainerShapeType,
-  BasicContainerContext,
-  ResourceShape
-} from "../resources/ldpShapes";
+  chatShex,
+  ChatShape,
+  ChatShapeType,
+  ChatShapeContext,
+} from "../resources/shex";
 
 describe(".create()", () => {
   it("can find one shape", async () => {
     const testIri = "https://lalatest.solidcommunity.net/public/";
-    const solidProfile = new Shape<BasicContainerShape>({
-      id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
-      shape: ldpShex,
-      context: BasicContainerContext,
-      type: BasicContainerShapeType,
+    const basicContainer = new Shape<ChatShape>({
+      id: "http://www.w3.org/ns/ldp#ChatShape",
+      shape: chatShex,
+      context: ChatShapeContext,
+      type: ChatShapeType,
     });
-    const shape = await solidProfile.create({
+    const shape = await basicContainer.create({
       at: testIri,
-      data: { id: testIri, type: BasicContainerShapeType.BasicContainer },
+      data: {
+        id: testIri,
+        type: ChatShapeType.LongChat,
+        title: "Test Chat"
+      } as ChatShape,
     });
     const { from } = shape;
     expect(from).toBe(testIri);

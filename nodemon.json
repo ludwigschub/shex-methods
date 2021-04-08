@@ -1,5 +1,6 @@
 {
   "ext": "*.ts",
+  "ignore": ["test/resources"],
   "events": {
     "restart": "yarn build && yarn test"
   }
