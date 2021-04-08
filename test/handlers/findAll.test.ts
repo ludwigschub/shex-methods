@@ -2,11 +2,10 @@ import { Shape } from "../../lib";
 import {
   ResourceShape,
   ldpShapesShex,
-  ResourceShapeContext,
+  LdpShapesContext,
   ResourceShapeType,
   BasicContainerShape,
   BasicContainerShapeType,
-  BasicContainerShapeContext,
 } from "../resources/shex";
 
 describe(".findAll()", () => {
@@ -16,7 +15,7 @@ describe(".findAll()", () => {
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
       shape: ldpShapesShex,
-      context: ResourceShapeContext,
+      context: LdpShapesContext,
       type: ResourceShapeType,
     });
     const shape = await resource.findAll({
@@ -37,7 +36,7 @@ describe(".findAll()", () => {
     const resource = new Shape<BasicContainerShape>({
       id: "http://www.w3.org/ns/ldp#BasicContainerShape",
       shape: ldpShapesShex,
-      context: BasicContainerShapeContext,
+      context: LdpShapesContext,
       type: BasicContainerShapeType,
     });
     const shape = await resource.findAll({
@@ -58,7 +57,7 @@ describe(".findAll()", () => {
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
       shape: ldpShapesShex,
-      context: ResourceShapeContext,
+      context: LdpShapesContext,
       type: ResourceShapeType,
     });
     const { errors } = await resource.findAll({

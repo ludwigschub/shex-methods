@@ -2,7 +2,7 @@ import { Shape } from "../../lib";
 import {
   SolidProfileShape,
   solidProfileShex,
-  SolidProfileShapeContext,
+  SolidProfileContext,
   SolidProfileShapeType,
 } from "../resources/shex";
 
@@ -12,7 +12,7 @@ describe(".findOne()", () => {
     const solidProfile = new Shape<SolidProfileShape>({
       id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
       shape: solidProfileShex,
-      context: SolidProfileShapeContext,
+      context: SolidProfileContext,
       type: SolidProfileShapeType,
     });
     const shape = await solidProfile.findOne({
@@ -33,7 +33,7 @@ describe(".findOne()", () => {
     const solidProfile = new Shape<SolidProfileShape>({
       id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
       shape: solidProfileShex,
-      context: SolidProfileShapeContext,
+      context: SolidProfileContext,
       type: SolidProfileShapeType,
     });
     const { errors } = await solidProfile.findOne({
