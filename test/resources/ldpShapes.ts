@@ -1,10 +1,10 @@
 export type BasicContainerShape = {
   id: string
-  type: string;
-  modified: string;
-  mtime: string;
-  size: string;
-  contains: ResourceShape[];
+  type?: string;
+  modified?: string;
+  mtime?: string;
+  size?: string;
+  contains?: ResourceShape[];
 };
 
 export enum BasicContainerShapeType {
@@ -21,10 +21,10 @@ export enum BasicContainerContext {
 
 export type ResourceShape = {
   id: string
-  type: string | string[];
-  modified: string;
-  mtime: string;
-  size: string;
+  type?: string | string[];
+  modified?: string;
+  mtime?: string;
+  size?: string;
 };
 
 export enum ResourceShapeType {

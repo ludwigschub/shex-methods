@@ -35,7 +35,7 @@ export async function validateShex<ShapeType>(
     });
     return [allShapes, allErrors];
   } catch (err) {
-    console.debug(err)
+    console.debug(err);
     return [undefined, [err.message]];
   }
 }
@@ -86,7 +86,10 @@ function getAllStatementsOfNode(
   const allSubjectStatements = store.statementsMatching(node);
   const allObjectStatements = allSubjectStatements.reduce(
     (allStatements, statement) => {
-      if (statement.object.termType === "BlankNode" || statement.object.termType === "NamedNode") {
+      if (
+        statement.object.termType === "BlankNode" ||
+        statement.object.termType === "NamedNode"
+      ) {
         const allObjectStatements = getAllStatementsOfNode(
           store,
           statement.object

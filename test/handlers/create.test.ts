@@ -4,12 +4,12 @@ import {
   BasicContainerShape,
   BasicContainerShapeType,
   BasicContainerContext,
-  ResourceShape,
+  ResourceShape
 } from "../resources/ldpShapes";
 
-describe(".findOne()", () => {
+describe(".create()", () => {
   it("can find one shape", async () => {
-    const testIri = "https://lalatest.solidcommunity.net/profile/card#me";
+    const testIri = "https://lalatest.solidcommunity.net/public/";
     const solidProfile = new Shape<BasicContainerShape>({
       id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
       shape: ldpShex,
@@ -18,15 +18,15 @@ describe(".findOne()", () => {
     });
     const shape = await solidProfile.create({
       at: testIri,
-      data: { id: testIri },
+      data: { id: testIri, type: BasicContainerShapeType.BasicContainer },
     });
-    const { from, data } = shape;
+    const { from } = shape;
     expect(from).toBe(testIri);
-    expect(data.name[0]).toBe("Tester");
-    expect(data["foaf:name"][0]).toBe("Tester");
-    expect(data.hasEmail[0]["vcard:value"][0]).toBe(
-      "mailto:lalasepp@gmail.com"
-    );
+    // expect(data.name[0]).toBe("Tester");
+    // expect(data["foaf:name"][0]).toBe("Tester");
+    // expect(data.hasEmail[0]["vcard:value"][0]).toBe(
+    //   "mailto:lalasepp@gmail.com"
+    // );
   });
 
   // it("should return an error for finding the wrong shape", async () => {
