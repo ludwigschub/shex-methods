@@ -38,7 +38,7 @@ export enum ResourceContext {
   "size" = "st:size",
 }
 
-export const solidLdpShex = `
+export const ldpShex = `
 PREFIX ldp: <http://www.w3.org/ns/ldp#>
 PREFIX st: <http://www.w3.org/ns/posix/stat#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

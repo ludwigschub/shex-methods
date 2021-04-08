@@ -4,7 +4,7 @@ import {
   solidProfileShex,
   SolidProfileContext,
   SolidProfileShapeType,
-} from "../resources/findOne";
+} from "../resources/solidProfile";
 
 describe(".findOne()", () => {
   it("can find one shape", async () => {

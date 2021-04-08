@@ -1,13 +1,13 @@
 import { Shape } from "../../lib";
 import {
   ResourceShape,
-  solidLdpShex,
+  ldpShex,
   ResourceContext,
   ResourceShapeType,
   BasicContainerShape,
   BasicContainerShapeType,
   BasicContainerContext,
-} from "../resources/findAll";
+} from "../resources/ldpShapes";
 
 describe(".findAll()", () => {
   it("can find all instances of shape", async () => {
@@ -15,7 +15,7 @@ describe(".findAll()", () => {
     const testIri = "https://lalatest.solidcommunity.net/profile/card";
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
-      shape: solidLdpShex,
+      shape: ldpShex,
       context: ResourceContext,
       type: ResourceShapeType,
     });
@@ -36,7 +36,7 @@ describe(".findAll()", () => {
     const testIri = "https://lalatest.solidcommunity.net/profile/";
     const resource = new Shape<BasicContainerShape>({
       id: "http://www.w3.org/ns/ldp#BasicContainerShape",
-      shape: solidLdpShex,
+      shape: ldpShex,
       context: BasicContainerContext,
       type: BasicContainerShapeType,
     });
@@ -57,7 +57,7 @@ describe(".findAll()", () => {
     const fromIri = "https://lalatest.solidcommunity.net/profile/";
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
-      shape: solidLdpShex,
+      shape: ldpShex,
       context: ResourceContext,
       type: ResourceShapeType,
     });
