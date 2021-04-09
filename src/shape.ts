@@ -33,7 +33,7 @@ export class Shape<ShapeType> {
   findAll: (args: FindAllArgs<ShapeType>) => Promise<QueryResult<ShapeType[]>>;
   findOne: (args: FindUniqueArgs) => Promise<QueryResult<ShapeType>>;
   create: (args: CreateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
-  dataToStatements: (data: ShapeType) => any;
+  dataToStatements: (data: ShapeType, doc: string) => any;
   validateShex: (ids: string[]) => any;
   validatedToDataResult: (
     validated: any,
@@ -45,7 +45,7 @@ export class Shape<ShapeType> {
     this.shape = shape;
     this.schema = shex.Parser.construct(this.id).parse(this.shape);
     this.prefixes = {
-      rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
       ...this.schema.prefixes,
     };
     this.type = Object.values(type);
@@ -63,14 +63,21 @@ export class Shape<ShapeType> {
     this.findOne = function (this: Shape<ShapeType>, args: FindUniqueArgs) {
       return findOne<ShapeType>(this, args);
     }.bind(this);
-    this.create = function (this: Shape<ShapeType>, args: CreateArgs<ShapeType>) {
+    this.create = function (
+      this: Shape<ShapeType>,
+      args: CreateArgs<ShapeType>
+    ) {
       return create<ShapeType>(this, args);
     }.bind(this);
     this.validateShex = function (this: Shape<ShapeType>, ids: string[]) {
       return validateShex<ShapeType>(this, ids);
     }.bind(this);
-    this.dataToStatements = function (this: Shape<ShapeType>, data: ShapeType) {
-      return dataToStatements<ShapeType>(this, data);
+    this.dataToStatements = function (
+      this: Shape<ShapeType>,
+      data: ShapeType,
+      doc: string
+    ) {
+      return dataToStatements<ShapeType>(this, data, doc);
     }.bind(this);
     this.validatedToDataResult = function (
       this: Shape<ShapeType>,

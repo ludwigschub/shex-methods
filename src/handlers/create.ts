@@ -13,11 +13,11 @@ export async function create<ShapeType>(
   return new Promise(async (resolve, reject) => {
     let doesntExist = "";
     await shape.fetcher.load(at).catch((err) => (doesntExist = err));
-    const [_del, ins] = await shape.dataToStatements(data);
     const { id } = data as { id: string };
     if (shape.store.holds(new NamedNode(id), null, null, at)) {
       throw new Error("Shape already exists at " + at);
     }
+    const [_del, ins] = await shape.dataToStatements(data, at);
     if (!doesntExist) {
       await updateExisting(shape.updater, [], ins).catch((err) => reject(err));
     } else {

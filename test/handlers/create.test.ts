@@ -3,16 +3,16 @@ import {
   chatShex,
   ChatShape,
   ChatShapeType,
-  ChatShapeContext,
+  ChatContext,
 } from "../resources/shex";
 
 describe(".create()", () => {
   it("can find one shape", async () => {
-    const testIri = "https://lalatest.solidcommunity.net/public/";
+    const testIri = "https://lalatest.solidcommunity.net/public/testChat.ttl";
     const basicContainer = new Shape<ChatShape>({
       id: "http://www.w3.org/ns/ldp#ChatShape",
       shape: chatShex,
-      context: ChatShapeContext,
+      context: ChatContext,
       type: ChatShapeType,
     });
     const shape = await basicContainer.create({
