@@ -1,9 +1,9 @@
 import { Fetcher, IndexedFormula, UpdateManager } from "rdflib";
-import { dataToStatements } from "./dataToRdf";
+import { dataToStatements } from "./transform/dataToRdf";
 import { create, CreateArgs } from "./handlers/create";
 import { findAll, FindAllArgs } from "./handlers/findAll";
 import { findOne, FindUniqueArgs } from "./handlers/findOne";
-import { validatedToDataResult } from "./rdfToData";
+import { validatedToDataResult } from "./transform/rdfToData";
 import { validateShex } from "./validate";
 const shex = require("shex");
 

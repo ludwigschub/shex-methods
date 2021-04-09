@@ -1,6 +1,6 @@
 import camelcase from "camelcase";
 import path from "path";
-import { Shape } from "./shape";
+import { Shape } from "../shape";
 
 export function validatedToDataResult<ShapeType>(
   shape: Shape<ShapeType>,

@@ -1,5 +1,5 @@
 import { IndexedFormula, Literal, NamedNode, Statement } from "rdflib";
-import { Shape } from "./shape";
+import { Shape } from "../shape";
 
 export function dataToStatements<ShapeType>(
   shape: Shape<ShapeType>,
