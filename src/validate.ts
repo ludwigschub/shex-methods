@@ -6,31 +6,57 @@ import {
   Statement,
 } from "rdflib";
 import { Parser, Store } from "n3";
-import { Shape } from "./shape";
+import { Validated, validatedToDataResult } from "./transform/rdfToData";
 
 const shex = require("shex");
 
-export async function validateShex<ShapeType>(
-  shape: Shape<ShapeType>,
-  ids?: string[]
-) {
-  const validator = shex.Validator.construct(shape.schema, {
+export interface ValidateArgs {
+  schema: any;
+  store: IndexedFormula;
+  type: string[];
+  shapeId: string;
+  ids?: string[];
+  contexts: Record<string, string>[];
+  prefixes: Record<string, string>;
+}
+
+export async function validateShex<ShapeType>({
+  schema,
+  store,
+  type,
+  ids,
+  shapeId,
+  contexts,
+  prefixes,
+}: ValidateArgs) {
+  const validator = shex.Validator.construct(schema, {
     results: "api",
   });
-  const [db, potentialShapes] = await createN3DB(shape.store, shape.type);
+  const [db, potentialShapes] = await createN3DB(store, type);
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
   if (!ids && potentialShapes.length === 0) {
-    return [undefined, ["No shapes found of type " + shape.id]];
+    return [undefined, ["No shapes found of type " + shapeId]];
   }
   try {
     const validated = validator.validate(
       db,
-      (ids ?? potentialShapes).map((id) => ({ node: id, shape: shape.id }))
+      (ids ?? potentialShapes).map((id) => ({ node: id, shape: shapeId }))
     );
     validated.forEach((validation: any) => {
-      const [foundShape, foundErrors] = mapValidationResult(shape, validation);
-      if (!foundErrors) allShapes = [...(allShapes ?? []), foundShape];
+      const [foundShape, foundErrors] = mapValidationResult(
+        shapeId,
+        validation
+      );
+      if (!foundErrors)
+        allShapes = [
+          ...(allShapes ?? []),
+          validatedToDataResult({
+            contexts,
+            prefixes,
+            ...foundShape,
+          }) as ShapeType,
+        ];
       if (foundErrors) allErrors = [...(allErrors ?? []), ...foundErrors];
     });
     return [allShapes, allErrors];
@@ -40,21 +66,19 @@ export async function validateShex<ShapeType>(
   }
 }
 
-function mapValidationResult<ShapeType>(
-  shape: Shape<ShapeType>,
-  validated: any
-) {
+function mapValidationResult(shapeId: string, validated: any) {
   let foundErrors: any;
-  let foundShapes: ShapeType;
+  let foundShapes: any;
   foundErrors =
     validated.status === "nonconformant" &&
-    shex.Util.errsToSimple(validated.appinfo, validated.node, shape.id);
-  foundShapes = (validated.status === "conformant" &&
-    shape.validatedToDataResult(
-      shex.Util.valToValues(validated.appinfo),
-      validated.node,
-      validated.shape
-    )) as ShapeType;
+    shex.Util.errsToSimple(validated.appinfo, validated.node, shapeId);
+  foundShapes =
+    validated.status === "conformant" &&
+    ({
+      validated: shex.Util.valToValues(validated.appinfo),
+      baseUrl: validated.node,
+      shapeUrl: validated.shape,
+    } as Validated);
   return [foundShapes, foundErrors];
 }
 

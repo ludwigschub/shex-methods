@@ -3,8 +3,6 @@ import { dataToStatements } from "./transform/dataToRdf";
 import { create, CreateArgs } from "./handlers/create";
 import { findAll, FindAllArgs } from "./handlers/findAll";
 import { findOne, FindUniqueArgs } from "./handlers/findOne";
-import { validatedToDataResult } from "./transform/rdfToData";
-import { validateShex } from "./validate";
 import { UpdateArgs } from "./handlers/update";
 import { DeleteArgs, deleteShape } from "./handlers/delete";
 const shex = require("shex");
@@ -40,12 +38,6 @@ export class Shape<ShapeType> {
   update: (args: UpdateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
   delete: (args: DeleteArgs) => Promise<void>;
   dataToStatements: (data: ShapeType, doc: string) => any;
-  validateShex: (ids: string[]) => any;
-  validatedToDataResult: (
-    validated: any,
-    baseUrl: string,
-    shapeUrl: string
-  ) => ShapeType;
   constructor({
     id,
     shape,
@@ -91,28 +83,12 @@ export class Shape<ShapeType> {
     this.delete = function (this: Shape<ShapeType>, args: DeleteArgs) {
       return deleteShape<ShapeType>(this, args);
     }.bind(this);
-    this.validateShex = function (this: Shape<ShapeType>, ids: string[]) {
-      return validateShex<ShapeType>(this, ids);
-    }.bind(this);
     this.dataToStatements = function (
       this: Shape<ShapeType>,
       data: ShapeType,
       doc: string
     ) {
       return dataToStatements<ShapeType>(this, data, doc);
-    }.bind(this);
-    this.validatedToDataResult = function (
-      this: Shape<ShapeType>,
-      validated: any,
-      baseUrl: string,
-      shapeUrl: string
-    ) {
-      return validatedToDataResult<ShapeType>(
-        this,
-        validated,
-        baseUrl,
-        shapeUrl
-      );
     }.bind(this);
   }
 }

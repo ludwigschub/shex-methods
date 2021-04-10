@@ -1,24 +1,29 @@
 import camelcase from "camelcase";
 import path from "path";
-import { Shape } from "../shape";
 
-export function validatedToDataResult<ShapeType>(
-  shape: Shape<ShapeType>,
-  validated: any,
-  baseUrl: string,
-  shapeUrl: string
-) {
+export interface Validated {
+  validated: any;
+  baseUrl: string;
+  shapeUrl: string;
+}
+
+export function validatedToDataResult({
+  validated,
+  baseUrl,
+  shapeUrl,
+  contexts,
+  prefixes,
+}: {
+  contexts: Record<string, string>[];
+  prefixes: Record<string, string>;
+} & Validated) {
   const absoluteData = validatedToAbsolute(validated, baseUrl);
-  const data = absoluteToNormalized(
-    absoluteData,
-    [shape.context, ...shape.childContexts],
-    shape.prefixes
-  );
+  const data = absoluteToNormalized(absoluteData, contexts, prefixes);
   return proxifyShape(
     { __shapeName: shapeUrl, id: validated.node, ...data },
-    [shape.context, ...shape.childContexts],
-    shape.prefixes
-  ) as ShapeType;
+    contexts,
+    prefixes
+  );
 }
 
 export function validatedToAbsolute(data: any, baseUrl: string): any {
