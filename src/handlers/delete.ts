@@ -13,11 +13,10 @@ export async function deleteShape<ShapeType>(
   return new Promise(async (resolve, reject) => {
     await shape.fetcher.load(doc).catch(reject);
     const { id } = where as { id: string };
-    resolve(
-      shape.updater.update(
-        shape.store.statementsMatching(new NamedNode(id)),
-        []
-      )
-    );
+    const statementsOfId = shape.store.statementsMatching(new NamedNode(id));
+    if (statementsOfId.length === 0) {
+      resolve();
+    }
+    resolve(shape.updater.update(statementsOfId, []));
   });
 }

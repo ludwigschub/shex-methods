@@ -13,21 +13,47 @@ describe(".create()", () => {
   const testDoc = "https://lalatest.solidcommunity.net/public/chat";
   const testChatIri =
     "https://lalatest.solidcommunity.net/public/chat.ttl#this";
-  const basicContainer = new Shape<ChatShape>({
+  const chat = new Shape<ChatShape>({
     id: "https://shaperepo.com/schemas/longChat#ChatShape",
     shape: chatShex,
     context: ChatShapeContext,
+    type: ChatShapeType,
+  });
+  const badlyConfiguredChat = new Shape<ChatShape>({
+    id: "https://shaperepo.com/schemas/longChat#ChatShape",
+    shape: chatShex,
+    context: { ...ChatShapeContext, created: "terms:created" },
     type: ChatShapeType,
   });
 
   beforeAll(async () => {
     const client = new SolidNodeClient();
     await client.login(config);
-    basicContainer.fetcher._fetch = client.fetch.bind(client);
+    chat.fetcher._fetch = client.fetch.bind(client);
   });
 
   it("can create one shape", async () => {
-    const shape = await basicContainer.create({
+    const shape = await chat.create({
+      doc: testDoc,
+      data: {
+        id: testChatIri,
+        type: ChatShapeType.LongChat,
+        title: "Test Chat",
+        author: webId,
+        created: new Date(),
+      } as ChatShape,
+    });
+    const { from, data, errors } = shape;
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(from).toBe(testDoc);
+    expect(data.title).toBe("Test Chat");
+    expect(data.author).toBe(webId);
+    expect(data.type).toBe(ChatShapeType.LongChat);
+  });
+
+  it("throws error when context doesn't match", async () => {
+    const shape = await badlyConfiguredChat.create({
       doc: testDoc,
       data: {
         id: testChatIri,
@@ -39,15 +65,17 @@ describe(".create()", () => {
     });
     const { from, data, errors } = shape;
     expect(from).toBe(testDoc);
-    expect(data.title).toBe("Test Chat");
-    // expect(data["foaf:name"][0]).toBe("Tester");
-    // expect(data.hasEmail[0]["vcard:value"][0]).toBe(
-    //   "mailto:lalasepp@gmail.com"
-    // );
+    expect(data).toBeUndefined();
+    expect(errors).toBeDefined();
+    expect(errors).toStrictEqual([
+      `Could not find field name for: http://purl.org/dc/elements/1.1/created
+Context objects used: 
+[{\"type\":\"rdf:type\",\"author\":\"purl:author\",\"created\":\"terms:created\",\"title\":\"purl:title\",\"participation\":\"flow:participation\",\"sharedPreferences\":\"ui:sharedPreferences\"}]`,
+    ]);
   });
 
   afterAll(async () => {
-    await basicContainer.delete({
+    await chat.delete({
       doc: testDoc,
       where: {
         id: testChatIri,

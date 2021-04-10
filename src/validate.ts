@@ -14,6 +14,7 @@ const shex = require("shex");
 export interface ValidateArgs {
   schema: any;
   store: IndexedFormula;
+  statements?: Statement[];
   type: string[];
   shapeId: string;
   ids?: string[];
@@ -21,7 +22,15 @@ export interface ValidateArgs {
   prefixes: Record<string, string>;
 }
 
-export function validateShapes<ShapeType>(shape: Shape<ShapeType>, ids: string[] | undefined){
+export type ValidationResult<ShapeType> = [
+  ShapeType[] | undefined,
+  string[] | undefined
+];
+
+export function validateShapes<ShapeType>(
+  shape: Shape<ShapeType>,
+  ids: string[] | undefined
+) {
   const {
     schema,
     context,
@@ -45,16 +54,17 @@ export function validateShapes<ShapeType>(shape: Shape<ShapeType>, ids: string[]
 export async function validateShex<ShapeType>({
   schema,
   store,
+  statements,
   type,
   ids,
   shapeId,
   contexts,
   prefixes,
-}: ValidateArgs) {
+}: ValidateArgs): Promise<ValidationResult<ShapeType>> {
   const validator = shex.Validator.construct(schema, {
     results: "api",
   });
-  const [db, potentialShapes] = await createN3DB(store, type);
+  const [db, potentialShapes] = await createN3DB(store, type, statements);
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
   if (!ids && potentialShapes.length === 0) {
@@ -79,11 +89,12 @@ export async function validateShex<ShapeType>({
             ...foundShape,
           }) as ShapeType,
         ];
-      if (foundErrors) allErrors = [...(allErrors ?? []), ...foundErrors];
+      if (foundErrors) {
+        allErrors = [...(allErrors ?? []), ...foundErrors];
+      }
     });
     return [allShapes, allErrors];
   } catch (err) {
-    console.debug(err);
     return [undefined, [err.message]];
   }
 }
@@ -152,13 +163,15 @@ function getAllStatementsOfNode(
 
 function createN3DB(
   store: IndexedFormula,
-  type: string[]
+  type: string[],
+  statements?: Statement[]
 ): Promise<[any, string[]]> {
   const nodesOfType = getNodesOfTypeFromStore(store, type);
   const turtle = new Serializer(store).statementsToN3(
-    nodesOfType.reduce((allStatements: Statement[], node: NamedNode) => {
-      return [...allStatements, ...getAllStatementsOfNode(store, node)];
-    }, [])
+    statements ??
+      nodesOfType.reduce((allStatements: Statement[], node: NamedNode) => {
+        return [...allStatements, ...getAllStatementsOfNode(store, node)];
+      }, [])
   );
   const n3Store = new Store();
   return new Promise((resolve, reject) => {

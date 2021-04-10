@@ -8,8 +8,8 @@ import { DeleteArgs, deleteShape } from "./handlers/delete";
 const shex = require("shex");
 
 export interface QueryResult<Type> {
-  errors: string[];
-  data: Type;
+  errors?: string[];
+  data?: Type;
   from: string | string[];
 }
 

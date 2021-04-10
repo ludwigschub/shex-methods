@@ -1,5 +1,6 @@
-import { NamedNode, Statement, UpdateManager } from "rdflib";
+import { IndexedFormula, NamedNode, Statement, UpdateManager } from "rdflib";
 import { QueryResult, Shape } from "../shape";
+import { validateShex } from "../validate";
 
 export interface CreateArgs<ShapeType> {
   doc: string;
@@ -18,6 +19,8 @@ export async function create<ShapeType>(
       throw new Error("Shape already exists doc " + doc);
     }
     const [_del, ins] = await shape.dataToStatements(data, doc);
+    const [_, errors] = await validateNewShape<ShapeType>(shape, [], ins);
+    if (errors) resolve({ from: doc, errors });
     if (!doesntExist) {
       await updateExisting(shape.updater, [], ins).catch((err) => reject(err));
     } else {
@@ -30,6 +33,26 @@ export async function create<ShapeType>(
       })
       .catch(reject)) as QueryResult<ShapeType>;
     resolve(newlyCreated);
+  });
+}
+
+export function validateNewShape<ShapeType>(
+  shape: Shape<ShapeType>,
+  del: Statement[],
+  ins: Statement[]
+) {
+  const updatedStore = new IndexedFormula();
+  updatedStore.add(shape.store.statementsMatching());
+  updatedStore.remove(del);
+  updatedStore.add(ins);
+  const { schema, context, prefixes, childContexts, type, id: shapeId } = shape;
+  return validateShex<ShapeType>({
+    schema,
+    type,
+    shapeId,
+    prefixes,
+    store: updatedStore,
+    contexts: [context, ...childContexts],
   });
 }
 
