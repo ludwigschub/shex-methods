@@ -7,6 +7,7 @@ import {
 } from "rdflib";
 import { Parser, Store } from "n3";
 import { Validated, validatedToDataResult } from "./transform/rdfToData";
+import { Shape } from "./shape";
 
 const shex = require("shex");
 
@@ -18,6 +19,27 @@ export interface ValidateArgs {
   ids?: string[];
   contexts: Record<string, string>[];
   prefixes: Record<string, string>;
+}
+
+export function validateShapes<ShapeType>(shape: Shape<ShapeType>, ids: string[] | undefined){
+  const {
+    schema,
+    context,
+    prefixes,
+    childContexts,
+    type,
+    store,
+    id: shapeId,
+  } = shape;
+  return validateShex({
+    schema,
+    prefixes,
+    type,
+    store,
+    shapeId,
+    contexts: [context, ...childContexts],
+    ids,
+  });
 }
 
 export async function validateShex<ShapeType>({

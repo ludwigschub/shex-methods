@@ -37,7 +37,7 @@ describe(".create()", () => {
         created: new Date(),
       } as ChatShape,
     });
-    const { from, data } = shape;
+    const { from, data, errors } = shape;
     expect(from).toBe(testDoc);
     expect(data.title).toBe("Test Chat");
     // expect(data["foaf:name"][0]).toBe("Tester");

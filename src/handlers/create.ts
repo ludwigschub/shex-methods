@@ -23,10 +23,12 @@ export async function create<ShapeType>(
     } else {
       await createNew(shape.updater, doc, ins).catch((err) => reject(err));
     }
-    const newlyCreated = (await shape.findOne({
-      from: doc,
-      where: { id },
-    }).catch(reject)) as QueryResult<ShapeType>;
+    const newlyCreated = (await shape
+      .findOne({
+        from: doc,
+        where: { id },
+      })
+      .catch(reject)) as QueryResult<ShapeType>;
     resolve(newlyCreated);
   });
 }
