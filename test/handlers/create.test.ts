@@ -1,3 +1,4 @@
+import { Literal } from "rdflib";
 import { SolidNodeClient } from "solid-node-client";
 import { Shape } from "../../lib";
 import {
@@ -11,8 +12,10 @@ const config = require("dotenv").config();
 describe(".create()", () => {
   const webId = "https://lalatest.solidcommunity.net/profile/card#me";
   const testDoc = "https://lalatest.solidcommunity.net/public/chat";
-  const testChatIri =
-    "https://lalatest.solidcommunity.net/public/chat.ttl#this";
+  const firstChatIri =
+    "https://lalatest.solidcommunity.net/public/chat.ttl#first";
+  const secondChatIri =
+    "https://lalatest.solidcommunity.net/public/chat.ttl#second";
   const chat = new Shape<ChatShape>({
     id: "https://shaperepo.com/schemas/longChat#ChatShape",
     shape: chatShex,
@@ -36,7 +39,7 @@ describe(".create()", () => {
     const shape = await chat.create({
       doc: testDoc,
       data: {
-        id: testChatIri,
+        id: firstChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
         author: webId,
@@ -52,11 +55,29 @@ describe(".create()", () => {
     expect(data.type).toBe(ChatShapeType.LongChat);
   });
 
+  it("throws error when data doesn't match shex", async () => {
+    const shape = await chat.create({
+      doc: testDoc,
+      data: {
+        id: secondChatIri,
+        type: ChatShapeType.LongChat,
+        title: "Test Chat",
+        author: webId,
+        created: new Literal(new Date().toISOString()),
+      } as ChatShape,
+    });
+    const { from, data, errors } = shape;
+    expect(from).toBe(testDoc);
+    expect(data).toBeUndefined();
+    expect(errors).toBeDefined();
+    expect(errors.join("\n")).toContain("mismatched datatype");
+  });
+
   it("throws error when context doesn't match", async () => {
     const shape = await badlyConfiguredChat.create({
       doc: testDoc,
       data: {
-        id: testChatIri,
+        id: firstChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
         author: webId,
@@ -78,7 +99,13 @@ Context objects used:
     await chat.delete({
       doc: testDoc,
       where: {
-        id: testChatIri,
+        id: firstChatIri,
+      },
+    });
+    await chat.delete({
+      doc: testDoc,
+      where: {
+        id: secondChatIri,
       },
     });
   });
