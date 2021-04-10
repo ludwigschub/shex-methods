@@ -2,8 +2,9 @@ import { Shape } from "../../lib";
 import {
   SolidProfileShape,
   solidProfileShex,
-  SolidProfileContext,
+  SolidProfileShapeContext,
   SolidProfileShapeType,
+  EmailShapeContext,
 } from "../resources/shex";
 
 describe(".findOne()", () => {
@@ -12,7 +13,8 @@ describe(".findOne()", () => {
     const solidProfile = new Shape<SolidProfileShape>({
       id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
       shape: solidProfileShex,
-      context: SolidProfileContext,
+      context: SolidProfileShapeContext,
+      childContexts: [EmailShapeContext],
       type: SolidProfileShapeType,
     });
     const shape = await solidProfile.findOne({
@@ -21,9 +23,9 @@ describe(".findOne()", () => {
     });
     const { from, data } = shape;
     expect(from).toBe(testIri);
-    expect(data.name[0]).toBe("Tester");
-    expect(data["foaf:name"][0]).toBe("Tester");
-    expect(data.hasEmail[0]["vcard:value"][0]).toBe(
+    expect(data.name).toBe("Tester");
+    expect(data["foaf:name"]).toBe("Tester");
+    expect(data.hasEmail["vcard:value"]).toBe(
       "mailto:lalasepp@gmail.com"
     );
   });
@@ -33,7 +35,8 @@ describe(".findOne()", () => {
     const solidProfile = new Shape<SolidProfileShape>({
       id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
       shape: solidProfileShex,
-      context: SolidProfileContext,
+      context: SolidProfileShapeContext,
+      childContexts: [EmailShapeContext],
       type: SolidProfileShapeType,
     });
     const { errors } = await solidProfile.findOne({

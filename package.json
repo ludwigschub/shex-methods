@@ -4,9 +4,10 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
+    "postinstall": "shex-codegen generate",
     "build": "rimraf lib && tsc",
     "develop": "nodemon --watch src --watch test",
-    "test": "shex-codegen generate && jest"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -27,10 +28,12 @@
     "@babel/preset-env": "^7.13.12",
     "@babel/preset-typescript": "^7.13.0",
     "@types/jest": "^26.0.22",
+    "dotenv": "^8.2.0",
     "jest": "^26.6.3",
     "nodemon": "^2.0.7",
     "rimraf": "^3.0.2",
-    "shex-codegen": "^0.2.6",
+    "shex-codegen": "^0.2.10",
+    "solid-node-client": "^2.0.2",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
   },

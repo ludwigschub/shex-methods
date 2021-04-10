@@ -5,6 +5,8 @@ import { findAll, FindAllArgs } from "./handlers/findAll";
 import { findOne, FindUniqueArgs } from "./handlers/findOne";
 import { validatedToDataResult } from "./transform/rdfToData";
 import { validateShex } from "./validate";
+import { UpdateArgs } from "./handlers/update";
+import { DeleteArgs, deleteShape } from "./handlers/delete";
 const shex = require("shex");
 
 export interface QueryResult<Type> {
@@ -17,6 +19,7 @@ export interface ShapeConstructorArgs {
   id: string;
   shape: string;
   context: Record<string, string>;
+  childContexts?: Record<string, string>[];
   type: Record<string, string> | string[];
 }
 
@@ -27,12 +30,15 @@ export class Shape<ShapeType> {
   prefixes: any;
   type: string[];
   context: Record<string, string>;
+  childContexts: Record<string, string>[];
   store: IndexedFormula;
   fetcher: Fetcher;
   updater: UpdateManager;
   findAll: (args: FindAllArgs<ShapeType>) => Promise<QueryResult<ShapeType[]>>;
   findOne: (args: FindUniqueArgs) => Promise<QueryResult<ShapeType>>;
   create: (args: CreateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
+  update: (args: UpdateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
+  delete: (args: DeleteArgs) => Promise<void>;
   dataToStatements: (data: ShapeType, doc: string) => any;
   validateShex: (ids: string[]) => any;
   validatedToDataResult: (
@@ -40,7 +46,13 @@ export class Shape<ShapeType> {
     baseUrl: string,
     shapeUrl: string
   ) => ShapeType;
-  constructor({ id, shape, context, type }: ShapeConstructorArgs) {
+  constructor({
+    id,
+    shape,
+    context,
+    childContexts,
+    type,
+  }: ShapeConstructorArgs) {
     this.id = id;
     this.shape = shape;
     this.schema = shex.Parser.construct(this.id).parse(this.shape);
@@ -50,6 +62,7 @@ export class Shape<ShapeType> {
     };
     this.type = Object.values(type);
     this.context = context;
+    this.childContexts = childContexts ?? [];
     this.store = new IndexedFormula();
     this.fetcher = new Fetcher(this.store);
     this.updater = new UpdateManager(this.store);
@@ -68,6 +81,15 @@ export class Shape<ShapeType> {
       args: CreateArgs<ShapeType>
     ) {
       return create<ShapeType>(this, args);
+    }.bind(this);
+    this.update = function (
+      this: Shape<ShapeType>,
+      args: UpdateArgs<ShapeType>
+    ) {
+      return create<ShapeType>(this, args);
+    }.bind(this);
+    this.delete = function (this: Shape<ShapeType>, args: DeleteArgs) {
+      return deleteShape<ShapeType>(this, args);
     }.bind(this);
     this.validateShex = function (this: Shape<ShapeType>, ids: string[]) {
       return validateShex<ShapeType>(this, ids);

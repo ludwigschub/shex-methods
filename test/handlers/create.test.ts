@@ -1,35 +1,58 @@
+import { SolidNodeClient } from "solid-node-client";
 import { Shape } from "../../lib";
 import {
   chatShex,
   ChatShape,
   ChatShapeType,
-  ChatContext,
+  ChatShapeContext,
 } from "../resources/shex";
+const config = require("dotenv").config();
 
 describe(".create()", () => {
-  it("can find one shape", async () => {
-    const testIri = "https://lalatest.solidcommunity.net/public/testChat.ttl";
-    const basicContainer = new Shape<ChatShape>({
-      id: "http://www.w3.org/ns/ldp#ChatShape",
-      shape: chatShex,
-      context: ChatContext,
-      type: ChatShapeType,
-    });
+  const webId = "https://lalatest.solidcommunity.net/profile/card#me";
+  const testDoc = "https://lalatest.solidcommunity.net/public/chat";
+  const testChatIri =
+    "https://lalatest.solidcommunity.net/public/chat.ttl#this";
+  const basicContainer = new Shape<ChatShape>({
+    id: "https://shaperepo.com/schemas/longChat#ChatShape",
+    shape: chatShex,
+    context: ChatShapeContext,
+    type: ChatShapeType,
+  });
+
+  beforeAll(async () => {
+    const client = new SolidNodeClient();
+    await client.login(config);
+    basicContainer.fetcher._fetch = client.fetch.bind(client);
+  });
+
+  it("can create one shape", async () => {
     const shape = await basicContainer.create({
-      at: testIri,
+      doc: testDoc,
       data: {
-        id: testIri,
+        id: testChatIri,
         type: ChatShapeType.LongChat,
-        title: "Test Chat"
+        title: "Test Chat",
+        author: webId,
+        created: new Date(),
       } as ChatShape,
     });
-    const { from } = shape;
-    expect(from).toBe(testIri);
-    // expect(data.name[0]).toBe("Tester");
+    const { from, data } = shape;
+    expect(from).toBe(testDoc);
+    expect(data.title).toBe("Test Chat");
     // expect(data["foaf:name"][0]).toBe("Tester");
     // expect(data.hasEmail[0]["vcard:value"][0]).toBe(
     //   "mailto:lalasepp@gmail.com"
     // );
+  });
+
+  afterAll(async () => {
+    await basicContainer.delete({
+      doc: testDoc,
+      where: {
+        id: testChatIri,
+      },
+    });
   });
 
   // it("should return an error for finding the wrong shape", async () => {

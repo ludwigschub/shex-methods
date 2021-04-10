@@ -11,12 +11,13 @@ export function validatedToDataResult<ShapeType>(
   const absoluteData = validatedToAbsolute(validated, baseUrl);
   const data = absoluteToNormalized(
     absoluteData,
-    shape.context,
+    [shape.context, ...shape.childContexts],
     shape.prefixes
   );
   return proxifyShape(
     { __shapeName: shapeUrl, id: validated.node, ...data },
-    shape.context
+    [shape.context, ...shape.childContexts],
+    shape.prefixes
   ) as ShapeType;
 }
 
@@ -26,6 +27,9 @@ export function validatedToAbsolute(data: any, baseUrl: string): any {
     ...Object.keys(data).map((key) => {
       const value = data[key];
       if (Array.isArray(value)) {
+        if (value.length === 1) {
+          return { [key]: validatedToAbsoluteValue(value[0]) };
+        }
         return { [key]: value.map((value) => validatedToAbsoluteValue(value)) };
       } else {
         return { [key]: validatedToAbsoluteValue(value) };
@@ -46,7 +50,7 @@ export function validatedToAbsoluteValue(value: any) {
 
 export function absoluteToNormalized(
   data: any,
-  context: Record<string, string>,
+  contexts: Record<string, string>[],
   prefixes: Record<string, string>
 ) {
   return Object.assign(
@@ -57,7 +61,7 @@ export function absoluteToNormalized(
       }
       const contextKey = getNormalizedKeyFromContextOrSchemaPrefixes(
         key,
-        context,
+        contexts,
         prefixes
       );
       if (contextKey) {
@@ -65,16 +69,20 @@ export function absoluteToNormalized(
         if (Array.isArray(value)) {
           return {
             [contextKey]: value.map((value) =>
-              absoluteToNormalizedValue(value, context, prefixes)
+              absoluteToNormalizedValue(value, contexts, prefixes)
             ),
           };
         } else {
           return {
-            [contextKey]: absoluteToNormalizedValue(value, context, prefixes),
+            [contextKey]: absoluteToNormalizedValue(value, contexts, prefixes),
           };
         }
       } else {
-        throw Error(`Could not find field name for: ${key}\nContext object used: \n${JSON.stringify(context)}`);
+        throw Error(
+          `Could not find field name for: ${key}\nContext objects used: \n${JSON.stringify(
+            contexts
+          )}`
+        );
       }
     })
   );
@@ -82,11 +90,11 @@ export function absoluteToNormalized(
 
 export function absoluteToNormalizedValue(
   value: any,
-  context: Record<string, string>,
+  contexts: Record<string, string>[],
   prefixes: Record<string, string>
 ): any {
   if (typeof value === "object") {
-    return absoluteToNormalized(value, context, prefixes);
+    return absoluteToNormalized(value, contexts, prefixes);
   } else {
     return value;
   }
@@ -94,15 +102,18 @@ export function absoluteToNormalizedValue(
 
 export function getNormalizedKeyFromContextOrSchemaPrefixes(
   key: string,
-  context: Record<string, string>,
+  contexts: Record<string, string>[],
   prefixes: Record<string, string>
 ) {
-  return Object.keys(context).find((contextKey) => {
-    const prefix = Object.keys(prefixes).find((prefix) => {
-      return key.includes(prefixes[prefix]);
-    });
-    return context[contextKey] === `${prefix}:${normalizeUrl(key)}`;
+  const prefix = Object.keys(prefixes).find((prefix) => {
+    return key.includes(prefixes[prefix]);
   });
+  const prefixedKey = `${prefix}:${normalizeUrl(key)}`;
+  return contexts.reduce((key: string | undefined, context) => {
+    if (!key)
+      return Object.keys(context).find((key) => context[key] === prefixedKey);
+    else return key;
+  }, "");
 }
 
 export function normalizeUrl(
@@ -141,17 +152,26 @@ export function normalizeUrl(
 
 function proxifyShape(
   shape: Record<string, any>,
-  context: Record<string, string>
+  contexts: Record<string, string>[],
+  prefixes: Record<string, string>
 ): Record<string, any> {
   return new Proxy(shape, {
     get: (target, key: string) => {
-      const directValue = proxyGetHandler(target, key, context);
+      const directValue = proxyGetHandler(target, key, contexts, prefixes);
       if (directValue) return directValue;
-      const contextKey = Object.keys(context).find((contextKey: string) => {
-        const contextValue = context[contextKey];
-        return contextValue === key;
-      });
-      return proxyGetHandler(target, contextKey as string, context);
+      const [prefix, normalizedKey] = key.split(":");
+      if (contexts.find((context) => context[normalizedKey])) {
+        return proxyGetHandler(target, normalizedKey, contexts, prefixes);
+      } else {
+        const absoluteKey = prefixes[prefix] + normalizedKey;
+        const foundKey = getNormalizedKeyFromContextOrSchemaPrefixes(
+          absoluteKey,
+          contexts,
+          prefixes
+        );
+        if (foundKey)
+          return proxyGetHandler(target, foundKey, contexts, prefixes);
+      }
     },
   });
 }
@@ -159,11 +179,12 @@ function proxifyShape(
 function proxyGetHandler(
   target: any,
   key: string,
-  context: Record<string, string>
+  contexts: Record<string, string>[],
+  prefixes: Record<string, string>
 ) {
   if (typeof target[key] === "string") {
     return target[key];
   } else if (typeof target[key] === "object") {
-    return proxifyShape(target[key], context);
+    return proxifyShape(target[key], contexts, prefixes);
   }
 }

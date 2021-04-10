@@ -1,5 +1,13 @@
-import { IndexedFormula, Literal, NamedNode, Statement } from "rdflib";
+import {
+  IndexedFormula,
+  Literal,
+  NamedNode,
+  Namespace,
+  Statement,
+} from "rdflib";
 import { Shape } from "../shape";
+
+const xml = Namespace("http://www.w3.org/2001/XMLSchema#");
 
 export function dataToStatements<ShapeType>(
   shape: Shape<ShapeType>,
@@ -11,19 +19,21 @@ export function dataToStatements<ShapeType>(
     shape.context,
     shape.prefixes
   );
-  const ins = absoluteToStatements(absoluteData, doc);
+  const ins = absoluteToStatements(absoluteData, doc).filter(
+    (st) => !shape.store.holdsStatement(st)
+  );
   const del = oldFromNewStatements(shape.store, ins);
-  return [ins, del] as [Statement[], Statement[]];
+  return [del, ins] as [Statement[], Statement[]];
 }
 
 export function oldFromNewStatements(store: IndexedFormula, ins: Statement[]) {
   return ins.reduce((allDelStatements: Statement[], st: Statement) => {
-    const oldStatements = store.statementsMatching(
-      st.subject,
-      st.predicate,
-      null,
-      st.graph
-    );
+    const oldStatements = store
+      .statementsMatching(st.subject, st.predicate, null, st.graph)
+      .filter((oldSt: Statement) => {
+        const { object } = oldSt;
+        object.value === st.object.value;
+      });
     if (oldStatements.length > 0) {
       return [...allDelStatements, ...oldStatements];
     } else {
@@ -51,12 +61,20 @@ export function absoluteNodeToStatements(
   value: any,
   doc: string
 ): Statement | Statement[] {
-  if (typeof value !== "object") {
+  const isNode =
+    value?.termType === "NamedNode" ||
+    value?.termType === "BlankNode" ||
+    value?.termType === "Literal";
+  if (typeof value !== "object" || isNode) {
     let valueNode;
-    try {
-      valueNode = new NamedNode(value);
-    } catch {
-      valueNode = new Literal(value);
+    if (isNode) {
+      valueNode = value;
+    } else {
+      try {
+        valueNode = new NamedNode(value);
+      } catch {
+        valueNode = new Literal(value);
+      }
     }
     return new Statement(
       new NamedNode(id),
@@ -74,7 +92,16 @@ export function absoluteNodeToStatements(
       }
     });
   } else {
-    return absoluteToStatements(value, doc);
+    if (typeof value.toISOString === "function") {
+      return new Statement(
+        new NamedNode(id),
+        new NamedNode(prop),
+        new Literal(value.toISOString(), null, xml("dateTime")),
+        new NamedNode(doc)
+      );
+    } else {
+      return absoluteToStatements(value, doc);
+    }
   }
 }
 
@@ -106,21 +133,27 @@ export function normalizedToAbsolute(
 
 export function normalizedToAbsoluteNode(
   key: string,
-  value: any,
+  nodeValue: any,
   context: Record<string, string>,
   prefixes: Record<string, string>
 ) {
   if (key === "id") {
-    return { id: value };
+    return { id: nodeValue };
   }
   const contextKey = context[key];
   const prefix = contextKey.split(":")[0];
   const absoluteKey = prefixes[prefix] + key;
-  if (typeof value === "object" && !Array.isArray(value)) {
+  const prototype = Object.getPrototypeOf(nodeValue);
+  if (
+    typeof nodeValue === "object" &&
+    !prototype &&
+    !(nodeValue?.termType && nodeValue.value) &&
+    !Array.isArray(nodeValue)
+  ) {
     return {
-      [absoluteKey]: normalizedToAbsolute(value, context, prefixes),
+      [absoluteKey]: normalizedToAbsolute(nodeValue, context, prefixes),
     };
   } else {
-    return { [absoluteKey]: value };
+    return { [absoluteKey]: nodeValue };
   }
 }

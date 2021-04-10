@@ -24,7 +24,7 @@ srs:ChatShape EXTRA a {
   ui:sharedPreferences IRI ?
     // rdfs:comment  "Chat preferences" 
 }
-
+ 
 srs:ChatParticipationShape {
   ic:dtstart xsd:dateTime
     // rdfs:comment  "The date and time this individual began participating in the chat." ;

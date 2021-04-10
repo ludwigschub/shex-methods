@@ -2,37 +2,36 @@ import { NamedNode, Statement, UpdateManager } from "rdflib";
 import { QueryResult, Shape } from "../shape";
 
 export interface CreateArgs<ShapeType> {
-  at: string;
+  doc: string;
   data: ShapeType & { id: string };
 }
 
 export async function create<ShapeType>(
   shape: Shape<ShapeType>,
-  { at, data }: CreateArgs<ShapeType>
+  { doc, data }: CreateArgs<ShapeType>
 ): Promise<QueryResult<ShapeType>> {
   return new Promise(async (resolve, reject) => {
     let doesntExist = "";
-    await shape.fetcher.load(at).catch((err) => (doesntExist = err));
+    await shape.fetcher.load(doc).catch((err) => (doesntExist = err));
     const { id } = data as { id: string };
-    if (shape.store.holds(new NamedNode(id), null, null, at)) {
-      throw new Error("Shape already exists at " + at);
+    if (shape.store.holds(new NamedNode(id), null, null, doc)) {
+      throw new Error("Shape already exists doc " + doc);
     }
-    const [_del, ins] = await shape.dataToStatements(data, at);
+    const [_del, ins] = await shape.dataToStatements(data, doc);
     if (!doesntExist) {
       await updateExisting(shape.updater, [], ins).catch((err) => reject(err));
     } else {
-      await createNew(shape.updater, at, ins).catch((err) => reject(err));
+      await createNew(shape.updater, doc, ins).catch((err) => reject(err));
     }
-    resolve(
-      await shape.findOne({
-        from: at,
-        where: { id },
-      })
-    );
+    const newlyCreated = (await shape.findOne({
+      from: doc,
+      where: { id },
+    }).catch(reject)) as QueryResult<ShapeType>;
+    resolve(newlyCreated);
   });
 }
 
-function updateExisting(
+export function updateExisting(
   updater: UpdateManager,
   del: Statement[],
   ins: Statement[]
@@ -46,12 +45,12 @@ function updateExisting(
 
 function createNew(
   updater: UpdateManager,
-  at: string,
+  doc: string,
   ins: Statement[]
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     updater.put(
-      new NamedNode(at),
+      new NamedNode(doc),
       ins,
       "text/turtle",
       async (_uri, ok, error) => {

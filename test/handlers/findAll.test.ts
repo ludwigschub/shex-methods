@@ -2,7 +2,8 @@ import { Shape } from "../../lib";
 import {
   ResourceShape,
   ldpShapesShex,
-  LdpShapesContext,
+  BasicContainerShapeContext,
+  ResourceShapeContext,
   ResourceShapeType,
   BasicContainerShape,
   BasicContainerShapeType,
@@ -15,31 +16,31 @@ describe(".findAll()", () => {
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
       shape: ldpShapesShex,
-      context: LdpShapesContext,
+      context: ResourceShapeContext,
       type: ResourceShapeType,
     });
     const shape = await resource.findAll({
       from: fromIri,
     });
     const { from, data, errors } = shape;
-    const card = data[1] as ResourceShape;
+    const card = data[2] as ResourceShape;
     expect(errors).toBeUndefined();
     expect(from).toBe(fromIri);
     expect(card.id).toBe(testIri);
-    expect(card.type[0]).toBe("http://www.w3.org/ns/ldp#Resource");
+    expect(card.type).toBe("http://www.w3.org/ns/ldp#Resource");
   });
 
   it("can find all instances of shape in multiple files", async () => {
     const fromIri1 = "https://lalatest.solidcommunity.net/profile/";
     const fromIri2 = "https://lalatest.solidcommunity.net/public/";
     const testIri = "https://lalatest.solidcommunity.net/profile/";
-    const resource = new Shape<BasicContainerShape>({
+    const basicContainer = new Shape<BasicContainerShape>({
       id: "http://www.w3.org/ns/ldp#BasicContainerShape",
       shape: ldpShapesShex,
-      context: LdpShapesContext,
+      context: BasicContainerShapeContext,
       type: BasicContainerShapeType,
     });
-    const shape = await resource.findAll({
+    const shape = await basicContainer.findAll({
       from: [fromIri1, fromIri2],
     });
     const { from, data, errors } = shape;
@@ -49,7 +50,7 @@ describe(".findAll()", () => {
     expect(data.length).toBe(2);
     expect(from).toStrictEqual([fromIri1, fromIri2]);
     expect(profileFolder.id).toBe(testIri);
-    expect(card.type[0]).toBe("http://www.w3.org/ns/ldp#Resource");
+    expect(card.type).toBe("http://www.w3.org/ns/ldp#Resource");
   });
 
   it("should return an error for finding the wrong shape", async () => {
@@ -57,7 +58,7 @@ describe(".findAll()", () => {
     const resource = new Shape<ResourceShape>({
       id: "http://www.w3.org/ns/ldp#ResourceShape",
       shape: ldpShapesShex,
-      context: LdpShapesContext,
+      context: ResourceShapeContext,
       type: ResourceShapeType,
     });
     const { errors } = await resource.findAll({
