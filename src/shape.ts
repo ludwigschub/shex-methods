@@ -3,7 +3,7 @@ import { dataToStatements } from "./transform/dataToRdf";
 import { create, CreateArgs } from "./handlers/create";
 import { findAll, FindAllArgs } from "./handlers/findAll";
 import { findOne, FindUniqueArgs } from "./handlers/findOne";
-import { UpdateArgs } from "./handlers/update";
+import { update, UpdateArgs } from "./handlers/update";
 import { DeleteArgs, deleteShape } from "./handlers/delete";
 const shex = require("shex");
 
@@ -37,7 +37,7 @@ export class Shape<ShapeType> {
   create: (args: CreateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
   update: (args: UpdateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
   delete: (args: DeleteArgs) => Promise<void>;
-  dataToStatements: (data: ShapeType, doc: string) => any;
+  dataToStatements: (data: Partial<ShapeType>, doc: string) => any;
   constructor({
     id,
     shape,
@@ -78,14 +78,14 @@ export class Shape<ShapeType> {
       this: Shape<ShapeType>,
       args: UpdateArgs<ShapeType>
     ) {
-      return create<ShapeType>(this, args);
+      return update<ShapeType>(this, args);
     }.bind(this);
     this.delete = function (this: Shape<ShapeType>, args: DeleteArgs) {
       return deleteShape<ShapeType>(this, args);
     }.bind(this);
     this.dataToStatements = function (
       this: Shape<ShapeType>,
-      data: ShapeType,
+      data: Partial<ShapeType>,
       doc: string
     ) {
       return dataToStatements<ShapeType>(this, data, doc);

@@ -17,6 +17,13 @@ export async function deleteShape<ShapeType>(
     if (statementsOfId.length === 0) {
       resolve();
     }
-    resolve(shape.updater.update(statementsOfId, []));
+    await shape.updater.update(statementsOfId, [], (_uri, ok, err) => {
+      if (ok) {
+        console.debug("Successfully deleted " + id);
+        resolve();
+      } else {
+        reject(err);
+      }
+    });
   });
 }

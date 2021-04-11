@@ -1,6 +1,6 @@
 import { IndexedFormula, NamedNode, Statement, UpdateManager } from "rdflib";
 import { QueryResult, Shape } from "../shape";
-import { validateShex } from "../validate";
+import { getAllStatementsOfNode, validateShex } from "../validate";
 
 export interface CreateArgs<ShapeType> {
   doc: string;
@@ -11,38 +11,49 @@ export async function create<ShapeType>(
   shape: Shape<ShapeType>,
   { doc, data }: CreateArgs<ShapeType>
 ): Promise<QueryResult<ShapeType>> {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     let doesntExist = "";
-    await shape.fetcher.load(doc).catch((err) => (doesntExist = err));
+    await shape.fetcher
+      .load(doc, { clearPreviousData: true })
+      .catch((err) => err.status === 404 && (doesntExist = err));
     const { id } = data as { id: string };
-    if (shape.store.holds(new NamedNode(id), null, null, doc)) {
-      throw new Error("Shape already exists doc " + doc);
+    if (shape.store.any(new NamedNode(id), null, null, new NamedNode(doc))) {
+      resolve({
+        from: doc,
+        errors: ["Node with id: " + id + " already exists in doc:" + doc],
+      });
     }
     const [_del, ins] = await shape.dataToStatements(data, doc);
-    const [_, errors] = await validateNewShape<ShapeType>(shape, [], ins);
-    if (errors) resolve({ from: doc, errors });
+    const [newShape, errors] = await validateNewShape<ShapeType>(
+      shape,
+      id,
+      [],
+      ins
+    );
+    if (!newShape || errors) resolve({ from: doc, errors });
     if (!doesntExist) {
-      await updateExisting(shape.updater, [], ins).catch((err) => reject(err));
+      await updateExisting(shape.updater, [], ins).catch((err) =>
+        resolve({ from: doc, errors: [err] })
+      );
     } else {
-      await createNew(shape.updater, doc, ins).catch((err) => reject(err));
+      await createNew(shape.updater, doc, ins).catch((err) =>
+        resolve({ from: doc, errors: [err] })
+      );
     }
-    const newlyCreated = (await shape
-      .findOne({
-        from: doc,
-        where: { id },
-      })
-      .catch(reject)) as QueryResult<ShapeType>;
-    resolve(newlyCreated);
+    if (newShape) resolve({ from: doc, data: newShape[0], errors });
   });
 }
 
 export function validateNewShape<ShapeType>(
   shape: Shape<ShapeType>,
+  node: string,
   del: Statement[],
   ins: Statement[]
 ) {
   const updatedStore = new IndexedFormula();
-  updatedStore.add(shape.store.statementsMatching());
+  updatedStore.add(
+    getAllStatementsOfNode(shape.store, new NamedNode(node))
+  );
   updatedStore.remove(del);
   updatedStore.add(ins);
   const { schema, context, prefixes, childContexts, type, id: shapeId } = shape;

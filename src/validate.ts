@@ -136,7 +136,7 @@ function getNodesOfTypeFromStore(store: IndexedFormula, type: string[]) {
     });
 }
 
-function getAllStatementsOfNode(
+export function getAllStatementsOfNode(
   store: IndexedFormula,
   node: NamedNode | BlankNode
 ): Statement[] {

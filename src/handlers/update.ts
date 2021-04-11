@@ -1,9 +1,10 @@
-import { NamedNode, Statement, UpdateManager } from "rdflib";
+import { Statement, UpdateManager } from "rdflib";
 import { QueryResult, Shape } from "../shape";
+import { validateNewShape } from "./create";
 
 export interface UpdateArgs<ShapeType> {
   doc: string;
-  data: ShapeType & { id: string };
+  data: Partial<ShapeType> & { id: string };
 }
 
 export async function update<ShapeType>(
@@ -11,24 +12,19 @@ export async function update<ShapeType>(
   { doc, data }: UpdateArgs<ShapeType>
 ): Promise<QueryResult<ShapeType>> {
   return new Promise(async (resolve, reject) => {
-    const { id } = data as { id: string };
-    await shape
-      .findOne({
-        from: doc,
-        where: { id },
-      })
-      .catch(reject);
-    if (shape.store.holds(new NamedNode(id), null, null, doc)) {
-      throw new Error("Shape already exists at " + doc);
-    }
+    await shape.fetcher
+      .load(doc, { clearPreviousData: true })
+      .catch((err) => resolve({ from: doc, errors: [err] }));
     const [del, ins] = await shape.dataToStatements(data, doc);
-    await updateExisting(shape.updater, del, ins).catch((err) => reject(err));
-    resolve(
-      (await shape.findOne({
-        from: doc,
-        where: { id },
-      })) as QueryResult<ShapeType>
+    const [shapes, errors] = await validateNewShape<ShapeType>(
+      shape,
+      data.id,
+      del,
+      ins
     );
+    if (errors) resolve({ from: doc, errors });
+    await updateExisting(shape.updater, del, ins).catch((err) => reject(err));
+    resolve({ from: doc, data: (shapes as ShapeType[])[0], errors });
   });
 }
 

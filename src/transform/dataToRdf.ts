@@ -11,7 +11,7 @@ const xml = Namespace("http://www.w3.org/2001/XMLSchema#");
 
 export function dataToStatements<ShapeType>(
   shape: Shape<ShapeType>,
-  data: ShapeType,
+  data: Partial<ShapeType>,
   doc: string
 ) {
   const absoluteData = normalizedToAbsolute(
@@ -20,7 +20,9 @@ export function dataToStatements<ShapeType>(
     shape.prefixes
   );
   const ins = absoluteToStatements(absoluteData, doc).filter(
-    (st) => !shape.store.holdsStatement(st)
+    ({ subject, predicate, object, graph }) => {
+      return !shape.store.any(subject, predicate, object, graph);
+    }
   );
   const del = oldFromNewStatements(shape.store, ins);
   return [del, ins] as [Statement[], Statement[]];
@@ -30,9 +32,8 @@ export function oldFromNewStatements(store: IndexedFormula, ins: Statement[]) {
   return ins.reduce((allDelStatements: Statement[], st: Statement) => {
     const oldStatements = store
       .statementsMatching(st.subject, st.predicate, null, st.graph)
-      .filter((oldSt: Statement) => {
-        const { object } = oldSt;
-        object.value === st.object.value;
+      .filter(({ subject, predicate, object, graph }) => {
+        return !store.any(subject, predicate, object, graph);
       });
     if (oldStatements.length > 0) {
       return [...allDelStatements, ...oldStatements];

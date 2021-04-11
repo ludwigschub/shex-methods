@@ -9,30 +9,50 @@ import {
 } from "../resources/shex";
 const config = require("dotenv").config();
 
-describe(".create()", () => {
-  const webId = "https://lalatest.solidcommunity.net/profile/card#me";
-  const testDoc = "https://lalatest.solidcommunity.net/public/chat";
-  const firstChatIri =
-    "https://lalatest.solidcommunity.net/public/chat.ttl#first";
-  const secondChatIri =
-    "https://lalatest.solidcommunity.net/public/chat.ttl#second";
-  const chat = new Shape<ChatShape>({
-    id: "https://shaperepo.com/schemas/longChat#ChatShape",
-    shape: chatShex,
-    context: ChatShapeContext,
-    type: ChatShapeType,
-  });
-  const badlyConfiguredChat = new Shape<ChatShape>({
-    id: "https://shaperepo.com/schemas/longChat#ChatShape",
-    shape: chatShex,
-    context: { ...ChatShapeContext, created: "terms:created" },
-    type: ChatShapeType,
-  });
+const webId = "https://lalatest.solidcommunity.net/profile/card#me";
+const testDoc = "https://lalatest.solidcommunity.net/test/createChat";
+const firstChatIri =
+  "https://lalatest.solidcommunity.net/test/createChat#first";
+const secondChatIri =
+  "https://lalatest.solidcommunity.net/test/createChat#second";
+const thirdChatIri =
+  "https://lalatest.solidcommunity.net/test/createChat#third";
+const chat = new Shape<ChatShape>({
+  id: "https://shaperepo.com/schemas/longChat#ChatShape",
+  shape: chatShex,
+  context: ChatShapeContext,
+  type: ChatShapeType,
+});
+const badlyConfiguredChat = new Shape<ChatShape>({
+  id: "https://shaperepo.com/schemas/longChat#ChatShape",
+  shape: chatShex,
+  context: { ...ChatShapeContext, created: "terms:created" },
+  type: ChatShapeType,
+});
 
+function clean() {
+  return Promise.all([
+    chat.delete({
+      doc: testDoc,
+      where: {
+        id: firstChatIri,
+      },
+    }),
+    chat.delete({
+      doc: testDoc,
+      where: {
+        id: secondChatIri,
+      },
+    }),
+  ]);
+}
+
+describe(".create()", () => {
   beforeAll(async () => {
     const client = new SolidNodeClient();
     await client.login(config);
     chat.fetcher._fetch = client.fetch.bind(client);
+    await clean();
   });
 
   it("can create one shape", async () => {
@@ -53,6 +73,26 @@ describe(".create()", () => {
     expect(data.title).toBe("Test Chat");
     expect(data.author).toBe(webId);
     expect(data.type).toBe(ChatShapeType.LongChat);
+  });
+
+  it("throws error when shape with id already exists in doc", async () => {
+    const shape = await chat.create({
+      doc: testDoc,
+      data: {
+        id: firstChatIri,
+        type: ChatShapeType.LongChat,
+        title: "Test Chat",
+        author: webId,
+        created: new Date(),
+      } as ChatShape,
+    });
+    const { from, data, errors } = shape;
+    expect(from).toBe(testDoc);
+    expect(data).toBeUndefined();
+    expect(errors).toBeDefined();
+    expect(errors).toStrictEqual([
+      "Node with id: https://lalatest.solidcommunity.net/test/createChat#first already exists in doc:https://lalatest.solidcommunity.net/test/createChat",
+    ]);
   });
 
   it("throws error when data doesn't match shex", async () => {
@@ -77,7 +117,7 @@ describe(".create()", () => {
     const shape = await badlyConfiguredChat.create({
       doc: testDoc,
       data: {
-        id: firstChatIri,
+        id: thirdChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
         author: webId,
@@ -89,45 +129,8 @@ describe(".create()", () => {
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
-      `Could not find field name for: http://purl.org/dc/elements/1.1/created
-Context objects used: 
-[{\"type\":\"rdf:type\",\"author\":\"purl:author\",\"created\":\"terms:created\",\"title\":\"purl:title\",\"participation\":\"flow:participation\",\"sharedPreferences\":\"ui:sharedPreferences\"}]`,
+      "validating https://lalatest.solidcommunity.net/test/createChat#third as https://shaperepo.com/schemas/longChat#ChatShape:",
+      "    Missing property: http://purl.org/dc/elements/1.1/created",
     ]);
   });
-
-  afterAll(async () => {
-    await chat.delete({
-      doc: testDoc,
-      where: {
-        id: firstChatIri,
-      },
-    });
-    await chat.delete({
-      doc: testDoc,
-      where: {
-        id: secondChatIri,
-      },
-    });
-  });
-
-  // it("should return an error for finding the wrong shape", async () => {
-  //   const testIri = "https://lalatest.solidcommunity.net/profile";
-  //   const solidProfile = new Shape<BasicContainerShape>({
-  //     id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
-  //     shape: ldpShex,
-  //     context: BasicContainerContext,
-  //     type: BasicContainerShapeType,
-  //   });
-  //   const { errors } = await solidProfile.findOne({
-  //     from: testIri,
-  //     where: { id: testIri },
-  //   });
-  //   expect(errors).toBeDefined();
-  //   expect(errors).toStrictEqual([
-  //     "validating https://lalatest.solidcommunity.net/profile as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:",
-  //     "    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-  //     "  OR",
-  //     "  Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-  //   ]);
-  // });
 });
