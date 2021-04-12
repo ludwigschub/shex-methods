@@ -1,4 +1,4 @@
-import { Fetcher, IndexedFormula, UpdateManager } from "rdflib";
+import { Fetcher, IndexedFormula, Statement, UpdateManager } from "rdflib";
 import { dataToStatements } from "./transform/dataToRdf";
 import { create, CreateArgs } from "./handlers/create";
 import { findAll, FindAllArgs } from "./handlers/findAll";
@@ -37,7 +37,7 @@ export class Shape<ShapeType> {
   create: (args: CreateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
   update: (args: UpdateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
   delete: (args: DeleteArgs) => Promise<void>;
-  dataToStatements: (data: Partial<ShapeType>, doc: string) => any;
+  dataToStatements: (data: Partial<ShapeType>, doc: string) => [Statement[], Statement[]];
   constructor({
     id,
     shape,

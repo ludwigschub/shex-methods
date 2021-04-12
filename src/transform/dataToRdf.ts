@@ -20,32 +20,41 @@ export function dataToStatements<ShapeType>(
     shape.prefixes
   );
   const ins = absoluteToStatements(absoluteData, doc).filter(
-    ({ subject, predicate, object, graph }) => {
-      return !shape.store.any(subject, predicate, object, graph);
-    }
+    ({ subject, predicate, object, graph }) =>
+      !shape.store.any(subject, predicate, object, graph)
   );
   const del = oldFromNewStatements(shape.store, ins);
   return [del, ins] as [Statement[], Statement[]];
 }
 
 export function oldFromNewStatements(store: IndexedFormula, ins: Statement[]) {
-  return ins.reduce((allDelStatements: Statement[], st: Statement) => {
-    const oldStatements = store
-      .statementsMatching(st.subject, st.predicate, null, st.graph)
-      .filter(({ subject, predicate, object, graph }) => {
-        return !store.any(subject, predicate, object, graph);
-      });
-    if (oldStatements.length > 0) {
-      return [...allDelStatements, ...oldStatements];
-    } else {
-      return allDelStatements;
-    }
-  }, []);
+  const oldStatements = ins.reduce(
+    (allDelStatements: Statement[], st: Statement) => {
+      const oldStatements = store.statementsMatching(
+        st.subject,
+        st.predicate,
+        null,
+        st.graph
+      );
+      return oldStatements.length > 0
+        ? [...allDelStatements, ...oldStatements]
+        : allDelStatements;
+    },
+    []
+  );
+  return oldStatements.filter((oldSt, index, statements) => {
+    return (
+      !ins.find((st) => JSON.stringify(st) === JSON.stringify(oldSt)) &&
+      statements.findIndex(
+        (st) => JSON.stringify(st) === JSON.stringify(oldSt)
+      ) === index
+    );
+  });
 }
 
 export function absoluteToStatements(data: Record<string, any>, doc: string) {
   const { id, ...props } = data;
-  return Object.keys(props).reduce((statements: Statement[], prop: string) => {
+  const statements = Object.keys(props).reduce((statements: Statement[], prop: string) => {
     const value = props[prop];
     const statement = absoluteNodeToStatements(id, prop, value, doc);
     if (Array.isArray(statement)) {
@@ -54,6 +63,13 @@ export function absoluteToStatements(data: Record<string, any>, doc: string) {
       return [...statements, statement];
     }
   }, []);
+  return statements.filter((newSt, index, statements) => {
+    return (
+      statements.findIndex(
+        (st) => JSON.stringify(st) === JSON.stringify(newSt)
+      ) === index
+    );
+  });
 }
 
 export function absoluteNodeToStatements(
@@ -84,14 +100,10 @@ export function absoluteNodeToStatements(
       new NamedNode(doc)
     );
   } else if (Array.isArray(value)) {
-    return value.reduce((allStatements, value) => {
-      const statement = absoluteNodeToStatements(id, prop, value, doc);
-      if (Array.isArray(statement)) {
-        return [...allStatements, ...statement];
-      } else {
-        return [...allStatements, statement];
-      }
-    });
+    return value.reduce((allStatements: Statement[], value) => {
+      const statements = absoluteToStatements({ id, ...value }, doc);
+      return [...allStatements, ...statements];
+    }, []);
   } else {
     if (typeof value.toISOString === "function") {
       return new Statement(

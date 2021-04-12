@@ -113,7 +113,7 @@ describe(".create()", () => {
     expect(errors.join("\n")).toContain("mismatched datatype");
   });
 
-  it("throws error when context doesn't match", async () => {
+  it("throws error when validating and context doesn't match", async () => {
     const shape = await badlyConfiguredChat.create({
       doc: testDoc,
       data: {

@@ -51,9 +51,7 @@ export function validateNewShape<ShapeType>(
   ins: Statement[]
 ) {
   const updatedStore = new IndexedFormula();
-  updatedStore.add(
-    getAllStatementsOfNode(shape.store, new NamedNode(node))
-  );
+  updatedStore.add(getAllStatementsOfNode(shape.store, new NamedNode(node)));
   updatedStore.remove(del);
   updatedStore.add(ins);
   const { schema, context, prefixes, childContexts, type, id: shapeId } = shape;
