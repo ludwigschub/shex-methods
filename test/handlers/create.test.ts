@@ -15,8 +15,6 @@ const firstChatIri =
   "https://lalatest.solidcommunity.net/test/createChat#first";
 const secondChatIri =
   "https://lalatest.solidcommunity.net/test/createChat#second";
-const thirdChatIri =
-  "https://lalatest.solidcommunity.net/test/createChat#third";
 const chat = new Shape<ChatShape>({
   id: "https://shaperepo.com/schemas/longChat#ChatShape",
   shape: chatShex,
@@ -31,20 +29,12 @@ const badlyConfiguredChat = new Shape<ChatShape>({
 });
 
 function clean() {
-  return Promise.all([
-    chat.delete({
-      doc: testDoc,
-      where: {
-        id: firstChatIri,
-      },
-    }),
-    chat.delete({
-      doc: testDoc,
-      where: {
-        id: secondChatIri,
-      },
-    }),
-  ]);
+  return chat.delete({
+    doc: testDoc,
+    where: {
+      id: firstChatIri,
+    },
+  });
 }
 
 describe(".create()", () => {
@@ -73,6 +63,24 @@ describe(".create()", () => {
     expect(data.title).toBe("Test Chat");
     expect(data.author).toBe(webId);
     expect(data.type).toBe(ChatShapeType.LongChat);
+  });
+
+  it("throws error when data doesn't match cardinality", async () => {
+    const shape = await chat.create({
+      doc: testDoc,
+      data: {
+        id: secondChatIri,
+        type: ChatShapeType.LongChat,
+        title: (["Test Chat", "UpdatedChat"] as unknown) as string,
+        author: webId,
+        created: new Date(),
+      } as ChatShape,
+    });
+    const { from, data, errors } = shape;
+    expect(from).toBe(testDoc);
+    expect(data).toBeUndefined();
+    expect(errors).toBeDefined();
+    expect(errors.join("\n")).toContain("exceeds cardinality");
   });
 
   it("throws error when shape with id already exists in doc", async () => {
@@ -117,7 +125,7 @@ describe(".create()", () => {
     const shape = await badlyConfiguredChat.create({
       doc: testDoc,
       data: {
-        id: thirdChatIri,
+        id: secondChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
         author: webId,
@@ -129,7 +137,7 @@ describe(".create()", () => {
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
-      "validating https://lalatest.solidcommunity.net/test/createChat#third as https://shaperepo.com/schemas/longChat#ChatShape:",
+      "validating https://lalatest.solidcommunity.net/test/createChat#second as https://shaperepo.com/schemas/longChat#ChatShape:",
       "    Missing property: http://purl.org/dc/elements/1.1/created",
     ]);
   });

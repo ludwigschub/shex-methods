@@ -30,17 +30,19 @@ export async function create<ShapeType>(
       [],
       ins
     );
-    if (!newShape || errors) resolve({ from: doc, errors });
-    if (!doesntExist) {
-      await updateExisting(shape.updater, [], ins).catch((err) =>
-        resolve({ from: doc, errors: [err] })
-      );
+    if (!newShape || errors) {
+      resolve({ from: doc, errors });
     } else {
-      await createNew(shape.updater, doc, ins).catch((err) =>
-        resolve({ from: doc, errors: [err] })
-      );
+      if (!doesntExist) {
+        await updateExisting(shape.updater, [], ins)
+          .catch((err) => resolve({ from: doc, errors: [err] }))
+          .then(() => resolve({ from: doc, data: newShape[0], errors }));
+      } else {
+        await createNew(shape.updater, doc, ins)
+          .catch((err) => resolve({ from: doc, errors: [err] }))
+          .then(() => resolve({ from: doc, data: newShape[0], errors }));
+      }
     }
-    if (newShape) resolve({ from: doc, data: newShape[0], errors });
   });
 }
 

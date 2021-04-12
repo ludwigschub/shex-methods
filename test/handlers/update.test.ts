@@ -117,7 +117,7 @@ describe(".update()", () => {
     expect(errors).toStrictEqual([
       `Could not find field name for: http://purl.org/dc/elements/1.1/title
 Context objects used: 
-[{\"type\":\"rdf:type\",\"author\":\"purl:author\",\"created\":\"purl:created\",\"title\":\"rdf:title\",\"participation\":\"flow:participation\",\"sharedPreferences\":\"ui:sharedPreferences\"}]`,
+[{\"type\":\"rdf:type\",\"author\":\"purl:author\",\"created\":\"purl:created\",\"title\":\"rdf:title\",\"participation\":\"flow:participation\",\"sharedPreferences\":\"ui:sharedPreferences\",\"message\":\"flow:message\"}]`,
     ]);
   });
 });

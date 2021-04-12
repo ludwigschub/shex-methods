@@ -95,6 +95,7 @@ export async function validateShex<ShapeType>({
     });
     return [allShapes, allErrors];
   } catch (err) {
+    console.debug(err)
     return [undefined, [err.message]];
   }
 }
