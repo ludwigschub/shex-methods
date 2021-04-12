@@ -77,7 +77,7 @@ describe(".update()", () => {
       doc: testDoc,
       data: {
         id: firstChatIri,
-        title: ["Test Chat", "UpdatedChat"] as unknown as string,
+        title: (["Test Chat", "UpdatedChat"] as unknown) as string,
       } as ChatShape,
     });
     const { from, data, errors } = shape;
@@ -120,24 +120,4 @@ Context objects used:
 [{\"type\":\"rdf:type\",\"author\":\"purl:author\",\"created\":\"purl:created\",\"title\":\"rdf:title\",\"participation\":\"flow:participation\",\"sharedPreferences\":\"ui:sharedPreferences\"}]`,
     ]);
   });
-  // it("should return an error for finding the wrong shape", async () => {
-  //   const testIri = "https://lalatest.solidcommunity.net/profile";
-  //   const solidProfile = new Shape<BasicContainerShape>({
-  //     id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
-  //     shape: ldpShex,
-  //     context: BasicContainerContext,
-  //     type: BasicContainerShapeType,
-  //   });
-  //   const { errors } = await solidProfile.findOne({
-  //     from: testIri,
-  //     where: { id: testIri },
-  //   });
-  //   expect(errors).toBeDefined();
-  //   expect(errors).toStrictEqual([
-  //     "validating https://lalatest.solidcommunity.net/profile as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:",
-  //     "    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-  //     "  OR",
-  //     "  Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-  //   ]);
-  // });
 });
