@@ -61,6 +61,6 @@ Planned features:
 
 ## Contributing
 
-Use `yarn develop` to start the build process in watch mode and run the tests on file changes.
+Run `yarn` to install dependencies and generate shape types.
 
-If you have a use case in which the generated code is incorrect/corrupt please include an example in your pr/issue.
+Use `yarn develop` to start the build process in watch mode and run the tests on file changes.
