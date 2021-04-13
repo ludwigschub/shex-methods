@@ -7,6 +7,7 @@
     "postinstall": "shex-codegen generate",
     "build": "rimraf lib && tsc",
     "develop": "nodemon --watch src --watch test",
+    "generate:docs": "typedoc lib/index.js --name shex-methods --readme ./README.md",
     "test": "jest"
   },
   "repository": {
@@ -35,6 +36,7 @@
     "shex-codegen": "^0.2.12",
     "solid-node-client": "^2.0.2",
     "ts-node": "^9.1.1",
+    "typedoc": "^0.20.35",
     "typescript": "^4.2.3"
   },
   "dependencies": {
