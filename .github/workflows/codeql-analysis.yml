@@ -21,6 +21,7 @@ on:
       - '**/*.md'
       - '**/*.txt'
       - '**/*.shex'
+      - '**/*.yml'
   schedule:
     - cron: '29 2 * * 6'
 
