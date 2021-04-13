@@ -18,7 +18,7 @@ export interface ShapeConstructorArgs {
   shape: string;
   context: Record<string, string>;
   childContexts?: Record<string, string>[];
-  type: Record<string, string> | string[];
+  type?: Record<string, string> | string[];
 }
 
 export class Shape<ShapeType> {
@@ -37,7 +37,10 @@ export class Shape<ShapeType> {
   create: (args: CreateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
   update: (args: UpdateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
   delete: (args: DeleteArgs) => Promise<void>;
-  dataToStatements: (data: Partial<ShapeType>, doc: string) => [Statement[], Statement[]];
+  dataToStatements: (
+    data: Partial<ShapeType>,
+    doc: string
+  ) => [Statement[], Statement[]];
   constructor({
     id,
     shape,
@@ -52,7 +55,7 @@ export class Shape<ShapeType> {
       rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
       ...this.schema.prefixes,
     };
-    this.type = Object.values(type);
+    this.type = Object.values(type ?? {});
     this.context = context;
     this.childContexts = childContexts ?? [];
     this.store = new IndexedFormula();
