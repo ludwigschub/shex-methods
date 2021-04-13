@@ -23,7 +23,7 @@ on:
       - '**/*.shex'
       - '**/*.yml'
   schedule:
-    - cron: '29 2 * * 6'
+    - cron: '0 12 * * *'
 
 jobs:
   analyze:
