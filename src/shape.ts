@@ -26,7 +26,7 @@ export class Shape<ShapeType> {
   shape: string;
   schema: any;
   prefixes: any;
-  type: string[];
+  type?: string[];
   context: Record<string, string>;
   childContexts: Record<string, string>[];
   store: IndexedFormula;
@@ -55,7 +55,7 @@ export class Shape<ShapeType> {
       rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
       ...this.schema.prefixes,
     };
-    this.type = Object.values(type ?? {});
+    this.type = type && Object.values(type);
     this.context = context;
     this.childContexts = childContexts ?? [];
     this.store = new IndexedFormula();

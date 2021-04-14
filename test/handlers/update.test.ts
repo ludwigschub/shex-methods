@@ -7,6 +7,7 @@ import {
   ChatShape,
   ChatShapeType,
   ChatShapeContext,
+  chat,
 } from "../resources/shex";
 const config = require("dotenv").config();
 
@@ -15,12 +16,6 @@ describe(".update()", () => {
   const testDoc = "https://lalatest.solidcommunity.net/test/updateChat";
   const firstChatIri =
     "https://lalatest.solidcommunity.net/test/updateChat#first";
-  const chat = new Shape<ChatShape>({
-    id: "https://shaperepo.com/schemas/longChat#ChatShape",
-    shape: chatShex,
-    context: ChatShapeContext,
-    type: ChatShapeType,
-  });
   const badlyConfiguredChat = new Shape<ChatShape>({
     id: "https://shaperepo.com/schemas/longChat#ChatShape",
     shape: chatShex,

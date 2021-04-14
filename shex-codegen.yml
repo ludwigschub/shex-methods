@@ -5,3 +5,4 @@ generates:
   test/resources/shex.ts:
     # the visitors to visit the schema with
     - typescript
+    - typescript-methods

@@ -4,10 +4,12 @@ import {
   NamedNode,
   Serializer,
   Statement,
+  Node,
 } from "rdflib";
 import { Parser, Store } from "n3";
 import { Validated, validatedToDataResult } from "./transform/rdfToData";
 import { Shape } from "./shape";
+import { Quad_Subject } from "rdflib/lib/tf-types";
 
 const shex = require("shex");
 
@@ -15,7 +17,7 @@ export interface ValidateArgs {
   schema: any;
   store: IndexedFormula;
   statements?: Statement[];
-  type: string[];
+  type?: string[];
   shapeId: string;
   ids?: string[];
   contexts: Record<string, string>[];
@@ -54,7 +56,6 @@ export function validateShapes<ShapeType>(
 export async function validateShex<ShapeType>({
   schema,
   store,
-  statements,
   type,
   ids,
   shapeId,
@@ -64,7 +65,7 @@ export async function validateShex<ShapeType>({
   const validator = shex.Validator.construct(schema, {
     results: "api",
   });
-  const [db, potentialShapes] = await createN3DB(store, type, statements);
+  const [db, potentialShapes] = await createN3DB(store, type);
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
   if (!ids && potentialShapes.length === 0) {
@@ -95,7 +96,7 @@ export async function validateShex<ShapeType>({
     });
     return [allShapes, allErrors];
   } catch (err) {
-    console.debug(err)
+    console.debug(err);
     return [undefined, [err.message]];
   }
 }
@@ -116,32 +117,33 @@ function mapValidationResult(shapeId: string, validated: any) {
   return [foundShapes, foundErrors];
 }
 
-function getNodesOfTypeFromStore(store: IndexedFormula, type: string[]) {
-  return type
-    .reduce((allNodes: NamedNode[], type: string) => {
-      return [
-        ...allNodes,
-        ...store.each(
-          null,
-          new NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-          new NamedNode(type)
-        ),
-      ] as NamedNode[];
-    }, [])
-    .filter((node: NamedNode, index: number, allNodes: NamedNode[]) => {
-      return (
-        allNodes.findIndex(
-          (possiblySameNode: NamedNode) => possiblySameNode.value === node.value
-        ) === index
-      );
-    });
+function getNodesFromStore(store: IndexedFormula, type?: string[]) {
+  return (type
+    ? type.reduce((allNodes: NamedNode[], type: string) => {
+        return [
+          ...allNodes,
+          ...store.each(
+            null,
+            new NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+            new NamedNode(type)
+          ),
+        ] as NamedNode[];
+      }, [])
+    : store.each(null)
+  ).filter((node: Node, index: number, allNodes: Node[]) => {
+    return (
+      allNodes.findIndex(
+        (possiblySameNode: Node) => possiblySameNode.value === node.value
+      ) === index
+    );
+  });
 }
 
 export function getAllStatementsOfNode(
   store: IndexedFormula,
-  node: NamedNode | BlankNode
+  node: Node | NamedNode | BlankNode
 ): Statement[] {
-  const allSubjectStatements = store.statementsMatching(node);
+  const allSubjectStatements = store.statementsMatching(node as Quad_Subject);
   const allObjectStatements = allSubjectStatements.reduce(
     (allStatements, statement) => {
       if (
@@ -164,15 +166,16 @@ export function getAllStatementsOfNode(
 
 function createN3DB(
   store: IndexedFormula,
-  type: string[],
-  statements?: Statement[]
+  types?: string[]
 ): Promise<[any, string[]]> {
-  const nodesOfType = getNodesOfTypeFromStore(store, type);
+  const foundNodes = getNodesFromStore(store, types);
   const turtle = new Serializer(store).statementsToN3(
-    statements ??
-      nodesOfType.reduce((allStatements: Statement[], node: NamedNode) => {
-        return [...allStatements, ...getAllStatementsOfNode(store, node)];
-      }, [])
+    foundNodes.reduce((allStatements: Statement[], node: Node) => {
+      return [
+        ...allStatements,
+        ...getAllStatementsOfNode(store, node),
+      ] as Statement[];
+    }, [])
   );
   const n3Store = new Store();
   return new Promise((resolve, reject) => {
@@ -188,7 +191,7 @@ function createN3DB(
       } else {
         resolve([
           shex.Util.makeN3DB(n3Store),
-          nodesOfType.map((node) => node.value),
+          foundNodes.map((node) => node.value),
         ]);
       }
     });
