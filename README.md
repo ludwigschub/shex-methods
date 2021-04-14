@@ -42,7 +42,7 @@ const { data, errors } = newChat;
 ## Usage
 
 Install the package via your preferred node package manager:
-`npm i --save-dev shex-methods` or `yarn add -D shex-methods`
+`npm i shex-methods` or `yarn add shex-methods`
 
 See the [auto-generated documentation](https://ludwigschubi.github.io/shex-methods/index.html) to learn about all methods.
 
