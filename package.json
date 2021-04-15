@@ -20,7 +20,7 @@
     "typescript"
   ],
   "author": "Ludwig Schubert",
-  "license": "GPL-3.0",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/ludwigschubi/shex-methods/issues"
   },
