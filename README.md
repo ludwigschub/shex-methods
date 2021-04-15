@@ -6,7 +6,7 @@ A library to read, create, update or delete rdf nodes that fit a given shape exp
 
 ## Examples
 
-To create a shape factory you can generate context and types using [shex-codegen](https://github.com/ludwigschubi/shex-codegen/).
+To create a shape object you can use the generated context and types from [shex-codegen](https://github.com/ludwigschubi/shex-codegen/).
 ```typescript
 import { Shape } from "shex-methods";
 import {
@@ -24,7 +24,7 @@ const chat = new Shape<ChatShape>({
 });
 ```
 
-Then you can use the factory to create shapes using plain javascript-objects for specifying data. The id of the input data will be used as the node iri of the shape so make sure to pass a valid url.
+Then you can use the shape object to create nodes of this shape using plain javascript-objects for specifying data. The id of the input data will be used as the node iri of the shape so make sure to pass a valid url.
 ```typescript
 const newChat = await chat.create({
   doc: testDoc,
