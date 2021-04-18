@@ -102,6 +102,21 @@ describe(".update()", () => {
     expect((data.hasEmail as EmailShape).value).toBe(testString);
   });
 
+  it("deletes values if they are empty", async () => {
+    const shape = await solidProfile.update({
+      doc: webId,
+      data: {
+        id: webId,
+        hasEmail: undefined,
+      },
+    });
+    const { from, data, errors } = shape;
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(from).toBe(webId);
+    expect(data.hasEmail).toBeUndefined();
+  });
+
   it("throws error when data doesn't match cardinality", async () => {
     const shape = await chat.update({
       doc: testDoc,

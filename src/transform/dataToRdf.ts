@@ -7,6 +7,7 @@ import {
   Statement,
   Variable,
 } from "rdflib";
+import { Quad_Subject } from "rdflib/lib/tf-types";
 import { Shape } from "../shape";
 
 const xml = Namespace("http://www.w3.org/2001/XMLSchema#");
@@ -25,8 +26,46 @@ export function dataToStatements<ShapeType>(
     ({ subject, predicate, object, graph }) =>
       !shape.store.any(subject, predicate, object, graph)
   );
-  const del = oldFromNewStatements(shape.store, ins);
+  const delEmptyValues = deleteStatementsForEmptyValues(
+    shape.store,
+    absoluteData,
+    doc
+  );
+  const delOldValues = oldFromNewStatements(shape.store, ins);
+  const del = [...delOldValues, ...delEmptyValues];
   return [del, ins] as [Statement[], Statement[]];
+}
+
+export function deleteStatementsForEmptyValues(
+  store: IndexedFormula,
+  data: Record<string, any>,
+  doc: string
+) {
+  const { id } = data;
+  return Object.keys(data).reduce(
+    (allDelStatements: Statement[], key: string) => {
+      if (isEmptyValue(data[key])) {
+        const nodeToDelete = store.any(
+          safeNode(doc, id),
+          new NamedNode(key),
+          null,
+          new NamedNode(doc).doc()
+        );
+        if (nodeToDelete) {
+          return [
+            ...allDelStatements,
+            ...store.statementsMatching(nodeToDelete as Quad_Subject),
+            ...store.statementsMatching(null, null, nodeToDelete),
+          ];
+        } else {
+          return allDelStatements;
+        }
+      } else {
+        return allDelStatements;
+      }
+    },
+    []
+  );
 }
 
 export function oldFromNewStatements(store: IndexedFormula, ins: Statement[]) {
@@ -102,9 +141,7 @@ export function safeNode(doc: string, id?: string | Variable) {
 
 export function isEmptyValue(obj: any): boolean {
   return (
-    obj === undefined ||
-    obj === null ||
-    obj === false ||
+    (!obj && typeof obj !== "number") ||
     (typeof obj === "object" &&
       typeof obj.toISOString !== "function" &&
       Object.values(obj).filter((value: any | any[]) => !isEmptyValue(value))
