@@ -1,9 +1,11 @@
 import {
+  BlankNode,
   IndexedFormula,
   Literal,
   NamedNode,
   Namespace,
   Statement,
+  Variable,
 } from "rdflib";
 import { Shape } from "../shape";
 
@@ -16,10 +18,10 @@ export function dataToStatements<ShapeType>(
 ) {
   const absoluteData = normalizedToAbsolute(
     data,
-    shape.context,
+    [shape.context, ...shape.childContexts],
     shape.prefixes
   );
-  const ins = absoluteToStatements(absoluteData, doc).filter(
+  const ins = absoluteToStatements(shape.store, absoluteData, doc).filter(
     ({ subject, predicate, object, graph }) =>
       !shape.store.any(subject, predicate, object, graph)
   );
@@ -52,17 +54,24 @@ export function oldFromNewStatements(store: IndexedFormula, ins: Statement[]) {
   });
 }
 
-export function absoluteToStatements(data: Record<string, any>, doc: string) {
+export function absoluteToStatements(
+  store: IndexedFormula,
+  data: Record<string, any>,
+  doc: string
+) {
   const { id, ...props } = data;
-  const statements = Object.keys(props).reduce((statements: Statement[], prop: string) => {
-    const value = props[prop];
-    const statement = absoluteNodeToStatements(id, prop, value, doc);
-    if (Array.isArray(statement)) {
-      return [...statements, ...statement];
-    } else {
-      return [...statements, statement];
-    }
-  }, []);
+  const statements = Object.keys(props).reduce(
+    (statements: Statement[], prop: string) => {
+      const value = props[prop];
+      const statement = absoluteNodeToStatements(store, id, prop, value, doc);
+      if (Array.isArray(statement)) {
+        return [...statements, ...statement];
+      } else {
+        return [...statements, statement];
+      }
+    },
+    []
+  );
   return statements.filter((newSt, index, statements) => {
     return (
       statements.findIndex(
@@ -72,7 +81,27 @@ export function absoluteToStatements(data: Record<string, any>, doc: string) {
   });
 }
 
+export function safeNode(doc: string, id?: string | Variable) {
+  let subject: NamedNode | BlankNode;
+  if ((id as Variable)?.termType && (id as Variable)?.value)
+    return id as Variable;
+  if (!id) {
+    const newNode = new URL(doc);
+    newNode.hash = "id" + new Date().getMilliseconds();
+    return new NamedNode(newNode.toString());
+  }
+  try {
+    subject = new NamedNode(id as string);
+  } catch {
+    const newNode = new URL(doc);
+    newNode.hash = "id" + new Date().getMilliseconds();
+    subject = new NamedNode(newNode.toString());
+  }
+  return subject;
+}
+
 export function absoluteNodeToStatements(
+  store: IndexedFormula,
   id: string,
   prop: string,
   value: any,
@@ -94,14 +123,14 @@ export function absoluteNodeToStatements(
       }
     }
     return new Statement(
-      new NamedNode(id),
+      safeNode(doc, id),
       new NamedNode(prop),
       valueNode,
-      new NamedNode(doc)
+      new NamedNode(doc).doc()
     );
   } else if (Array.isArray(value)) {
     return value.reduce((allStatements: Statement[], value) => {
-      const statements = absoluteToStatements({ id, ...value }, doc);
+      const statements = absoluteToStatements(store, { id, ...value }, doc);
       return [...allStatements, ...statements];
     }, []);
   } else {
@@ -110,24 +139,43 @@ export function absoluteNodeToStatements(
         new NamedNode(id),
         new NamedNode(prop),
         new Literal(value.toISOString(), null, xml("dateTime")),
-        new NamedNode(doc)
+        new NamedNode(doc).doc()
       );
     } else {
-      return absoluteToStatements(value, doc);
+      const targetNode = safeNode(doc, id);
+      let newOrExistingNode =
+        store.any(targetNode, new NamedNode(prop), null) ??
+        safeNode(doc, value.id);
+      if (newOrExistingNode.termType === "BlankNode") {
+        newOrExistingNode = safeNode(doc, value.id);
+      }
+      return [
+        new Statement(
+          new NamedNode(id),
+          new NamedNode(prop),
+          newOrExistingNode as Variable,
+          new NamedNode(doc).doc()
+        ),
+        ...absoluteToStatements(
+          store,
+          { ...value, id: newOrExistingNode },
+          doc
+        ),
+      ];
     }
   }
 }
 
 export function normalizedToAbsolute(
   data: any,
-  context: Record<string, string>,
+  contexts: Record<string, string>[],
   prefixes: Record<string, string>
 ) {
   let absoluteData: Record<string, any> = {};
   Object.keys(data).map((key) => {
     if (Array.isArray(data[key])) {
       const absoluteNodes = data[key].map((value: any) =>
-        normalizedToAbsoluteNode(key, value, context, prefixes)
+        normalizedToAbsoluteNode(key, value, contexts, prefixes)
       );
       const absoluteKey = Object.keys(absoluteNodes)[0];
       absoluteData = {
@@ -137,7 +185,7 @@ export function normalizedToAbsolute(
     } else {
       absoluteData = {
         ...absoluteData,
-        ...normalizedToAbsoluteNode(key, data[key], context, prefixes),
+        ...normalizedToAbsoluteNode(key, data[key], contexts, prefixes),
       };
     }
   });
@@ -147,24 +195,29 @@ export function normalizedToAbsolute(
 export function normalizedToAbsoluteNode(
   key: string,
   nodeValue: any,
-  context: Record<string, string>,
+  contexts: Record<string, string>[],
   prefixes: Record<string, string>
 ) {
   if (key === "id") {
     return { id: nodeValue };
   }
-  const contextKey = context[key];
+  const contextKey = (contexts.find((context) => context[key]) ?? {})[key];
+  if (!contextKey)
+    throw new Error(
+      "Key: " +
+        key +
+        " could not be found in context: " +
+        JSON.stringify(contexts)
+    );
   const prefix = contextKey.split(":")[0];
   const absoluteKey = prefixes[prefix] + key;
-  const prototype = Object.getPrototypeOf(nodeValue);
   if (
     typeof nodeValue === "object" &&
-    !prototype &&
-    !(nodeValue?.termType && nodeValue.value) &&
-    !Array.isArray(nodeValue)
+    !nodeValue.toISOString &&
+    !(nodeValue?.termType && nodeValue.value)
   ) {
     return {
-      [absoluteKey]: normalizedToAbsolute(nodeValue, context, prefixes),
+      [absoluteKey]: normalizedToAbsolute(nodeValue, contexts, prefixes),
     };
   } else {
     return { [absoluteKey]: nodeValue };

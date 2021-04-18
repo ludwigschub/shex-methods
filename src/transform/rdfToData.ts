@@ -56,7 +56,7 @@ export function absoluteToNormalized(
   data: any,
   contexts: Record<string, string>[],
   prefixes: Record<string, string>
-) {
+): Record<string, any> {
   return Object.assign(
     {},
     ...Object.keys(data).map((key) => {
@@ -75,6 +75,10 @@ export function absoluteToNormalized(
             [contextKey]: value.map((value) =>
               absoluteToNormalizedValue(value, contexts, prefixes)
             ),
+          };
+        } else if (typeof value === "object") {
+          return {
+            [contextKey]: absoluteToNormalized(value, contexts, prefixes),
           };
         } else {
           return {
@@ -168,6 +172,7 @@ function proxifyShape(
       const directValue = proxyGetHandler(target, key, contexts, prefixes);
       if (directValue) return directValue;
       const [prefix, normalizedKey] = key.split(":");
+      if (!normalizedKey || !prefix) return undefined;
       if (contexts.find((context) => context[normalizedKey])) {
         return proxyGetHandler(target, normalizedKey, contexts, prefixes);
       } else {
