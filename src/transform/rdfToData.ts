@@ -1,5 +1,4 @@
 import camelcase from "camelcase";
-import path from "path";
 
 export interface Validated {
   validated: any;
@@ -121,6 +120,10 @@ export function getNormalizedKeyFromContextOrSchemaPrefixes(
   }, "");
 }
 
+export function getNameOfPath(path: string) {
+  return path.substr(path.lastIndexOf("/") + 1).split(".")[0];
+}
+
 export function normalizeUrl(
   url: string,
   capitalize?: boolean,
@@ -130,14 +133,14 @@ export function normalizeUrl(
   const urlObject = new URL(url);
   let normalized = camelcase(
     urlObject.hash === ""
-      ? path.parse(urlObject.pathname).name
+      ? getNameOfPath(urlObject.pathname)
       : urlObject.hash.replace(/#+/, "")
   );
 
   if (not && normalized.toLowerCase() === not.toLowerCase()) {
     const namespaceUrl = url.replace(
       urlObject.hash === ""
-        ? path.parse(urlObject.pathname).name
+        ? getNameOfPath(urlObject.pathname)
         : urlObject.hash,
       ""
     );
