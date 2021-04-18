@@ -104,6 +104,7 @@ export function isEmptyValue(obj: any): boolean {
   return (
     obj === undefined ||
     obj === null ||
+    obj === false ||
     (typeof obj === "object" &&
       typeof obj.toISOString !== "function" &&
       Object.values(obj).filter((value: any | any[]) => !isEmptyValue(value))
