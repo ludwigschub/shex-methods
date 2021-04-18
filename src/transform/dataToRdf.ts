@@ -102,7 +102,7 @@ export function safeNode(doc: string, id?: string | Variable) {
 
 export function isEmptyObject(obj: any): boolean {
   return (
-    !obj.toISOString &&
+    !obj?.toISOString &&
     Object.values(obj).filter(
       (value: any | any[]) => !!value || !isEmptyObject(value)
     ).length === 0
