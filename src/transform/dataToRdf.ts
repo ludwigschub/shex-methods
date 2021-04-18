@@ -126,14 +126,14 @@ export function safeNode(doc: string, id?: string | Variable) {
     return id as Variable;
   if (!id) {
     const newNode = new URL(doc);
-    newNode.hash = "id" + new Date().getMilliseconds();
+    newNode.hash = "id" + new Number(new Date());
     return new NamedNode(newNode.toString());
   }
   try {
     subject = new NamedNode(id as string);
   } catch {
     const newNode = new URL(doc);
-    newNode.hash = "id" + new Date().getMilliseconds();
+    newNode.hash = "id" + new Number(new Date());
     subject = new NamedNode(newNode.toString());
   }
   return subject;

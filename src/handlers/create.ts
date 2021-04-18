@@ -54,9 +54,6 @@ export function validateNewShape<ShapeType>(
 ) {
   const updatedStore = new IndexedFormula();
   updatedStore.add(getAllStatementsOfNode(shape.store, new NamedNode(node)));
-  if (node === "https://lalatest.solidcommunity.net/profile/card#me") {
-    console.debug(del, ins);
-  }
   updatedStore.remove(del);
   updatedStore.add(ins);
   const { schema, context, prefixes, childContexts, type, id: shapeId } = shape;

@@ -14,6 +14,7 @@ import {
 const config = require("dotenv").config();
 
 describe(".update()", () => {
+  jest.setTimeout(8000)
   const webId = "https://lalatest.solidcommunity.net/profile/card#me";
   const testDoc = "https://lalatest.solidcommunity.net/test/updateChat";
   const firstChatIri =
@@ -84,6 +85,21 @@ describe(".update()", () => {
     expect(data.type).toBe(ChatShapeType.LongChat);
   });
 
+  it("deletes values if they are empty", async () => {
+    const shape = await solidProfile.update({
+      doc: webId,
+      data: {
+        id: webId,
+        hasEmail: undefined,
+      },
+    });
+    const { from, data, errors } = shape;
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(from).toBe(webId);
+    expect(data.hasEmail).toBeUndefined();
+  });
+
   it("can update a shape with a nested value", async () => {
     const testString = "mailto:lalasepp@gmail.com";
     const shape = await solidProfile.update({
@@ -100,21 +116,6 @@ describe(".update()", () => {
     expect(data).toBeDefined();
     expect(from).toBe(webId);
     expect((data.hasEmail as EmailShape).value).toBe(testString);
-  });
-
-  it("deletes values if they are empty", async () => {
-    const shape = await solidProfile.update({
-      doc: webId,
-      data: {
-        id: webId,
-        hasEmail: undefined,
-      },
-    });
-    const { from, data, errors } = shape;
-    expect(errors).toBeUndefined();
-    expect(data).toBeDefined();
-    expect(from).toBe(webId);
-    expect(data.hasEmail).toBeUndefined();
   });
 
   it("throws error when data doesn't match cardinality", async () => {
