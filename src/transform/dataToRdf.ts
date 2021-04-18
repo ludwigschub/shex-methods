@@ -24,7 +24,8 @@ export function dataToStatements<ShapeType>(
   );
   const ins = absoluteToStatements(shape.store, absoluteData, doc).filter(
     ({ subject, predicate, object, graph }) =>
-      !shape.store.any(subject, predicate, object, graph)
+      shape.store.statementsMatching(subject, predicate, object, graph)
+        .length === 0
   );
   const delEmptyValues = deleteStatementsForEmptyValues(
     shape.store,
