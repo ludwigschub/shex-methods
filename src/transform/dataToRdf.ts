@@ -100,12 +100,14 @@ export function safeNode(doc: string, id?: string | Variable) {
   return subject;
 }
 
-export function isEmptyObject(obj: any): boolean {
+export function isEmptyValue(obj: any): boolean {
   return (
-    !obj?.toISOString &&
-    Object.values(obj).filter(
-      (value: any | any[]) => !!value || !isEmptyObject(value)
-    ).length === 0
+    obj === undefined ||
+    obj === null ||
+    (typeof obj === "object" &&
+      typeof obj.toISOString !== "function" &&
+      Object.values(obj).filter((value: any | any[]) => !isEmptyValue(value))
+        .length === 0)
   );
 }
 
@@ -120,11 +122,7 @@ export function absoluteNodeToStatements(
     value?.termType === "NamedNode" ||
     value?.termType === "BlankNode" ||
     value?.termType === "Literal";
-  if (
-    value === undefined ||
-    value === null ||
-    (typeof value === "object" && !Array.isArray(value) && isEmptyObject(value))
-  ) {
+  if (isEmptyValue(value)) {
     return [];
   }
   if (typeof value !== "object" || isNode) {
