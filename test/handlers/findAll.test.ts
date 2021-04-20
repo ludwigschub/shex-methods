@@ -2,23 +2,16 @@ import { Shape } from "../../lib";
 import {
   ResourceShape,
   ldpShapesShex,
-  BasicContainerShapeContext,
   ResourceShapeContext,
   ResourceShapeType,
-  BasicContainerShape,
-  BasicContainerShapeType,
+  resource,
+  basicContainer,
 } from "../resources/shex";
 
 describe(".findAll()", () => {
   it("can find all instances of shape", async () => {
     const fromIri = "https://lalatest.solidcommunity.net/profile/";
     const testIri = "https://lalatest.solidcommunity.net/profile/card";
-    const resource = new Shape<ResourceShape>({
-      id: "http://www.w3.org/ns/ldp#ResourceShape",
-      shape: ldpShapesShex,
-      context: ResourceShapeContext,
-      type: ResourceShapeType,
-    });
     const shape = await resource.findAll({
       from: fromIri,
     });
@@ -34,12 +27,6 @@ describe(".findAll()", () => {
     const fromIri1 = "https://lalatest.solidcommunity.net/profile/";
     const fromIri2 = "https://lalatest.solidcommunity.net/public/";
     const testIri = "https://lalatest.solidcommunity.net/profile/";
-    const basicContainer = new Shape<BasicContainerShape>({
-      id: "http://www.w3.org/ns/ldp#BasicContainerShape",
-      shape: ldpShapesShex,
-      context: BasicContainerShapeContext,
-      type: BasicContainerShapeType,
-    });
     const shape = await basicContainer.findAll({
       from: [fromIri1, fromIri2],
     });
@@ -69,12 +56,6 @@ describe(".findAll()", () => {
     expect(errors).toStrictEqual([
       "validating https://lalatest.solidcommunity.net/profile/ as http://www.w3.org/ns/ldp#ResourceShape:",
       "    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-      "  OR",
-      "  Missing property: http://www.w3.org/ns/posix/stat#size",
-      "  OR",
-      "  Missing property: http://www.w3.org/ns/posix/stat#mtime",
-      "  OR",
-      "  Missing property: http://purl.org/dc/terms/modified",
     ]);
   });
 });

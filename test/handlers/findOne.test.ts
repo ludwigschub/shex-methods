@@ -1,22 +1,10 @@
-import { Shape } from "../../lib";
 import {
-  SolidProfileShape,
-  solidProfileShex,
-  SolidProfileShapeContext,
-  SolidProfileShapeType,
-  EmailShapeContext,
+  solidProfile,
 } from "../resources/shex";
 
 describe(".findOne()", () => {
   it("can find one shape", async () => {
     const testIri = "https://lalatest.solidcommunity.net/profile/card#me";
-    const solidProfile = new Shape<SolidProfileShape>({
-      id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
-      shape: solidProfileShex,
-      context: SolidProfileShapeContext,
-      childContexts: [EmailShapeContext],
-      type: SolidProfileShapeType,
-    });
     const shape = await solidProfile.findOne({
       from: testIri,
       where: { id: testIri },
@@ -32,13 +20,6 @@ describe(".findOne()", () => {
 
   it("should return an error for finding the wrong shape", async () => {
     const testIri = "https://lalatest.solidcommunity.net/profile";
-    const solidProfile = new Shape<SolidProfileShape>({
-      id: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
-      shape: solidProfileShex,
-      context: SolidProfileShapeContext,
-      childContexts: [EmailShapeContext],
-      type: SolidProfileShapeType,
-    });
     const { errors } = await solidProfile.findOne({
       from: testIri,
       where: { id: testIri },

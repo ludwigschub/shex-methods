@@ -6,21 +6,16 @@ import {
   ChatShape,
   ChatShapeType,
   ChatShapeContext,
+  chat,
+  chatMessage,
 } from "../resources/shex";
 const config = require("dotenv").config();
 
 const webId = "https://lalatest.solidcommunity.net/profile/card#me";
 const testDoc = "https://lalatest.solidcommunity.net/test/createChat";
-const firstChatIri =
-  "https://lalatest.solidcommunity.net/test/createChat#first";
-const secondChatIri =
-  "https://lalatest.solidcommunity.net/test/createChat#second";
-const chat = new Shape<ChatShape>({
-  id: "https://shaperepo.com/schemas/longChat#ChatShape",
-  shape: chatShex,
-  context: ChatShapeContext,
-  type: ChatShapeType,
-});
+const chatIri = "https://lalatest.solidcommunity.net/test/createChat#";
+const firstChatIri = chatIri + "first";
+const secondChatIri = chatIri + "second";
 const badlyConfiguredChat = new Shape<ChatShape>({
   id: "https://shaperepo.com/schemas/longChat#ChatShape",
   shape: chatShex,
@@ -42,6 +37,7 @@ describe(".create()", () => {
     const client = new SolidNodeClient();
     await client.login(config);
     chat.fetcher._fetch = client.fetch.bind(client);
+    chatMessage.fetcher._fetch = client.fetch.bind(client);
     await clean();
   });
 
@@ -54,7 +50,7 @@ describe(".create()", () => {
         title: "Test Chat",
         author: webId,
         created: new Date(),
-      } as ChatShape,
+      },
     });
     const { from, data, errors } = shape;
     expect(errors).toBeUndefined();
@@ -63,6 +59,25 @@ describe(".create()", () => {
     expect(data.title).toBe("Test Chat");
     expect(data.author).toBe(webId);
     expect(data.type).toBe(ChatShapeType.LongChat);
+  });
+
+  it("can create one shape without type", async () => {
+    const now = new Date()
+    const message = await chatMessage.create({
+      doc: testDoc,
+      data: {
+        id: chatIri + now.getMilliseconds(),
+        content: "Test Message",
+        maker: webId,
+        created: now,
+      },
+    });
+    const { from, data, errors } = message;
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(from).toBe(testDoc);
+    expect(data.content).toBe("Test Message");
+    expect(data.maker).toBe(webId);
   });
 
   it("throws error when data doesn't match cardinality", async () => {
@@ -74,7 +89,7 @@ describe(".create()", () => {
         title: (["Test Chat", "UpdatedChat"] as unknown) as string,
         author: webId,
         created: new Date(),
-      } as ChatShape,
+      },
     });
     const { from, data, errors } = shape;
     expect(from).toBe(testDoc);
@@ -92,7 +107,7 @@ describe(".create()", () => {
         title: "Test Chat",
         author: webId,
         created: new Date(),
-      } as ChatShape,
+      },
     });
     const { from, data, errors } = shape;
     expect(from).toBe(testDoc);
@@ -112,7 +127,7 @@ describe(".create()", () => {
         title: "Test Chat",
         author: webId,
         created: new Literal(new Date().toISOString()),
-      } as ChatShape,
+      },
     });
     const { from, data, errors } = shape;
     expect(from).toBe(testDoc);
@@ -130,7 +145,7 @@ describe(".create()", () => {
         title: "Test Chat",
         author: webId,
         created: new Date(),
-      } as ChatShape,
+      },
     });
     const { from, data, errors } = shape;
     expect(from).toBe(testDoc);

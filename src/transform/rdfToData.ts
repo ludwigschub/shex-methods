@@ -1,5 +1,4 @@
 import camelcase from "camelcase";
-import path from "path";
 
 export interface Validated {
   validated: any;
@@ -57,7 +56,7 @@ export function absoluteToNormalized(
   data: any,
   contexts: Record<string, string>[],
   prefixes: Record<string, string>
-) {
+): Record<string, any> {
   return Object.assign(
     {},
     ...Object.keys(data).map((key) => {
@@ -76,6 +75,10 @@ export function absoluteToNormalized(
             [contextKey]: value.map((value) =>
               absoluteToNormalizedValue(value, contexts, prefixes)
             ),
+          };
+        } else if (typeof value === "object") {
+          return {
+            [contextKey]: absoluteToNormalized(value, contexts, prefixes),
           };
         } else {
           return {
@@ -121,6 +124,10 @@ export function getNormalizedKeyFromContextOrSchemaPrefixes(
   }, "");
 }
 
+export function getNameOfPath(path: string) {
+  return path.substr(path.lastIndexOf("/") + 1).split(".")[0];
+}
+
 export function normalizeUrl(
   url: string,
   capitalize?: boolean,
@@ -130,14 +137,14 @@ export function normalizeUrl(
   const urlObject = new URL(url);
   let normalized = camelcase(
     urlObject.hash === ""
-      ? path.parse(urlObject.pathname).name
+      ? getNameOfPath(urlObject.pathname)
       : urlObject.hash.replace(/#+/, "")
   );
 
   if (not && normalized.toLowerCase() === not.toLowerCase()) {
     const namespaceUrl = url.replace(
       urlObject.hash === ""
-        ? path.parse(urlObject.pathname).name
+        ? getNameOfPath(urlObject.pathname)
         : urlObject.hash,
       ""
     );
@@ -165,6 +172,7 @@ function proxifyShape(
       const directValue = proxyGetHandler(target, key, contexts, prefixes);
       if (directValue) return directValue;
       const [prefix, normalizedKey] = key.split(":");
+      if (!normalizedKey || !prefix) return undefined;
       if (contexts.find((context) => context[normalizedKey])) {
         return proxyGetHandler(target, normalizedKey, contexts, prefixes);
       } else {
