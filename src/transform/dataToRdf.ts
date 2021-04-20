@@ -12,9 +12,9 @@ import { Shape } from "../shape";
 
 const xml = Namespace("http://www.w3.org/2001/XMLSchema#");
 
-export function dataToStatements<ShapeType>(
-  shape: Shape<ShapeType>,
-  data: Partial<ShapeType>,
+export function dataToStatements<ShapeType, CreateShapeArgs>(
+  shape: Shape<ShapeType, CreateShapeArgs>,
+  data: Partial<CreateShapeArgs>,
   doc: string
 ) {
   const absoluteData = normalizedToAbsolute(
@@ -145,6 +145,7 @@ export function isEmptyValue(obj: any): boolean {
     (!obj && typeof obj !== "number") ||
     (typeof obj === "object" &&
       typeof obj.toISOString !== "function" &&
+      typeof obj.href !== "string" &&
       Object.values(obj).filter((value: any | any[]) => !isEmptyValue(value))
         .length === 0)
   );
@@ -192,6 +193,13 @@ export function absoluteNodeToStatements(
         new NamedNode(id),
         new NamedNode(prop),
         new Literal(value.toISOString(), null, xml("dateTime")),
+        new NamedNode(doc).doc()
+      );
+    } else if (typeof value.href === "string") {
+      return new Statement(
+        new NamedNode(id),
+        new NamedNode(prop),
+        new NamedNode(value.href),
         new NamedNode(doc).doc()
       );
     } else {
@@ -267,6 +275,7 @@ export function normalizedToAbsoluteNode(
   if (
     typeof nodeValue === "object" &&
     !nodeValue.toISOString &&
+    !nodeValue.href &&
     !(nodeValue?.termType && nodeValue.value)
   ) {
     return {

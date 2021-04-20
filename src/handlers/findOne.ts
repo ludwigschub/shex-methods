@@ -6,13 +6,13 @@ export interface FindUniqueArgs {
   where: { id: string };
 }
 
-export async function findOne<ShapeType>(
-  shape: Shape<ShapeType>,
+export async function findOne<ShapeType, CreateShapeArgs>(
+  shape: Shape<ShapeType, CreateShapeArgs>,
   { where, from }: FindUniqueArgs
 ): Promise<QueryResult<ShapeType>> {
   const { id } = where;
   await shape.fetcher.load(from);
-  const [data, errors] = await validateShapes<ShapeType>(shape, [id]);
+  const [data, errors] = await validateShapes<ShapeType, CreateShapeArgs>(shape, [id]);
   return {
     from,
     data: data ? data[0] : undefined,

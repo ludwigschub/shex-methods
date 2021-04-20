@@ -6,8 +6,8 @@ export interface DeleteArgs {
   where: { id: string };
 }
 
-export async function deleteShape<ShapeType>(
-  shape: Shape<ShapeType>,
+export async function deleteShape<ShapeType, CreateShapeArgs>(
+  shape: Shape<ShapeType, CreateShapeArgs>,
   { doc, where }: DeleteArgs
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {

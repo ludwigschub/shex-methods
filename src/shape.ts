@@ -21,7 +21,7 @@ export interface ShapeConstructorArgs {
   type?: Record<string, string> | string[];
 }
 
-export class Shape<ShapeType> {
+export class Shape<ShapeType, CreateShapeArgs> {
   id: string;
   shape: string;
   schema: any;
@@ -34,11 +34,15 @@ export class Shape<ShapeType> {
   updater: UpdateManager;
   findAll: (args: FindAllArgs<ShapeType>) => Promise<QueryResult<ShapeType[]>>;
   findOne: (args: FindUniqueArgs) => Promise<QueryResult<ShapeType>>;
-  create: (args: CreateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
-  update: (args: UpdateArgs<ShapeType>) => Promise<QueryResult<ShapeType>>;
+  create: (
+    args: CreateArgs<CreateShapeArgs>
+  ) => Promise<QueryResult<ShapeType>>;
+  update: (
+    args: UpdateArgs<CreateShapeArgs>
+  ) => Promise<QueryResult<ShapeType>>;
   delete: (args: DeleteArgs) => Promise<void>;
   dataToStatements: (
-    data: Partial<ShapeType>,
+    data: Partial<CreateShapeArgs>,
     doc: string
   ) => [Statement[], Statement[]];
   constructor({
@@ -63,35 +67,41 @@ export class Shape<ShapeType> {
     this.updater = new UpdateManager(this.store);
 
     this.findAll = function (
-      this: Shape<ShapeType>,
+      this: Shape<ShapeType, CreateShapeArgs>,
       args: FindAllArgs<ShapeType>
     ) {
-      return findAll<ShapeType>(this, args);
+      return findAll<ShapeType, CreateShapeArgs>(this, args);
     }.bind(this);
-    this.findOne = function (this: Shape<ShapeType>, args: FindUniqueArgs) {
-      return findOne<ShapeType>(this, args);
+    this.findOne = function (
+      this: Shape<ShapeType, CreateShapeArgs>,
+      args: FindUniqueArgs
+    ) {
+      return findOne<ShapeType, CreateShapeArgs>(this, args);
     }.bind(this);
     this.create = function (
-      this: Shape<ShapeType>,
-      args: CreateArgs<ShapeType>
+      this: Shape<ShapeType, CreateShapeArgs>,
+      args: CreateArgs<CreateShapeArgs>
     ) {
-      return create<ShapeType>(this, args);
+      return create<ShapeType, CreateShapeArgs>(this, args);
     }.bind(this);
     this.update = function (
-      this: Shape<ShapeType>,
-      args: UpdateArgs<ShapeType>
+      this: Shape<ShapeType, CreateShapeArgs>,
+      args: UpdateArgs<CreateShapeArgs>
     ) {
-      return update<ShapeType>(this, args);
+      return update<ShapeType, CreateShapeArgs>(this, args);
     }.bind(this);
-    this.delete = function (this: Shape<ShapeType>, args: DeleteArgs) {
-      return deleteShape<ShapeType>(this, args);
+    this.delete = function (
+      this: Shape<ShapeType, CreateShapeArgs>,
+      args: DeleteArgs
+    ) {
+      return deleteShape<ShapeType, CreateShapeArgs>(this, args);
     }.bind(this);
     this.dataToStatements = function (
-      this: Shape<ShapeType>,
-      data: Partial<ShapeType>,
+      this: Shape<ShapeType, CreateShapeArgs>,
+      data: Partial<CreateShapeArgs>,
       doc: string
     ) {
-      return dataToStatements<ShapeType>(this, data, doc);
+      return dataToStatements<ShapeType, CreateShapeArgs>(this, data, doc);
     }.bind(this);
   }
 }

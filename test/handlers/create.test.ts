@@ -8,6 +8,7 @@ import {
   ChatShapeContext,
   chat,
   chatMessage,
+  ChatShapeCreateArgs,
 } from "../resources/shex";
 const config = require("dotenv").config();
 
@@ -16,7 +17,7 @@ const testDoc = "https://lalatest.solidcommunity.net/test/createChat";
 const chatIri = "https://lalatest.solidcommunity.net/test/createChat#";
 const firstChatIri = chatIri + "first";
 const secondChatIri = chatIri + "second";
-const badlyConfiguredChat = new Shape<ChatShape>({
+const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
   id: "https://shaperepo.com/schemas/longChat#ChatShape",
   shape: chatShex,
   context: { ...ChatShapeContext, created: "terms:created" },
@@ -48,7 +49,7 @@ describe(".create()", () => {
         id: firstChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
-        author: webId,
+        author: new URL(webId),
         created: new Date(),
       },
     });
@@ -62,13 +63,13 @@ describe(".create()", () => {
   });
 
   it("can create one shape without type", async () => {
-    const now = new Date()
+    const now = new Date();
     const message = await chatMessage.create({
       doc: testDoc,
       data: {
         id: chatIri + now.getMilliseconds(),
         content: "Test Message",
-        maker: webId,
+        maker: new URL(webId),
         created: now,
       },
     });
@@ -87,7 +88,7 @@ describe(".create()", () => {
         id: secondChatIri,
         type: ChatShapeType.LongChat,
         title: (["Test Chat", "UpdatedChat"] as unknown) as string,
-        author: webId,
+        author: new URL(webId),
         created: new Date(),
       },
     });
@@ -105,7 +106,7 @@ describe(".create()", () => {
         id: firstChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
-        author: webId,
+        author: new URL(webId),
         created: new Date(),
       },
     });
@@ -125,7 +126,7 @@ describe(".create()", () => {
         id: secondChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
-        author: webId,
+        author: new URL(webId),
         created: new Literal(new Date().toISOString()),
       },
     });
@@ -143,7 +144,7 @@ describe(".create()", () => {
         id: secondChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
-        author: webId,
+        author: new URL(webId),
         created: new Date(),
       },
     });

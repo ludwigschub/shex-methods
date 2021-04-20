@@ -2,14 +2,14 @@ import { IndexedFormula, NamedNode, Statement, UpdateManager } from "rdflib";
 import { QueryResult, Shape } from "../shape";
 import { getAllStatementsOfNode, validateShex } from "../validate";
 
-export interface CreateArgs<ShapeType> {
+export interface CreateArgs<CreateShapeArgs> {
   doc: string;
-  data: ShapeType & { id: string };
+  data: CreateShapeArgs & { id: string };
 }
 
-export async function create<ShapeType>(
-  shape: Shape<ShapeType>,
-  { doc, data }: CreateArgs<ShapeType>
+export async function create<ShapeType, CreateShapeArgs>(
+  shape: Shape<ShapeType, CreateShapeArgs>,
+  { doc, data }: CreateArgs<CreateShapeArgs>
 ): Promise<QueryResult<ShapeType>> {
   return new Promise(async (resolve) => {
     let doesntExist = "";
@@ -24,12 +24,10 @@ export async function create<ShapeType>(
       });
     }
     const [_del, ins] = await shape.dataToStatements(data, doc);
-    const [newShape, errors] = await validateNewShape<ShapeType>(
-      shape,
-      id,
-      [],
-      ins
-    );
+    const [newShape, errors] = await validateNewShape<
+      ShapeType,
+      CreateShapeArgs
+    >(shape, id, [], ins);
     if (!newShape || errors) {
       resolve({ from: doc, errors });
     } else {
@@ -46,8 +44,8 @@ export async function create<ShapeType>(
   });
 }
 
-export function validateNewShape<ShapeType>(
-  shape: Shape<ShapeType>,
+export function validateNewShape<ShapeType, CreateShapeArgs>(
+  shape: Shape<ShapeType, CreateShapeArgs>,
   node: string,
   del: Statement[],
   ins: Statement[]
