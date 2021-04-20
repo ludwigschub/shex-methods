@@ -10,16 +10,17 @@ import {
   chat,
   solidProfile,
   EmailShape,
+  ChatShapeCreateArgs,
 } from "../resources/shex";
 const config = require("dotenv").config();
 
 describe(".update()", () => {
-  jest.setTimeout(8000)
+  jest.setTimeout(8000);
   const webId = "https://lalatest.solidcommunity.net/profile/card#me";
   const testDoc = "https://lalatest.solidcommunity.net/test/updateChat";
   const firstChatIri =
     "https://lalatest.solidcommunity.net/test/updateChat#first";
-  const badlyConfiguredChat = new Shape<ChatShape>({
+  const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
     id: "https://shaperepo.com/schemas/longChat#ChatShape",
     shape: chatShex,
     context: { ...ChatShapeContext, title: "rdf:title" },
@@ -44,9 +45,9 @@ describe(".update()", () => {
         id: firstChatIri,
         type: ChatShapeType.LongChat,
         title: "Test Chat",
-        author: webId,
+        author: new URL(webId),
         created: new Date(),
-      } as ChatShape,
+      },
     });
     const profile = await solidProfile.findOne({
       from: webId,
@@ -124,7 +125,7 @@ describe(".update()", () => {
       data: {
         id: firstChatIri,
         title: (["Test Chat", "UpdatedChat"] as unknown) as string,
-      } as ChatShape,
+      },
     });
     const { from, data, errors } = shape;
     expect(from).toBe(testDoc);
@@ -139,7 +140,7 @@ describe(".update()", () => {
       data: {
         id: firstChatIri,
         created: new Literal(new Date().toISOString()),
-      } as ChatShape,
+      },
     });
     const { from, data, errors } = shape;
     expect(from).toBe(testDoc);
@@ -154,7 +155,7 @@ describe(".update()", () => {
       data: {
         id: firstChatIri,
         title: "Test Chat",
-      } as ChatShape,
+      },
     });
     const { from, data, errors } = shape;
     expect(from).toBe(testDoc);

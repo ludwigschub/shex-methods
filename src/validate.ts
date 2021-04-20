@@ -29,8 +29,8 @@ export type ValidationResult<ShapeType> = [
   string[] | undefined
 ];
 
-export function validateShapes<ShapeType>(
-  shape: Shape<ShapeType>,
+export function validateShapes<ShapeType, CreateShapeArgs>(
+  shape: Shape<ShapeType, CreateShapeArgs>,
   ids: string[] | undefined
 ) {
   const {
@@ -42,7 +42,7 @@ export function validateShapes<ShapeType>(
     store,
     id: shapeId,
   } = shape;
-  return validateShex({
+  return validateShex<ShapeType>({
     schema,
     prefixes,
     type,

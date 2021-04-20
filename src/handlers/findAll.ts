@@ -6,13 +6,13 @@ export interface FindAllArgs<ShapeType> {
   where?: { id?: string[] } & Partial<Omit<ShapeType, "id">>;
 }
 
-export async function findAll<ShapeType>(
-  shape: Shape<ShapeType>,
+export async function findAll<ShapeType, CreateShapeArgs>(
+  shape: Shape<ShapeType, CreateShapeArgs>,
   { where, from }: FindAllArgs<ShapeType>
 ): Promise<QueryResult<ShapeType[]>> {
   let ids = where?.id;
   await shape.fetcher.load(from);
-  const [data, errors] = await validateShapes<ShapeType>(shape, ids)
+  const [data, errors] = await validateShapes<ShapeType, CreateShapeArgs>(shape, ids)
   return {
     from,
     data,

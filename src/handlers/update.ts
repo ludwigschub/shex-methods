@@ -2,26 +2,24 @@ import { Statement, UpdateManager } from "rdflib";
 import { QueryResult, Shape } from "../shape";
 import { validateNewShape } from "./create";
 
-export interface UpdateArgs<ShapeType> {
+export interface UpdateArgs<CreateShapeArgs> {
   doc: string;
-  data: Partial<ShapeType> & { id: string };
+  data: Partial<CreateShapeArgs> & { id: string };
 }
 
-export async function update<ShapeType>(
-  shape: Shape<ShapeType>,
-  { doc, data }: UpdateArgs<ShapeType>
+export async function update<ShapeType, CreateShapeArgs>(
+  shape: Shape<ShapeType, CreateShapeArgs>,
+  { doc, data }: UpdateArgs<CreateShapeArgs>
 ): Promise<QueryResult<ShapeType>> {
   return new Promise(async (resolve, reject) => {
     await shape.fetcher
       .load(doc, { clearPreviousData: true })
       .catch((err) => resolve({ from: doc, errors: [err] }));
     const [del, ins] = await shape.dataToStatements(data, doc);
-    const [newShapes, errors] = await validateNewShape<ShapeType>(
-      shape,
-      data.id,
-      del,
-      ins
-    );
+    const [newShapes, errors] = await validateNewShape<
+      ShapeType,
+      CreateShapeArgs
+    >(shape, data.id, del, ins);
     if (!newShapes || errors) {
       resolve({ from: doc, errors });
     } else {
