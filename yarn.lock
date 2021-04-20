@@ -5209,10 +5209,10 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-n3@0.10.0, n3@^0.10.0, n3@^0.4.5, n3@^1.8.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/n3/-/n3-0.10.0.tgz#75fd10f0876cdd1749fc859181f26671467d4d63"
-  integrity sha1-df0Q8Ids3RdJ/IWRgfJmcUZ9TWM=
+n3@0.11.3, n3@^0.10.0, n3@^0.4.5, n3@^1.8.0:
+  version "0.11.3"
+  resolved "https://registry.yarnpkg.com/n3/-/n3-0.11.3.tgz#8e587495240dd21408c2c3aae385ec1651a837f8"
+  integrity sha512-Hk5GSXBeAZrYoqi+NeS/U0H47Hx0Lzj7K6nLWCZpC9E04iUwEwBcrlMb/5foAli7QF4newPNQQQGgM6IAxTxGg==
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -6664,10 +6664,10 @@ solid-auth-fetcher@^1.5.1:
     url-parse "^1.4.7"
     uuid "^8.2.0"
 
-solid-node-client@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/solid-node-client/-/solid-node-client-2.0.2.tgz#e2d82823345a14a7ad4cc8f9d1492ab9b68aad1a"
-  integrity sha512-ERFQqr4f+9AWCTr1xFgoHfrblMe7Xo2XsekB6juLzVlikMpPbp5PHUwFpcLii71pYgmFqtJkT32g0CX4lASiJw==
+solid-node-client@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/solid-node-client/-/solid-node-client-2.0.3.tgz#78808d5d0a7f524cd55eacefb682cd38ade535be"
+  integrity sha512-SG0JlYKkdNWJa6wRPRTxOdA9Nqnqc8CvoaQ5rNKxpRiNqkEa8faGf2Abq3+Gtz0qD1jUkV/TpqcC6uI7K099YA==
   dependencies:
     "@inrupt/generate-oidc-token" "^0.1.0"
     "@inrupt/solid-client-authn-node" "^1.5.1"
