@@ -6664,10 +6664,10 @@ solid-auth-fetcher@^1.5.1:
     url-parse "^1.4.7"
     uuid "^8.2.0"
 
-solid-node-client@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/solid-node-client/-/solid-node-client-2.0.2.tgz#e2d82823345a14a7ad4cc8f9d1492ab9b68aad1a"
-  integrity sha512-ERFQqr4f+9AWCTr1xFgoHfrblMe7Xo2XsekB6juLzVlikMpPbp5PHUwFpcLii71pYgmFqtJkT32g0CX4lASiJw==
+solid-node-client@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/solid-node-client/-/solid-node-client-2.0.3.tgz#78808d5d0a7f524cd55eacefb682cd38ade535be"
+  integrity sha512-SG0JlYKkdNWJa6wRPRTxOdA9Nqnqc8CvoaQ5rNKxpRiNqkEa8faGf2Abq3+Gtz0qD1jUkV/TpqcC6uI7K099YA==
   dependencies:
     "@inrupt/generate-oidc-token" "^0.1.0"
     "@inrupt/solid-client-authn-node" "^1.5.1"
