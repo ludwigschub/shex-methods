@@ -6507,10 +6507,10 @@ shellwords@^0.1.1:
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
-shex-codegen@0.2.15:
-  version "0.2.15"
-  resolved "https://registry.yarnpkg.com/shex-codegen/-/shex-codegen-0.2.15.tgz#91638dcd55b1b7b9934eb4af3dd086b51faa0394"
-  integrity sha512-SVMTFZ+213vuTxAxoNcJfOFVDK8A/GiUCBaBy5v/HBmpG7bRm5MIqBy3WYRXavwJXuACbUMU46kaLOAVSx7RyA==
+shex-codegen@0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/shex-codegen/-/shex-codegen-0.3.1.tgz#bf9ddf0d914dd79e6f0a4a16e18642032270d5cd"
+  integrity sha512-NTasHnL9wXna58e3zgtqBhqz8oRk2EnFPJAiGtLiXUfUswLfuxILu5eMfU4VnXVG6R2hoLFJY0JbSwYIl2uyRA==
   dependencies:
     "@shexjs/core" "^1.0.0-alpha.10"
     "@shexjs/parser" "^1.0.0-alpha.10"
