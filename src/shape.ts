@@ -1,4 +1,4 @@
-import { Fetcher, IndexedFormula, Statement, UpdateManager } from "rdflib";
+import { Fetcher, IndexedFormula, UpdateManager } from "rdflib";
 import { dataToStatements } from "./transform/dataToRdf";
 import { create, CreateArgs } from "./handlers/create";
 import { findAll, FindAllArgs } from "./handlers/findAll";
@@ -32,19 +32,6 @@ export class Shape<ShapeType, CreateShapeArgs> {
   store: IndexedFormula;
   fetcher: Fetcher;
   updater: UpdateManager;
-  findAll: (args: FindAllArgs<ShapeType>) => Promise<QueryResult<ShapeType[]>>;
-  findOne: (args: FindUniqueArgs) => Promise<QueryResult<ShapeType>>;
-  create: (
-    args: CreateArgs<CreateShapeArgs>
-  ) => Promise<QueryResult<ShapeType>>;
-  update: (
-    args: UpdateArgs<CreateShapeArgs>
-  ) => Promise<QueryResult<ShapeType>>;
-  delete: (args: DeleteArgs) => Promise<void>;
-  dataToStatements: (
-    data: Partial<CreateShapeArgs>,
-    doc: string
-  ) => [Statement[], Statement[]];
   constructor({
     id,
     shape,
@@ -65,43 +52,36 @@ export class Shape<ShapeType, CreateShapeArgs> {
     this.store = new IndexedFormula();
     this.fetcher = new Fetcher(this.store);
     this.updater = new UpdateManager(this.store);
-
-    this.findAll = function (
-      this: Shape<ShapeType, CreateShapeArgs>,
-      args: FindAllArgs<ShapeType>
-    ) {
-      return findAll<ShapeType, CreateShapeArgs>(this, args);
-    }.bind(this);
-    this.findOne = function (
-      this: Shape<ShapeType, CreateShapeArgs>,
-      args: FindUniqueArgs
-    ) {
-      return findOne<ShapeType, CreateShapeArgs>(this, args);
-    }.bind(this);
-    this.create = function (
-      this: Shape<ShapeType, CreateShapeArgs>,
-      args: CreateArgs<CreateShapeArgs>
-    ) {
-      return create<ShapeType, CreateShapeArgs>(this, args);
-    }.bind(this);
-    this.update = function (
-      this: Shape<ShapeType, CreateShapeArgs>,
-      args: UpdateArgs<CreateShapeArgs>
-    ) {
-      return update<ShapeType, CreateShapeArgs>(this, args);
-    }.bind(this);
-    this.delete = function (
-      this: Shape<ShapeType, CreateShapeArgs>,
-      args: DeleteArgs
-    ) {
-      return deleteShape<ShapeType, CreateShapeArgs>(this, args);
-    }.bind(this);
-    this.dataToStatements = function (
-      this: Shape<ShapeType, CreateShapeArgs>,
-      data: Partial<CreateShapeArgs>,
-      doc: string
-    ) {
-      return dataToStatements<ShapeType, CreateShapeArgs>(this, data, doc);
-    }.bind(this);
+  }
+  dataToStatements(
+    this: Shape<ShapeType, CreateShapeArgs>,
+    data: Partial<CreateShapeArgs>,
+    doc: string
+  ) {
+    return dataToStatements<ShapeType, CreateShapeArgs>(this, data, doc);
+  }
+  findOne(this: Shape<ShapeType, CreateShapeArgs>, args: FindUniqueArgs) {
+    return findOne<ShapeType, CreateShapeArgs>(this, args);
+  }
+  findAll(
+    this: Shape<ShapeType, CreateShapeArgs>,
+    args: FindAllArgs<ShapeType>
+  ) {
+    return findAll<ShapeType, CreateShapeArgs>(this, args);
+  }
+  create(
+    this: Shape<ShapeType, CreateShapeArgs>,
+    args: CreateArgs<CreateShapeArgs>
+  ) {
+    return create<ShapeType, CreateShapeArgs>(this, args);
+  }
+  update(
+    this: Shape<ShapeType, CreateShapeArgs>,
+    args: UpdateArgs<CreateShapeArgs>
+  ) {
+    return update<ShapeType, CreateShapeArgs>(this, args);
+  }
+  delete(this: Shape<ShapeType, CreateShapeArgs>, args: DeleteArgs) {
+    return deleteShape<ShapeType, CreateShapeArgs>(this, args);
   }
 }
