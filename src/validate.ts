@@ -9,7 +9,7 @@ import {
 import { Parser, Store } from "n3";
 import { Validated, validatedToDataResult } from "./transform/rdfToData";
 import { Shape } from "./shape";
-import { Quad_Subject } from "rdflib/lib/tf-types";
+import { Quad_Object, Quad_Subject } from "rdflib/lib/tf-types";
 
 const shex = require("shex");
 
@@ -143,25 +143,25 @@ export function getAllStatementsOfNode(
   store: IndexedFormula,
   node: Node | NamedNode | BlankNode
 ): Statement[] {
-  const allSubjectStatements = store.statementsMatching(node as Quad_Subject);
-  const allObjectStatements = allSubjectStatements.reduce(
-    (allStatements, statement) => {
-      if (
-        statement.object.termType === "BlankNode" ||
-        statement.object.termType === "NamedNode"
-      ) {
-        const allObjectStatements = getAllStatementsOfNode(
-          store,
-          statement.object
-        );
-        return [...allStatements, ...allObjectStatements];
-      } else {
-        return allStatements;
-      }
-    },
-    [] as Statement[]
-  );
-  return [...allSubjectStatements, ...allObjectStatements];
+  return [
+    ...store
+      .statementsMatching(node as Quad_Subject)
+      .reduce((allStatements, statement) => {
+        if (
+          statement.object.termType === "BlankNode" ||
+          statement.object.termType === "NamedNode"
+        ) {
+          const allObjectStatements = getAllStatementsOfNode(
+            store,
+            statement.object
+          );
+          return [...allStatements, statement, ...allObjectStatements];
+        } else {
+          return [...allStatements, statement];
+        }
+      }, [] as Statement[]),
+    ...store.statementsMatching(null, null, node as Quad_Object),
+  ];
 }
 
 function createN3DB(
@@ -169,14 +169,7 @@ function createN3DB(
   types?: string[]
 ): Promise<[any, string[]]> {
   const foundNodes = getNodesFromStore(store, types);
-  const turtle = new Serializer(store).statementsToN3(
-    foundNodes.reduce((allStatements: Statement[], node: Node) => {
-      return [
-        ...allStatements,
-        ...getAllStatementsOfNode(store, node),
-      ] as Statement[];
-    }, [])
-  );
+  const turtle = new Serializer(store).statementsToN3(store.statements);
   const n3Store = new Store();
   return new Promise((resolve, reject) => {
     new Parser({

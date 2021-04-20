@@ -1,13 +1,16 @@
 {
   "name": "shex-methods",
-  "version": "0.1.4",
+  "version": "0.1.19",
   "description": "",
   "main": "lib/index.js",
+  "homepage": "https://ludwigschubi.github.io/shex-methods/",
   "scripts": {
     "generate:shex": "shex-codegen generate",
     "build": "rimraf lib && tsc",
     "develop": "nodemon --watch src --watch test",
     "generate:docs": "typedoc ./src/index.ts --name shex-methods --readme ./README.md",
+    "predeploy": "yarn generate:docs",
+    "deploy": "gh-pages -d docs",
     "test": "jest"
   },
   "repository": {
@@ -20,20 +23,20 @@
     "typescript"
   ],
   "author": "Ludwig Schubert",
-  "license": "GPL-3.0",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/ludwigschubi/shex-methods/issues"
   },
-  "homepage": "https://github.com/ludwigschubi/shex-methods#readme",
   "devDependencies": {
     "@babel/preset-env": "7.13.15",
     "@babel/preset-typescript": "7.13.0",
     "@types/jest": "26.0.22",
     "dotenv": "8.2.0",
+    "gh-pages": "3.1.0",
     "jest": "26.6.3",
     "nodemon": "2.0.7",
     "rimraf": "3.0.2",
-    "shex-codegen": "^0.2.15",
+    "shex-codegen": "0.2.15",
     "solid-node-client": "2.0.3",
     "ts-node": "9.1.1",
     "typedoc": "0.20.35",

@@ -56,12 +56,6 @@ describe(".findAll()", () => {
     expect(errors).toStrictEqual([
       "validating https://lalatest.solidcommunity.net/profile/ as http://www.w3.org/ns/ldp#ResourceShape:",
       "    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-      "  OR",
-      "  Missing property: http://www.w3.org/ns/posix/stat#size",
-      "  OR",
-      "  Missing property: http://www.w3.org/ns/posix/stat#mtime",
-      "  OR",
-      "  Missing property: http://purl.org/dc/terms/modified",
     ]);
   });
 });

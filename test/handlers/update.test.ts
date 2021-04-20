@@ -8,10 +8,13 @@ import {
   ChatShapeType,
   ChatShapeContext,
   chat,
+  solidProfile,
+  EmailShape,
 } from "../resources/shex";
 const config = require("dotenv").config();
 
 describe(".update()", () => {
+  jest.setTimeout(8000)
   const webId = "https://lalatest.solidcommunity.net/profile/card#me";
   const testDoc = "https://lalatest.solidcommunity.net/test/updateChat";
   const firstChatIri =
@@ -27,6 +30,7 @@ describe(".update()", () => {
     const client = new SolidNodeClient();
     await client.login(config);
     chat.fetcher._fetch = client.fetch.bind(client);
+    solidProfile.fetcher._fetch = client.fetch.bind(client);
     badlyConfiguredChat.fetcher._fetch = client.fetch.bind(client);
     await chat.delete({
       doc: testDoc,
@@ -43,6 +47,20 @@ describe(".update()", () => {
         author: webId,
         created: new Date(),
       } as ChatShape,
+    });
+    const profile = await solidProfile.findOne({
+      from: webId,
+      where: { id: webId },
+    });
+    await solidProfile.update({
+      doc: webId,
+      data: {
+        id: webId,
+        hasEmail: {
+          id: (profile.data.hasEmail as EmailShape)?.id,
+          value: "mailto:lalasepp@lalasepp.com",
+        },
+      },
     });
     const { data, errors } = shape;
     expect(errors).toBeUndefined();
@@ -65,6 +83,39 @@ describe(".update()", () => {
     expect(data.title).toBe(testString);
     expect(data.author).toBe(webId);
     expect(data.type).toBe(ChatShapeType.LongChat);
+  });
+
+  it("deletes values if they are empty", async () => {
+    const shape = await solidProfile.update({
+      doc: webId,
+      data: {
+        id: webId,
+        hasEmail: undefined,
+      },
+    });
+    const { from, data, errors } = shape;
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(from).toBe(webId);
+    expect(data.hasEmail).toBeUndefined();
+  });
+
+  it("can update a shape with a nested value", async () => {
+    const testString = "mailto:lalasepp@gmail.com";
+    const shape = await solidProfile.update({
+      doc: webId,
+      data: {
+        id: webId,
+        hasEmail: {
+          value: testString,
+        } as EmailShape,
+      },
+    });
+    const { from, data, errors } = shape;
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(from).toBe(webId);
+    expect((data.hasEmail as EmailShape).value).toBe(testString);
   });
 
   it("throws error when data doesn't match cardinality", async () => {
