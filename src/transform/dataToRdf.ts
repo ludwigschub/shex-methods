@@ -6,42 +6,45 @@ import {
   Namespace,
   Statement,
   Variable,
-} from "rdflib";
-import { Quad_Subject } from "rdflib/lib/tf-types";
-import { Shape } from "../shape";
+} from 'rdflib';
+import { Quad_Subject } from 'rdflib/lib/tf-types';
 
-const xml = Namespace("http://www.w3.org/2001/XMLSchema#");
+import { Shape } from '../shape';
+
+const xml = Namespace('http://www.w3.org/2001/XMLSchema#');
+
+type PrimitiveNodeType = NamedNode | BlankNode | Literal | Date | URL | string;
 
 export function dataToStatements<ShapeType, CreateShapeArgs>(
   shape: Shape<ShapeType, CreateShapeArgs>,
   data: Partial<CreateShapeArgs>,
-  doc: string
-) {
+  doc: string,
+): [Statement[], Statement[]] {
   const absoluteData = normalizedToAbsolute(
     data,
     [shape.context, ...shape.childContexts],
-    shape.prefixes
+    shape.prefixes,
   );
   const ins = absoluteToStatements(shape.store, absoluteData, doc).filter(
     ({ subject, predicate, object, graph }) =>
       shape.store.statementsMatching(subject, predicate, object, graph)
-        .length === 0
+        .length === 0,
   );
   const delEmptyValues = deleteStatementsForEmptyValues(
     shape.store,
     absoluteData,
-    doc
+    doc,
   );
   const delOldValues = oldFromNewStatements(shape.store, ins);
   const del = [...delOldValues, ...delEmptyValues];
-  return [del, ins] as [Statement[], Statement[]];
+  return [del, ins];
 }
 
 export function deleteStatementsForEmptyValues(
   store: IndexedFormula,
   data: Record<string, any>,
-  doc: string
-) {
+  doc: string,
+): Statement[] {
   const { id } = data;
   return Object.keys(data).reduce(
     (allDelStatements: Statement[], key: string) => {
@@ -50,7 +53,7 @@ export function deleteStatementsForEmptyValues(
           safeNode(doc, id),
           new NamedNode(key),
           null,
-          new NamedNode(doc).doc()
+          new NamedNode(doc).doc(),
         );
         if (nodeToDelete) {
           return [
@@ -65,30 +68,33 @@ export function deleteStatementsForEmptyValues(
         return allDelStatements;
       }
     },
-    []
+    [],
   );
 }
 
-export function oldFromNewStatements(store: IndexedFormula, ins: Statement[]) {
+export function oldFromNewStatements(
+  store: IndexedFormula,
+  ins: Statement[],
+): Statement[] {
   const oldStatements = ins.reduce(
     (allDelStatements: Statement[], st: Statement) => {
       const oldStatements = store.statementsMatching(
         st.subject,
         st.predicate,
         null,
-        st.graph
+        st.graph,
       );
       return oldStatements.length > 0
         ? [...allDelStatements, ...oldStatements]
         : allDelStatements;
     },
-    []
+    [],
   );
   return oldStatements.filter((oldSt, index, statements) => {
     return (
       !ins.find((st) => JSON.stringify(st) === JSON.stringify(oldSt)) &&
       statements.findIndex(
-        (st) => JSON.stringify(st) === JSON.stringify(oldSt)
+        (st) => JSON.stringify(st) === JSON.stringify(oldSt),
       ) === index
     );
   });
@@ -97,8 +103,8 @@ export function oldFromNewStatements(store: IndexedFormula, ins: Statement[]) {
 export function absoluteToStatements(
   store: IndexedFormula,
   data: Record<string, any>,
-  doc: string
-) {
+  doc: string,
+): Statement[] {
   const { id, ...props } = data;
   const statements = Object.keys(props).reduce(
     (statements: Statement[], prop: string) => {
@@ -110,42 +116,47 @@ export function absoluteToStatements(
         return [...statements, statement];
       }
     },
-    []
+    [],
   );
   return statements.filter((newSt, index, statements) => {
     return (
       statements.findIndex(
-        (st) => JSON.stringify(st) === JSON.stringify(newSt)
+        (st) => JSON.stringify(st) === JSON.stringify(newSt),
       ) === index
     );
   });
 }
 
-export function safeNode(doc: string, id?: string | Variable) {
+export function safeNode(
+  doc: string,
+  id?: string | Variable,
+): Variable | NamedNode {
   let subject: NamedNode | BlankNode;
   if ((id as Variable)?.termType && (id as Variable)?.value)
     return id as Variable;
   if (!id) {
     const newNode = new URL(doc);
-    newNode.hash = "id" + new Number(new Date());
+    newNode.hash = 'id' + new Number(new Date());
     return new NamedNode(newNode.toString());
   }
   try {
     subject = new NamedNode(id as string);
   } catch {
     const newNode = new URL(doc);
-    newNode.hash = "id" + new Number(new Date());
+    newNode.hash = 'id' + new Number(new Date());
     subject = new NamedNode(newNode.toString());
   }
   return subject;
 }
 
-export function isEmptyValue(obj: any): boolean {
+export function isEmptyValue(
+  obj: Record<string, any> | PrimitiveNodeType,
+): boolean {
   return (
-    (!obj && typeof obj !== "number") ||
-    (typeof obj === "object" &&
-      typeof obj.toISOString !== "function" &&
-      typeof obj.href !== "string" &&
+    (!obj && typeof obj !== 'number') ||
+    (typeof obj === 'object' &&
+      typeof (obj as Date).toISOString !== 'function' &&
+      typeof (obj as URL).href !== 'string' &&
       Object.values(obj).filter((value: any | any[]) => !isEmptyValue(value))
         .length === 0)
   );
@@ -155,72 +166,79 @@ export function absoluteNodeToStatements(
   store: IndexedFormula,
   id: string,
   prop: string,
-  value: any,
-  doc: string
+  value:
+    | Record<string, any>
+    | Record<string, any>[]
+    | PrimitiveNodeType
+    | PrimitiveNodeType[],
+  doc: string,
 ): Statement | Statement[] {
   const isNode =
-    value?.termType === "NamedNode" ||
-    value?.termType === "BlankNode" ||
-    value?.termType === "Literal";
-  if (isEmptyValue(value)) {
+    (value as NamedNode)?.termType === 'NamedNode' ||
+    (value as BlankNode)?.termType === 'BlankNode' ||
+    (value as Literal)?.termType === 'Literal';
+  if (isEmptyValue(value as Record<string, any> | PrimitiveNodeType)) {
     return [];
   }
-  if (typeof value !== "object" || isNode) {
+  if (typeof value !== 'object' || isNode) {
     let valueNode;
     if (isNode) {
       valueNode = value;
     } else {
       try {
-        valueNode = new NamedNode(value);
+        valueNode = new NamedNode(value as string);
       } catch {
-        valueNode = new Literal(value);
+        valueNode = new Literal(value as string);
       }
     }
     return new Statement(
       safeNode(doc, id),
       new NamedNode(prop),
-      valueNode,
-      new NamedNode(doc).doc()
+      valueNode as Variable,
+      new NamedNode(doc).doc(),
     );
   } else if (Array.isArray(value)) {
-    return value.reduce((allStatements: Statement[], value) => {
-      const statements = absoluteToStatements(store, { id, ...value }, doc);
-      return [...allStatements, ...statements];
-    }, []);
+    return (value as Record<string, any>[]).reduce(
+      (allStatements: Statement[], value) => {
+        const statements = absoluteToStatements(store, { id, ...value }, doc);
+        return [...allStatements, ...statements];
+      },
+      [],
+    );
   } else {
-    if (typeof value.toISOString === "function") {
+    if (typeof (value as Date).toISOString === 'function') {
       return new Statement(
         new NamedNode(id),
         new NamedNode(prop),
-        new Literal(value.toISOString(), null, xml("dateTime")),
-        new NamedNode(doc).doc()
+        new Literal((value as Date).toISOString(), null, xml('dateTime')),
+        new NamedNode(doc).doc(),
       );
-    } else if (typeof value.href === "string") {
+    } else if (typeof (value as URL).href === 'string') {
       return new Statement(
         new NamedNode(id),
         new NamedNode(prop),
-        new NamedNode(value.href),
-        new NamedNode(doc).doc()
+        new NamedNode((value as URL).href),
+        new NamedNode(doc).doc(),
       );
     } else {
       const targetNode = safeNode(doc, id);
       let newOrExistingNode =
         store.any(targetNode, new NamedNode(prop), null) ??
-        safeNode(doc, value.id);
-      if (newOrExistingNode.termType === "BlankNode") {
-        newOrExistingNode = safeNode(doc, value.id);
+        safeNode(doc, (value as { id: string }).id);
+      if (newOrExistingNode.termType === 'BlankNode') {
+        newOrExistingNode = safeNode(doc, (value as { id: string }).id);
       }
       return [
         new Statement(
           new NamedNode(id),
           new NamedNode(prop),
           newOrExistingNode as Variable,
-          new NamedNode(doc).doc()
+          new NamedNode(doc).doc(),
         ),
         ...absoluteToStatements(
           store,
           { ...value, id: newOrExistingNode },
-          doc
+          doc,
         ),
       ];
     }
@@ -228,15 +246,15 @@ export function absoluteNodeToStatements(
 }
 
 export function normalizedToAbsolute(
-  data: any,
+  data: Record<string, any>,
   contexts: Record<string, string>[],
-  prefixes: Record<string, string>
-) {
+  prefixes: Record<string, string>,
+): Record<string, any | PrimitiveNodeType> {
   let absoluteData: Record<string, any> = {};
   Object.keys(data).map((key) => {
     if (Array.isArray(data[key])) {
       const absoluteNodes = data[key].map((value: any) =>
-        normalizedToAbsoluteNode(key, value, contexts, prefixes)
+        normalizedToAbsoluteNode(key, value, contexts, prefixes),
       );
       const absoluteKey = Object.keys(absoluteNodes)[0];
       absoluteData = {
@@ -255,25 +273,25 @@ export function normalizedToAbsolute(
 
 export function normalizedToAbsoluteNode(
   key: string,
-  nodeValue: any,
+  nodeValue: Record<string, any> | string,
   contexts: Record<string, string>[],
-  prefixes: Record<string, string>
-) {
-  if (key === "id") {
+  prefixes: Record<string, string>,
+): Record<string, any | PrimitiveNodeType> {
+  if (key === 'id') {
     return { id: nodeValue };
   }
   const contextKey = (contexts.find((context) => context[key]) ?? {})[key];
   if (!contextKey)
     throw new Error(
-      "Key: " +
+      'Key: ' +
         key +
-        " could not be found in context: " +
-        JSON.stringify(contexts)
+        ' could not be found in context: ' +
+        JSON.stringify(contexts),
     );
-  const prefix = contextKey.split(":")[0];
+  const prefix = contextKey.split(':')[0];
   const absoluteKey = prefixes[prefix] + key;
   if (
-    typeof nodeValue === "object" &&
+    typeof nodeValue === 'object' &&
     !nodeValue.toISOString &&
     !nodeValue.href &&
     !(nodeValue?.termType && nodeValue.value)

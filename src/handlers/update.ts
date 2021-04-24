@@ -1,5 +1,7 @@
 import { Statement, UpdateManager } from "rdflib";
+
 import { QueryResult, Shape } from "../shape";
+
 import { validateNewShape } from "./create";
 
 export interface UpdateArgs<CreateShapeArgs> {
@@ -7,7 +9,7 @@ export interface UpdateArgs<CreateShapeArgs> {
   data: Partial<CreateShapeArgs> & { id: string };
 }
 
-export async function update<ShapeType, CreateShapeArgs>(
+export function update<ShapeType, CreateShapeArgs>(
   shape: Shape<ShapeType, CreateShapeArgs>,
   { doc, data }: UpdateArgs<CreateShapeArgs>
 ): Promise<QueryResult<ShapeType>> {

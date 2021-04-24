@@ -5,16 +5,18 @@ import {
   Serializer,
   Statement,
   Node,
-} from "rdflib";
-import { Parser, Store } from "n3";
-import { Validated, validatedToDataResult } from "./transform/rdfToData";
-import { Shape } from "./shape";
-import { Quad_Object, Quad_Subject } from "rdflib/lib/tf-types";
+} from 'rdflib';
+import { Schema } from 'shexj';
+import { Parser, Store } from 'n3';
+import { Quad_Object, Quad_Subject } from 'rdflib/lib/tf-types';
 
-const shex = require("shex");
+import { Validated, validatedToDataResult } from './transform/rdfToData';
+import { Shape } from './shape';
+
+const shex = require('shex');
 
 export interface ValidateArgs {
-  schema: any;
+  schema: Schema;
   store: IndexedFormula;
   statements?: Statement[];
   type?: string[];
@@ -26,13 +28,13 @@ export interface ValidateArgs {
 
 export type ValidationResult<ShapeType> = [
   ShapeType[] | undefined,
-  string[] | undefined
+  string[] | undefined,
 ];
 
 export function validateShapes<ShapeType, CreateShapeArgs>(
   shape: Shape<ShapeType, CreateShapeArgs>,
-  ids: string[] | undefined
-) {
+  ids: string[] | undefined,
+): Promise<ValidationResult<ShapeType>> {
   const {
     schema,
     context,
@@ -63,23 +65,23 @@ export async function validateShex<ShapeType>({
   prefixes,
 }: ValidateArgs): Promise<ValidationResult<ShapeType>> {
   const validator = shex.Validator.construct(schema, {
-    results: "api",
+    results: 'api',
   });
   const [db, potentialShapes] = await createN3DB(store, type);
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
   if (!ids && potentialShapes.length === 0) {
-    return [undefined, ["No shapes found of type " + shapeId]];
+    return [undefined, ['No shapes found of type ' + shapeId]];
   }
   try {
     const validated = validator.validate(
       db,
-      (ids ?? potentialShapes).map((id) => ({ node: id, shape: shapeId }))
+      (ids ?? potentialShapes).map((id) => ({ node: id, shape: shapeId })),
     );
     validated.forEach((validation: any) => {
       const [foundShape, foundErrors] = mapValidationResult(
         shapeId,
-        validation
+        validation,
       );
       if (!foundErrors)
         allShapes = [
@@ -102,13 +104,11 @@ export async function validateShex<ShapeType>({
 }
 
 function mapValidationResult(shapeId: string, validated: any) {
-  let foundErrors: any;
-  let foundShapes: any;
-  foundErrors =
-    validated.status === "nonconformant" &&
+  const foundErrors =
+    validated.status === 'nonconformant' &&
     shex.Util.errsToSimple(validated.appinfo, validated.node, shapeId);
-  foundShapes =
-    validated.status === "conformant" &&
+  const foundShapes =
+    validated.status === 'conformant' &&
     ({
       validated: shex.Util.valToValues(validated.appinfo),
       baseUrl: validated.node,
@@ -124,8 +124,8 @@ function getNodesFromStore(store: IndexedFormula, type?: string[]) {
           ...allNodes,
           ...store.each(
             null,
-            new NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-            new NamedNode(type)
+            new NamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            new NamedNode(type),
           ),
         ] as NamedNode[];
       }, [])
@@ -133,7 +133,7 @@ function getNodesFromStore(store: IndexedFormula, type?: string[]) {
   ).filter((node: Node, index: number, allNodes: Node[]) => {
     return (
       allNodes.findIndex(
-        (possiblySameNode: Node) => possiblySameNode.value === node.value
+        (possiblySameNode: Node) => possiblySameNode.value === node.value,
       ) === index
     );
   });
@@ -141,19 +141,19 @@ function getNodesFromStore(store: IndexedFormula, type?: string[]) {
 
 export function getAllStatementsOfNode(
   store: IndexedFormula,
-  node: Node | NamedNode | BlankNode
+  node: Node | NamedNode | BlankNode,
 ): Statement[] {
   return [
     ...store
       .statementsMatching(node as Quad_Subject)
       .reduce((allStatements, statement) => {
         if (
-          statement.object.termType === "BlankNode" ||
-          statement.object.termType === "NamedNode"
+          statement.object.termType === 'BlankNode' ||
+          statement.object.termType === 'NamedNode'
         ) {
           const allObjectStatements = getAllStatementsOfNode(
             store,
-            statement.object
+            statement.object,
           );
           return [...allStatements, statement, ...allObjectStatements];
         } else {
@@ -166,7 +166,7 @@ export function getAllStatementsOfNode(
 
 function createN3DB(
   store: IndexedFormula,
-  types?: string[]
+  types?: string[],
 ): Promise<[any, string[]]> {
   const foundNodes = getNodesFromStore(store, types);
   const turtle = new Serializer(store).statementsToN3(store.statements);
@@ -174,8 +174,8 @@ function createN3DB(
   return new Promise((resolve, reject) => {
     new Parser({
       baseIRI: null,
-      blankNodePrefix: "",
-      format: "text/turtle",
+      blankNodePrefix: '',
+      format: 'text/turtle',
     }).parse(turtle as string, function (error: string, triple: any) {
       if (error) {
         reject(error);

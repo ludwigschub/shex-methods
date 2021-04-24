@@ -1,11 +1,14 @@
-import { Fetcher, IndexedFormula, UpdateManager } from "rdflib";
-import { dataToStatements } from "./transform/dataToRdf";
-import { create, CreateArgs } from "./handlers/create";
-import { findAll, FindAllArgs } from "./handlers/findAll";
-import { findOne, FindUniqueArgs } from "./handlers/findOne";
-import { update, UpdateArgs } from "./handlers/update";
-import { DeleteArgs, deleteShape } from "./handlers/delete";
-const shex = require("shex");
+import { Fetcher, IndexedFormula, Statement, UpdateManager } from 'rdflib';
+import { Schema } from 'shexj';
+
+import { dataToStatements } from './transform/dataToRdf';
+import { create, CreateArgs } from './handlers/create';
+import { findAll, FindAllArgs } from './handlers/findAll';
+import { findOne, FindUniqueArgs } from './handlers/findOne';
+import { update, UpdateArgs } from './handlers/update';
+import { DeleteArgs, deleteShape } from './handlers/delete';
+
+const shex = require('shex');
 
 export interface QueryResult<Type> {
   errors?: string[];
@@ -24,8 +27,8 @@ export interface ShapeConstructorArgs {
 export class Shape<ShapeType, CreateShapeArgs> {
   id: string;
   shape: string;
-  schema: any;
-  prefixes: any;
+  schema: Schema;
+  prefixes: Record<string, string>;
   type?: string[];
   context: Record<string, string>;
   childContexts: Record<string, string>[];
@@ -43,8 +46,9 @@ export class Shape<ShapeType, CreateShapeArgs> {
     this.shape = shape;
     this.schema = shex.Parser.construct(this.id).parse(this.shape);
     this.prefixes = {
-      rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-      ...this.schema.prefixes,
+      rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+      ...(this.schema as Schema & { prefixes: Record<string, string> })
+        .prefixes,
     };
     this.type = type && Object.values(type);
     this.context = context;
@@ -56,32 +60,38 @@ export class Shape<ShapeType, CreateShapeArgs> {
   dataToStatements(
     this: Shape<ShapeType, CreateShapeArgs>,
     data: Partial<CreateShapeArgs>,
-    doc: string
-  ) {
+    doc: string,
+  ): [Statement[], Statement[]] {
     return dataToStatements<ShapeType, CreateShapeArgs>(this, data, doc);
   }
-  findOne(this: Shape<ShapeType, CreateShapeArgs>, args: FindUniqueArgs) {
+  findOne(
+    this: Shape<ShapeType, CreateShapeArgs>,
+    args: FindUniqueArgs,
+  ): Promise<QueryResult<ShapeType>> {
     return findOne<ShapeType, CreateShapeArgs>(this, args);
   }
   findAll(
     this: Shape<ShapeType, CreateShapeArgs>,
-    args: FindAllArgs<ShapeType>
-  ) {
+    args: FindAllArgs<ShapeType>,
+  ): Promise<QueryResult<ShapeType[]>> {
     return findAll<ShapeType, CreateShapeArgs>(this, args);
   }
   create(
     this: Shape<ShapeType, CreateShapeArgs>,
-    args: CreateArgs<CreateShapeArgs>
-  ) {
+    args: CreateArgs<CreateShapeArgs>,
+  ): Promise<QueryResult<ShapeType>> {
     return create<ShapeType, CreateShapeArgs>(this, args);
   }
   update(
     this: Shape<ShapeType, CreateShapeArgs>,
-    args: UpdateArgs<CreateShapeArgs>
-  ) {
+    args: UpdateArgs<CreateShapeArgs>,
+  ): Promise<QueryResult<ShapeType>> {
     return update<ShapeType, CreateShapeArgs>(this, args);
   }
-  delete(this: Shape<ShapeType, CreateShapeArgs>, args: DeleteArgs) {
+  delete(
+    this: Shape<ShapeType, CreateShapeArgs>,
+    args: DeleteArgs,
+  ): Promise<void> {
     return deleteShape<ShapeType, CreateShapeArgs>(this, args);
   }
 }

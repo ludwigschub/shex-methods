@@ -1,4 +1,5 @@
 import { NamedNode } from "rdflib";
+
 import { Shape } from "../shape";
 
 export interface DeleteArgs {
