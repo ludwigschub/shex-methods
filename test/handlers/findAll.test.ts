@@ -1,4 +1,4 @@
-import { Shape } from "../../lib";
+import { Shape } from '../../lib';
 import {
   ResourceShape,
   ldpShapesShex,
@@ -6,12 +6,13 @@ import {
   ResourceShapeType,
   resource,
   basicContainer,
-} from "../resources/shex";
+  ResourceShapeCreateArgs,
+} from '../resources/shex';
 
-describe(".findAll()", () => {
-  it("can find all instances of shape", async () => {
-    const fromIri = "https://lalatest.solidcommunity.net/profile/";
-    const testIri = "https://lalatest.solidcommunity.net/profile/card";
+describe('.findAll()', () => {
+  it('can find all instances of shape', async () => {
+    const fromIri = 'https://lalatest.solidcommunity.net/profile/';
+    const testIri = 'https://lalatest.solidcommunity.net/profile/card';
     const shape = await resource.findAll({
       from: fromIri,
     });
@@ -20,13 +21,13 @@ describe(".findAll()", () => {
     expect(errors).toBeUndefined();
     expect(from).toBe(fromIri);
     expect(card.id).toBe(testIri);
-    expect(card.type).toBe("http://www.w3.org/ns/ldp#Resource");
+    expect(card.type).toBe('http://www.w3.org/ns/ldp#Resource');
   });
 
-  it("can find all instances of shape in multiple files", async () => {
-    const fromIri1 = "https://lalatest.solidcommunity.net/profile/";
-    const fromIri2 = "https://lalatest.solidcommunity.net/public/";
-    const testIri = "https://lalatest.solidcommunity.net/profile/";
+  it('can find all instances of shape in multiple files', async () => {
+    const fromIri1 = 'https://lalatest.solidcommunity.net/profile/';
+    const fromIri2 = 'https://lalatest.solidcommunity.net/public/';
+    const testIri = 'https://lalatest.solidcommunity.net/profile/';
     const shape = await basicContainer.findAll({
       from: [fromIri1, fromIri2],
     });
@@ -37,13 +38,13 @@ describe(".findAll()", () => {
     expect(data.length).toBe(2);
     expect(from).toStrictEqual([fromIri1, fromIri2]);
     expect(profileFolder.id).toBe(testIri);
-    expect(card.type).toBe("http://www.w3.org/ns/ldp#Resource");
+    expect(card.type).toBe('http://www.w3.org/ns/ldp#Resource');
   });
 
-  it("should return an error for finding the wrong shape", async () => {
-    const fromIri = "https://lalatest.solidcommunity.net/profile/";
-    const resource = new Shape<ResourceShape>({
-      id: "http://www.w3.org/ns/ldp#ResourceShape",
+  it('should return an error for finding the wrong shape', async () => {
+    const fromIri = 'https://lalatest.solidcommunity.net/profile/';
+    const resource = new Shape<ResourceShape, ResourceShapeCreateArgs>({
+      id: 'http://www.w3.org/ns/ldp#ResourceShape',
       shape: ldpShapesShex,
       context: ResourceShapeContext,
       type: ResourceShapeType,
@@ -54,8 +55,8 @@ describe(".findAll()", () => {
     });
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
-      "validating https://lalatest.solidcommunity.net/profile/ as http://www.w3.org/ns/ldp#ResourceShape:",
-      "    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      'validating https://lalatest.solidcommunity.net/profile/ as http://www.w3.org/ns/ldp#ResourceShape:',
+      '    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
     ]);
   });
 });
