@@ -6,14 +6,14 @@ import { create, CreateArgs } from './handlers/create';
 import { findAll, FindAllArgs } from './handlers/findAll';
 import { findOne, FindUniqueArgs } from './handlers/findOne';
 import { update, UpdateArgs } from './handlers/update';
-import { DeleteArgs, deleteShape } from './handlers/delete';
+import { DeleteArgs, DeleteQueryResult, deleteShape } from './handlers/delete';
 
 const shex = require('shex');
 
 export interface QueryResult<Type> {
   errors?: string[];
   data?: Type;
-  from: string | string[];
+  doc: string | string[];
 }
 
 export interface ShapeConstructorArgs {
@@ -91,7 +91,7 @@ export class Shape<ShapeType, CreateShapeArgs> {
   delete(
     this: Shape<ShapeType, CreateShapeArgs>,
     args: DeleteArgs,
-  ): Promise<void> {
+  ): Promise<DeleteQueryResult<ShapeType>> {
     return deleteShape<ShapeType, CreateShapeArgs>(this, args);
   }
 }

@@ -15,7 +15,7 @@ import {
 const config = require("dotenv").config();
 
 describe(".update()", () => {
-  jest.setTimeout(8000);
+  jest.setTimeout(8000)
   const webId = "https://lalatest.solidcommunity.net/profile/card#me";
   const testDoc = "https://lalatest.solidcommunity.net/test/updateChat";
   const firstChatIri =
@@ -50,7 +50,7 @@ describe(".update()", () => {
       },
     });
     const profile = await solidProfile.findOne({
-      from: webId,
+      doc: webId,
       where: { id: webId },
     });
     await solidProfile.update({
@@ -64,11 +64,12 @@ describe(".update()", () => {
       },
     });
     const { data, errors } = shape;
+    console.debug(data, errors)
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
   });
 
-  it("can update one shape", async () => {
+  it.only("can update one shape", async () => {
     const testString = "Updated Chat";
     const shape = await chat.update({
       doc: testDoc,
@@ -77,10 +78,10 @@ describe(".update()", () => {
         title: testString,
       },
     });
-    const { from, data, errors } = shape;
+    const { doc, data, errors } = shape;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
-    expect(from).toBe(testDoc);
+    expect(doc).toBe(testDoc);
     expect(data.title).toBe(testString);
     expect(data.author).toBe(webId);
     expect(data.type).toBe(ChatShapeType.LongChat);
@@ -94,10 +95,10 @@ describe(".update()", () => {
         hasEmail: undefined,
       },
     });
-    const { from, data, errors } = shape;
+    const { doc, data, errors } = shape;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
-    expect(from).toBe(webId);
+    expect(doc).toBe(webId);
     expect(data.hasEmail).toBeUndefined();
   });
 
@@ -112,10 +113,10 @@ describe(".update()", () => {
         } as EmailShape,
       },
     });
-    const { from, data, errors } = shape;
+    const { doc, data, errors } = shape;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
-    expect(from).toBe(webId);
+    expect(doc).toBe(webId);
     expect((data.hasEmail as EmailShape).value).toBe(testString);
   });
 
@@ -127,8 +128,8 @@ describe(".update()", () => {
         title: (["Test Chat", "UpdatedChat"] as unknown) as string,
       },
     });
-    const { from, data, errors } = shape;
-    expect(from).toBe(testDoc);
+    const { doc, data, errors } = shape;
+    expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors.join("\n")).toContain("exceeds cardinality");
@@ -142,8 +143,8 @@ describe(".update()", () => {
         created: new Literal(new Date().toISOString()),
       },
     });
-    const { from, data, errors } = shape;
-    expect(from).toBe(testDoc);
+    const { doc, data, errors } = shape;
+    expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors.join("\n")).toContain("mismatched datatype");
@@ -157,8 +158,8 @@ describe(".update()", () => {
         title: "Test Chat",
       },
     });
-    const { from, data, errors } = shape;
-    expect(from).toBe(testDoc);
+    const { doc, data, errors } = shape;
+    expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([

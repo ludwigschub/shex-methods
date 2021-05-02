@@ -6,11 +6,11 @@ describe(".findOne()", () => {
   it("can find one shape", async () => {
     const testIri = "https://lalatest.solidcommunity.net/profile/card#me";
     const shape = await solidProfile.findOne({
-      from: testIri,
+      doc: testIri,
       where: { id: testIri },
     });
-    const { from, data } = shape;
-    expect(from).toBe(testIri);
+    const { doc, data } = shape;
+    expect(doc).toBe(testIri);
     expect(data.name).toBe("Tester");
     expect(data["foaf:name"]).toBe("Tester");
     expect(data.hasEmail["vcard:value"]).toBe(
@@ -21,7 +21,7 @@ describe(".findOne()", () => {
   it("should return an error for finding the wrong shape", async () => {
     const testIri = "https://lalatest.solidcommunity.net/profile";
     const { errors } = await solidProfile.findOne({
-      from: testIri,
+      doc: testIri,
       where: { id: testIri },
     });
     expect(errors).toBeDefined();

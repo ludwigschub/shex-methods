@@ -34,6 +34,7 @@ function clean() {
 }
 
 describe(".create()", () => {
+  jest.setTimeout(8000)
   beforeAll(async () => {
     const client = new SolidNodeClient();
     await client.login(config);
@@ -53,10 +54,10 @@ describe(".create()", () => {
         created: new Date(),
       },
     });
-    const { from, data, errors } = shape;
+    const { doc, data, errors } = shape;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
-    expect(from).toBe(testDoc);
+    expect(doc).toBe(testDoc);
     expect(data.title).toBe("Test Chat");
     expect(data.author).toBe(webId);
     expect(data.type).toBe(ChatShapeType.LongChat);
@@ -73,10 +74,10 @@ describe(".create()", () => {
         created: now,
       },
     });
-    const { from, data, errors } = message;
+    const { doc, data, errors } = message;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
-    expect(from).toBe(testDoc);
+    expect(doc).toBe(testDoc);
     expect(data.content).toBe("Test Message");
     expect(data.maker).toBe(webId);
   });
@@ -92,8 +93,8 @@ describe(".create()", () => {
         created: new Date(),
       },
     });
-    const { from, data, errors } = shape;
-    expect(from).toBe(testDoc);
+    const { doc, data, errors } = shape;
+    expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors.join("\n")).toContain("exceeds cardinality");
@@ -110,8 +111,8 @@ describe(".create()", () => {
         created: new Date(),
       },
     });
-    const { from, data, errors } = shape;
-    expect(from).toBe(testDoc);
+    const { doc, data, errors } = shape;
+    expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
@@ -130,8 +131,8 @@ describe(".create()", () => {
         created: new Literal(new Date().toISOString()),
       },
     });
-    const { from, data, errors } = shape;
-    expect(from).toBe(testDoc);
+    const { doc, data, errors } = shape;
+    expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors.join("\n")).toContain("mismatched datatype");
@@ -148,8 +149,8 @@ describe(".create()", () => {
         created: new Date(),
       },
     });
-    const { from, data, errors } = shape;
-    expect(from).toBe(testDoc);
+    const { doc, data, errors } = shape;
+    expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([

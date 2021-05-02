@@ -20,7 +20,7 @@ export async function create<ShapeType, CreateShapeArgs>(
     const { id } = data as { id: string };
     if (shape.store.any(new NamedNode(id), null, null, new NamedNode(doc))) {
       resolve({
-        from: doc,
+        doc,
         errors: ["Node with id: " + id + " already exists in doc:" + doc],
       });
     }
@@ -30,16 +30,16 @@ export async function create<ShapeType, CreateShapeArgs>(
       CreateShapeArgs
     >(shape, id, [], ins);
     if (!newShape || errors) {
-      resolve({ from: doc, errors });
+      resolve({ doc, errors });
     } else {
       if (!doesntExist) {
         await updateExisting(shape.updater, [], ins)
-          .catch((err) => resolve({ from: doc, errors: [err] }))
-          .then(() => resolve({ from: doc, data: newShape[0], errors }));
+          .catch((err) => resolve({ doc, errors: [err] }))
+          .then(() => resolve({ doc, data: newShape[0], errors }));
       } else {
         await createNew(shape.updater, doc, ins)
-          .catch((err) => resolve({ from: doc, errors: [err] }))
-          .then(() => resolve({ from: doc, data: newShape[0], errors }));
+          .catch((err) => resolve({ doc, errors: [err] }))
+          .then(() => resolve({ doc, data: newShape[0], errors }));
       }
     }
   });
