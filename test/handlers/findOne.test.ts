@@ -1,10 +1,11 @@
 import { solidProfile } from '../resources/shex';
 import { SolidNodeClient } from 'solid-node-client';
+import { podUrl } from '../common';
 const config = require('dotenv').config();
 
 describe('.findOne()', () => {
-  jest.setTimeout(8000)
-  const testIri = 'https://lalatest.solidcommunity.net/profile/card#me';
+  jest.setTimeout(8000);
+  const testIri = podUrl('/profile/card#me');
   beforeAll(async () => {
     const client = new SolidNodeClient();
     await client.login(config);
@@ -13,7 +14,7 @@ describe('.findOne()', () => {
       doc: testIri,
       data: {
         id: testIri,
-        name: "Tester",
+        name: 'Tester',
         hasEmail: { value: new URL('mailto:lalasepp@lalatest.com') },
       },
     });
@@ -32,14 +33,16 @@ describe('.findOne()', () => {
   });
 
   it('should return an error for finding the wrong shape', async () => {
-    const testIri = 'https://lalatest.solidcommunity.net/profile';
+    const testIri = podUrl('/profile');
     const { errors } = await solidProfile.findOne({
       doc: testIri,
       where: { id: testIri },
     });
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
-      'validating https://lalatest.solidcommunity.net/profile as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:',
+      `validating ${podUrl(
+        '/profile',
+      )} as https://shaperepo.com/schemas/solidProfile#SolidProfileShape:`,
       '    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
       '  OR',
       '  Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type',

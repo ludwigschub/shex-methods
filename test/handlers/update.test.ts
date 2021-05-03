@@ -2,6 +2,7 @@
 import { Literal } from 'rdflib';
 import { SolidNodeClient } from 'solid-node-client';
 import { Shape } from '../../lib';
+import { podUrl } from '../common';
 import {
   chatShex,
   ChatShape,
@@ -16,10 +17,10 @@ const config = require('dotenv').config();
 
 describe('.update()', () => {
   jest.setTimeout(8000);
-  const webId = 'https://lalatest.solidcommunity.net/profile/card#me';
-  const testDoc = 'https://lalatest.solidcommunity.net/test/updateChat';
+  const webId = podUrl('/profile/card#me');
+  const testDoc = podUrl('/test/updateChat');
   const firstChatIri =
-    'https://lalatest.solidcommunity.net/test/updateChat#first';
+    podUrl('/test/updateChat#first');
   const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
     id: 'https://shaperepo.com/schemas/longChat#ChatShape',
     shape: chatShex,

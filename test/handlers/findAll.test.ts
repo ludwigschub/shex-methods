@@ -1,4 +1,5 @@
 import { Shape } from '../../lib';
+import { podUrl } from '../common';
 import {
   ResourceShape,
   ldpShapesShex,
@@ -11,8 +12,8 @@ import {
 
 describe('.findAll()', () => {
   it('can find all instances of shape', async () => {
-    const testDoc = 'https://lalatest.solidcommunity.net/profile/';
-    const testIri = 'https://lalatest.solidcommunity.net/profile/card';
+    const testDoc = podUrl('/profile/');
+    const testIri = podUrl('/profile/card');
     const shape = await resource.findAll({
       doc: testDoc,
     });
@@ -25,9 +26,9 @@ describe('.findAll()', () => {
   });
 
   it('can find all instances of shape in multiple files', async () => {
-    const testDoc1 = 'https://lalatest.solidcommunity.net/profile/';
-    const testDoc2 = 'https://lalatest.solidcommunity.net/public/';
-    const testIri = 'https://lalatest.solidcommunity.net/profile/';
+    const testDoc1 = podUrl('/profile/');
+    const testDoc2 = podUrl('/public/');
+    const testIri = podUrl('/profile/');
     const shape = await basicContainer.findAll({
       doc: [testDoc1, testDoc2],
     });
@@ -42,7 +43,7 @@ describe('.findAll()', () => {
   });
 
   it('should return an error for finding the wrong shape', async () => {
-    const testDoc = 'https://lalatest.solidcommunity.net/profile/';
+    const testDoc = podUrl('/profile/');
     const resource = new Shape<ResourceShape, ResourceShapeCreateArgs>({
       id: 'http://www.w3.org/ns/ldp#ResourceShape',
       shape: ldpShapesShex,
@@ -55,7 +56,9 @@ describe('.findAll()', () => {
     });
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
-      'validating https://lalatest.solidcommunity.net/profile/ as http://www.w3.org/ns/ldp#ResourceShape:',
+      `validating ${podUrl(
+        '/profile/',
+      )} as http://www.w3.org/ns/ldp#ResourceShape:`,
       '    Missing property: http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
     ]);
   });
