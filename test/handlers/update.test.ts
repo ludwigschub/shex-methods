@@ -1,7 +1,7 @@
 // import { Literal } from "rdflib";
-import { Literal } from "rdflib";
-import { SolidNodeClient } from "solid-node-client";
-import { Shape } from "../../lib";
+import { Literal } from 'rdflib';
+import { SolidNodeClient } from 'solid-node-client';
+import { Shape } from '../../lib';
 import {
   chatShex,
   ChatShape,
@@ -10,20 +10,20 @@ import {
   chat,
   solidProfile,
   EmailShape,
-  ChatShapeCreateArgs,
-} from "../resources/shex";
-const config = require("dotenv").config();
+  ChatShapeCreateArgs
+} from '../resources/shex';
+const config = require('dotenv').config();
 
-describe(".update()", () => {
-  jest.setTimeout(8000)
-  const webId = "https://lalatest.solidcommunity.net/profile/card#me";
-  const testDoc = "https://lalatest.solidcommunity.net/test/updateChat";
+describe('.update()', () => {
+  jest.setTimeout(8000);
+  const webId = 'https://lalatest.solidcommunity.net/profile/card#me';
+  const testDoc = 'https://lalatest.solidcommunity.net/test/updateChat';
   const firstChatIri =
-    "https://lalatest.solidcommunity.net/test/updateChat#first";
+    'https://lalatest.solidcommunity.net/test/updateChat#first';
   const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
-    id: "https://shaperepo.com/schemas/longChat#ChatShape",
+    id: 'https://shaperepo.com/schemas/longChat#ChatShape',
     shape: chatShex,
-    context: { ...ChatShapeContext, title: "rdf:title" },
+    context: { ...ChatShapeContext, title: 'rdf:title' },
     type: ChatShapeType,
   });
 
@@ -44,7 +44,7 @@ describe(".update()", () => {
       data: {
         id: firstChatIri,
         type: ChatShapeType.LongChat,
-        title: "Test Chat",
+        title: 'Test Chat',
         author: new URL(webId),
         created: new Date(),
       },
@@ -58,19 +58,18 @@ describe(".update()", () => {
       data: {
         id: webId,
         hasEmail: {
-          id: (profile.data.hasEmail as EmailShape)?.id,
-          value: "mailto:lalasepp@lalasepp.com",
+          id: (profile.data.hasEmail as EmailShape).id,
+          value: new URL('mailto:lalasepp@lalasepp.com'),
         },
       },
     });
     const { data, errors } = shape;
-    console.debug(data, errors)
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
   });
 
-  it.only("can update one shape", async () => {
-    const testString = "Updated Chat";
+  it('can update one shape', async () => {
+    const testString = 'Updated Chat';
     const shape = await chat.update({
       doc: testDoc,
       data: {
@@ -87,7 +86,7 @@ describe(".update()", () => {
     expect(data.type).toBe(ChatShapeType.LongChat);
   });
 
-  it("deletes values if they are empty", async () => {
+  it('deletes values if they are empty', async () => {
     const shape = await solidProfile.update({
       doc: webId,
       data: {
@@ -102,15 +101,15 @@ describe(".update()", () => {
     expect(data.hasEmail).toBeUndefined();
   });
 
-  it("can update a shape with a nested value", async () => {
-    const testString = "mailto:lalasepp@gmail.com";
+  it('can update a shape with a nested value', async () => {
+    const testString = 'mailto:lalasepp@gmail.com';
     const shape = await solidProfile.update({
       doc: webId,
       data: {
         id: webId,
         hasEmail: {
-          value: testString,
-        } as EmailShape,
+          value: new URL(testString),
+        },
       },
     });
     const { doc, data, errors } = shape;
@@ -125,14 +124,14 @@ describe(".update()", () => {
       doc: testDoc,
       data: {
         id: firstChatIri,
-        title: (["Test Chat", "UpdatedChat"] as unknown) as string,
+        title: (['Test Chat', 'UpdatedChat'] as unknown) as string,
       },
     });
     const { doc, data, errors } = shape;
     expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
-    expect(errors.join("\n")).toContain("exceeds cardinality");
+    expect(errors.join('\n')).toContain('exceeds cardinality');
   });
 
   it("throws error when data doesn't match shex", async () => {
@@ -147,7 +146,7 @@ describe(".update()", () => {
     expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
-    expect(errors.join("\n")).toContain("mismatched datatype");
+    expect(errors.join('\n')).toContain('mismatched datatype');
   });
 
   it("throws error when transforming and context doesn't match", async () => {
@@ -155,7 +154,7 @@ describe(".update()", () => {
       doc: testDoc,
       data: {
         id: firstChatIri,
-        title: "Test Chat",
+        title: 'Test Chat',
       },
     });
     const { doc, data, errors } = shape;

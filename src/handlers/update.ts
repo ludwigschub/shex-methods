@@ -24,9 +24,7 @@ export function update<ShapeType, CreateShapeArgs>(
       resolve({ doc, errors });
     } else {
       await updateExisting(shape.updater, del, ins)
-        .catch((err) =>
-          resolve({ doc, errors: [...(errors ?? []), err] }),
-        )
+        .catch((err) => resolve({ doc, errors: [...(errors ?? []), err] }))
         .then(() => {
           resolve({ doc, data: newShapes[0], errors });
         });

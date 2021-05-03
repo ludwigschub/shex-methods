@@ -224,7 +224,7 @@ export function absoluteNodeToStatements(
       const targetNode = safeNode(doc, id);
       let newOrExistingNode =
         store.any(targetNode, new NamedNode(prop), null) ??
-        safeNode(doc, (value as { id: string }).id);
+        safeNode(doc, (value as { id: string })?.id);
       if (newOrExistingNode.termType === 'BlankNode') {
         newOrExistingNode = safeNode(doc, (value as { id: string }).id);
       }
