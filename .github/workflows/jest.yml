@@ -19,7 +19,7 @@ jobs:
       - name: Install modules
         run: yarn
       - name: Build
-        run: yarn build
+        run: yarn build && yarn generate:shex
       - name: Run tests
         run: yarn test
         env: # Or as an environment variable
