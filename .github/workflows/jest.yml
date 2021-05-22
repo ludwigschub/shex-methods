@@ -22,3 +22,8 @@ jobs:
         run: yarn build
       - name: Run tests
         run: yarn test
+        env: # Or as an environment variable
+          SOLID_IDP: ${{ secrets.SOLID_IDP }}
+          SOLID_USERNAME: ${{ secrets.SOLID_USER }}
+          SOLID_PASSWORD: ${{ secrets.SOLID_PASSWORD }}
+
