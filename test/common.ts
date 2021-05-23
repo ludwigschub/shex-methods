@@ -1,6 +1,6 @@
 import * as pathUtils from 'path';
 
-const config = require('dotenv').config().parsed;
+const config = require('dotenv').config().parsed ?? {};
 
 export const podUrl = (path: string) => {
   const host = new URL(config.SOLID_IDP ?? process.env.SOLID_IDP).host;
