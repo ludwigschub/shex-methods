@@ -8819,10 +8819,10 @@ shellwords@^0.1.1:
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
-shex-codegen@0.3.8:
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/shex-codegen/-/shex-codegen-0.3.8.tgz#ff4c8410b4406cc8d53642102858f9c74cb8f996"
-  integrity sha512-L80jgVZGfOl0VvqTOKKrYVFbb3j5i9B8o67HSh5F4hUqUcKBYXdKooY2vxQzGxVvtiZvio0BfcZ+nZEXX+0RzQ==
+shex-codegen@0.3.14:
+  version "0.3.14"
+  resolved "https://registry.yarnpkg.com/shex-codegen/-/shex-codegen-0.3.14.tgz#5064f829858759b3a40ed936838134a4eeb63969"
+  integrity sha512-7GCuxiXg1OXrK14IO5LG7Elx6bzXhkK9/Y3CdnYuP+Urm3YAmEU0pgL1cCuqWMwSGMOkms5E1SOaqTpxvpQaDQ==
   dependencies:
     "@shexjs/core" "^1.0.0-alpha.10"
     "@shexjs/parser" "^1.0.0-alpha.10"
@@ -8833,6 +8833,7 @@ shex-codegen@0.3.8:
     fs-extra "^9.1.0"
     js-yaml "^4.0.0"
     nodemon "^2.0.7"
+    own-namespace "^0.4.5"
     prettier "^2.2.1"
 
 shex-test@^2.0.0:
