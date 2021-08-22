@@ -4,12 +4,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to GitHub Pages
-      # You may pin to the exact commit or the version.
-        uses: crazy-max/ghaction-github-pages@v2.5.0
-        with:
-          # Build directory to deploy
-          build_dir: "./build"
+      - name: Deploy with gh-pages
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          yarn deploy -u "github-actions-bot <support+actions@github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
   push: 
