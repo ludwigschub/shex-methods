@@ -63,4 +63,7 @@ Planned features:
 
 Run `yarn` to install dependencies and generate shape types.
 
+### Configure Environment
+Make a copy of example.env and add the required environment variables for running tests that involve authentication/authorization.
+
 Use `yarn develop` to start the build process in watch mode and run the tests on file changes.
