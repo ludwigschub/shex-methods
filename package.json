@@ -11,6 +11,7 @@
     "develop": "nodemon --watch src --watch test",
     "generate:docs": "typedoc ./src/index.ts --name shex-methods --readme ./README.md",
     "predeploy": "yarn generate:docs",
+    "prepare": "yarn husky install",
     "deploy": "gh-pages -d docs",
     "test": "jest",
     "lint": "eslint --ext .ts src/"
