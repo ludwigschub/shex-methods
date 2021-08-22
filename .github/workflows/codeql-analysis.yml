@@ -14,13 +14,6 @@ name: "CodeQL"
 on:
   push:
     branches: [ master ]
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.txt'
-      - '**/*.shex'
-      - '**/*.yml'
-  schedule:
-    - cron: '0 12 * * *'
 
 jobs:
   analyze:
