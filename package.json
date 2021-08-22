@@ -56,7 +56,7 @@
     "nodemon": "2.0.7",
     "prettier": "2.3.0",
     "rimraf": "3.0.2",
-    "shex-codegen": "0.3.14",
+    "shex-codegen": "0.3.25",
     "solid-node-client": "2.0.4",
     "ts-node": "9.1.1",
     "typedoc": "0.21.6",

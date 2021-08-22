@@ -4676,6 +4676,15 @@ fresh@0.5.2, fresh@^0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=
 
+fs-extra@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-10.0.0.tgz#9ff61b655dde53fb34a82df84bb214ce802e17c1"
+  integrity sha512-C5owb14u9eJwizKGdchcDUQeFtlSHHthBk8pbX9Vc1PFZrLombudjDnNns88aYslCyF6IY5SUw3Roz6xShcEIQ==
+  dependencies:
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
+
 fs-extra@^8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-8.1.0.tgz#49d43c45a88cd9677668cb7be1b46efdb8d2e1c0"
@@ -4685,7 +4694,7 @@ fs-extra@^8.1.0:
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
-fs-extra@^9.0.1, fs-extra@^9.1.0:
+fs-extra@^9.0.1:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.1.0.tgz#5954460c764a8da2094ba3554bf839e6b9a7c86d"
   integrity sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==
@@ -8909,10 +8918,10 @@ shellwords@^0.1.1:
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
-shex-codegen@0.3.14:
-  version "0.3.14"
-  resolved "https://registry.yarnpkg.com/shex-codegen/-/shex-codegen-0.3.14.tgz#5064f829858759b3a40ed936838134a4eeb63969"
-  integrity sha512-7GCuxiXg1OXrK14IO5LG7Elx6bzXhkK9/Y3CdnYuP+Urm3YAmEU0pgL1cCuqWMwSGMOkms5E1SOaqTpxvpQaDQ==
+shex-codegen@0.3.25:
+  version "0.3.25"
+  resolved "https://registry.yarnpkg.com/shex-codegen/-/shex-codegen-0.3.25.tgz#2b4d8f13ec8f1fca7b398e8e4bc7baf951ff5581"
+  integrity sha512-C8Q/lJ1Juq4QA+8N9RLnShZvjqlbA3ewwIZMrfJaoRanQ8sl0Rume6hmenNpmBTaSnaXzhnxjCSKOjAcwDRgfg==
   dependencies:
     "@shexjs/core" "^1.0.0-alpha.10"
     "@shexjs/parser" "^1.0.0-alpha.10"
@@ -8920,7 +8929,7 @@ shex-codegen@0.3.14:
     camelcase "^6.2.0"
     chalk "^4.1.0"
     findit "^2.0.0"
-    fs-extra "^9.1.0"
+    fs-extra "^10.0.0"
     js-yaml "^4.0.0"
     nodemon "^2.0.7"
     own-namespace "^0.4.5"
