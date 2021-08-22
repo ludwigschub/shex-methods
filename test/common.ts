@@ -1,5 +1,5 @@
-import * as pathUtils from 'path';
+import molid from 'molid';
 
 export const podUrl = (path: string): string => {
-  return pathUtils.join(`http://localhost:3333`, path);
+  return molid.uri(path);
 };

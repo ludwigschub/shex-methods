@@ -17,7 +17,8 @@ const config = require('dotenv').config();
 
 const webId = podUrl('profile/card#me');
 const testDoc = podUrl('test/createChat');
-const chatIri = podUrl('test/createChat#');
+const chatIri = podUrl('test/createChat#this');
+console.debug(chatIri);
 const firstChatIri = chatIri + 'first';
 const secondChatIri = chatIri + 'second';
 const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
