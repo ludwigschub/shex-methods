@@ -1,5 +1,6 @@
 import { Literal } from 'rdflib';
 import { SolidNodeClient } from 'solid-node-client';
+
 import { Shape } from '../../lib';
 import { podUrl } from '../common';
 import {
@@ -11,6 +12,7 @@ import {
   chatMessage,
   ChatShapeCreateArgs,
 } from '../resources/shex';
+
 const config = require('dotenv').config();
 
 const webId = podUrl('profile/card#me');
@@ -89,7 +91,7 @@ describe('.create()', () => {
       data: {
         id: secondChatIri,
         type: ChatShapeType.LongChat,
-        title: (['Test Chat', 'UpdatedChat'] as unknown) as string,
+        title: ['Test Chat', 'UpdatedChat'] as unknown as string,
         author: new URL(webId),
         created: new Date(),
       },
