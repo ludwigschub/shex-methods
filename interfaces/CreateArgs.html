@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>FindUniqueArgs | shex-methods</title>
+	<title>CreateArgs | shex-methods</title>
 	<meta name="description" content="Documentation for shex-methods">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,21 +55,29 @@
 					<a href="../modules.html">shex-methods</a>
 				</li>
 				<li>
-					<a href="finduniqueargs.html">FindUniqueArgs</a>
+					<a href="CreateArgs.html">CreateArgs</a>
 				</li>
 			</ul>
-			<h1>Interface FindUniqueArgs</h1>
+			<h1>Interface CreateArgs&lt;CreateShapeArgs&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>CreateShapeArgs</h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">FindUniqueArgs</span>
+						<span class="target">CreateArgs</span>
 					</li>
 				</ul>
 			</section>
@@ -80,8 +88,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="finduniqueargs.html#doc" class="tsd-kind-icon">doc</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="finduniqueargs.html#where" class="tsd-kind-icon">where</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="CreateArgs.html#data" class="tsd-kind-icon">data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="CreateArgs.html#doc" class="tsd-kind-icon">doc</a></li>
 							</ul>
 						</section>
 					</div>
@@ -90,32 +98,24 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="doc" class="tsd-anchor"></a>
-					<h3>doc</h3>
-					<div class="tsd-signature tsd-kind-icon">doc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="data" class="tsd-anchor"></a>
+					<h3>data</h3>
+					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CreateShapeArgs</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ludwigschubi/shex-methods/blob/06a8422/src/handlers/findOne.ts#L5">handlers/findOne.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/ludwigschubi/shex-methods/blob/066f815/src/handlers/create.ts#L8">handlers/create.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="where" class="tsd-anchor"></a>
-					<h3>where</h3>
-					<div class="tsd-signature tsd-kind-icon">where<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
+					<a name="doc" class="tsd-anchor"></a>
+					<h3>doc</h3>
+					<div class="tsd-signature tsd-kind-icon">doc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ludwigschubi/shex-methods/blob/06a8422/src/handlers/findOne.ts#L6">handlers/findOne.ts:6</a></li>
+							<li>Defined in <a href="https://github.com/ludwigschubi/shex-methods/blob/066f815/src/handlers/create.ts#L7">handlers/create.ts:7</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
-							</li>
-						</ul>
-					</div>
 				</section>
 			</section>
 		</div>
@@ -130,133 +130,133 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="../classes/shape.html" class="tsd-kind-icon">Shape</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="createargs.html" class="tsd-kind-icon">Create<wbr>Args</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="deleteargs.html" class="tsd-kind-icon">Delete<wbr>Args</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="findallargs.html" class="tsd-kind-icon">Find<wbr>All<wbr>Args</a>
+						<a href="../classes/Shape.html" class="tsd-kind-icon">Shape</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface">
-						<a href="finduniqueargs.html" class="tsd-kind-icon">Find<wbr>Unique<wbr>Args</a>
+					<li class="current tsd-kind-interface tsd-has-type-parameter">
+						<a href="CreateArgs.html" class="tsd-kind-icon">Create<wbr>Args</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="finduniqueargs.html#doc" class="tsd-kind-icon">doc</a>
+								<a href="CreateArgs.html#data" class="tsd-kind-icon">data</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="finduniqueargs.html#where" class="tsd-kind-icon">where</a>
+								<a href="CreateArgs.html#doc" class="tsd-kind-icon">doc</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="queryresult.html" class="tsd-kind-icon">Query<wbr>Result</a>
-					</li>
 					<li class=" tsd-kind-interface">
-						<a href="shapeconstructorargs.html" class="tsd-kind-icon">Shape<wbr>Constructor<wbr>Args</a>
+						<a href="DeleteArgs.html" class="tsd-kind-icon">Delete<wbr>Args</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="updateargs.html" class="tsd-kind-icon">Update<wbr>Args</a>
+						<a href="FindAllArgs.html" class="tsd-kind-icon">Find<wbr>All<wbr>Args</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="validateargs.html" class="tsd-kind-icon">Validate<wbr>Args</a>
+						<a href="FindUniqueArgs.html" class="tsd-kind-icon">Find<wbr>Unique<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="QueryResult.html" class="tsd-kind-icon">Query<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="validated.html" class="tsd-kind-icon">Validated</a>
+						<a href="ShapeConstructorArgs.html" class="tsd-kind-icon">Shape<wbr>Constructor<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="UpdateArgs.html" class="tsd-kind-icon">Update<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="ValidateArgs.html" class="tsd-kind-icon">Validate<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="Validated.html" class="tsd-kind-icon">Validated</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="../modules.html#deletequeryresult" class="tsd-kind-icon">Delete<wbr>Query<wbr>Result</a>
+						<a href="../modules.html#DeleteQueryResult" class="tsd-kind-icon">Delete<wbr>Query<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="../modules.html#validationresult" class="tsd-kind-icon">Validation<wbr>Result</a>
+						<a href="../modules.html#ValidationResult" class="tsd-kind-icon">Validation<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#absolutenodetostatements" class="tsd-kind-icon">absolute<wbr>Node<wbr>ToStatements</a>
+						<a href="../modules.html#absoluteNodeToStatements" class="tsd-kind-icon">absolute<wbr>Node<wbr>ToStatements</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#absolutetonormalized" class="tsd-kind-icon">absolute<wbr>ToNormalized</a>
+						<a href="../modules.html#absoluteToNormalized" class="tsd-kind-icon">absolute<wbr>ToNormalized</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#absolutetonormalizedvalue" class="tsd-kind-icon">absolute<wbr>ToNormalized<wbr>Value</a>
+						<a href="../modules.html#absoluteToNormalizedValue" class="tsd-kind-icon">absolute<wbr>ToNormalized<wbr>Value</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#absolutetostatements" class="tsd-kind-icon">absolute<wbr>ToStatements</a>
+						<a href="../modules.html#absoluteToStatements" class="tsd-kind-icon">absolute<wbr>ToStatements</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="../modules.html#create" class="tsd-kind-icon">create</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="../modules.html#datatostatements" class="tsd-kind-icon">data<wbr>ToStatements</a>
+						<a href="../modules.html#dataToStatements" class="tsd-kind-icon">data<wbr>ToStatements</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="../modules.html#deleteshape" class="tsd-kind-icon">delete<wbr>Shape</a>
+						<a href="../modules.html#deleteShape" class="tsd-kind-icon">delete<wbr>Shape</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#deletestatementsforemptyvalues" class="tsd-kind-icon">delete<wbr>Statements<wbr>For<wbr>Empty<wbr>Values</a>
+						<a href="../modules.html#deleteStatementsForEmptyValues" class="tsd-kind-icon">delete<wbr>Statements<wbr>For<wbr>Empty<wbr>Values</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="../modules.html#findall" class="tsd-kind-icon">find<wbr>All</a>
+						<a href="../modules.html#findAll" class="tsd-kind-icon">find<wbr>All</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="../modules.html#findone" class="tsd-kind-icon">find<wbr>One</a>
+						<a href="../modules.html#findOne" class="tsd-kind-icon">find<wbr>One</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#getallstatementsofnode" class="tsd-kind-icon">get<wbr>All<wbr>Statements<wbr>OfNode</a>
+						<a href="../modules.html#getAllStatementsOfNode" class="tsd-kind-icon">get<wbr>All<wbr>Statements<wbr>OfNode</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#getnameofpath" class="tsd-kind-icon">get<wbr>Name<wbr>OfPath</a>
+						<a href="../modules.html#getNameOfPath" class="tsd-kind-icon">get<wbr>Name<wbr>OfPath</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#getnormalizedkeyfromcontextorschemaprefixes" class="tsd-kind-icon">get<wbr>Normalized<wbr>Key<wbr>From<wbr>Context<wbr>OrSchema<wbr>Prefixes</a>
+						<a href="../modules.html#getNormalizedKeyFromContextOrSchemaPrefixes" class="tsd-kind-icon">get<wbr>Normalized<wbr>Key<wbr>From<wbr>Context<wbr>OrSchema<wbr>Prefixes</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#isemptyvalue" class="tsd-kind-icon">is<wbr>Empty<wbr>Value</a>
+						<a href="../modules.html#isEmptyValue" class="tsd-kind-icon">is<wbr>Empty<wbr>Value</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#normalizeurl" class="tsd-kind-icon">normalize<wbr>Url</a>
+						<a href="../modules.html#normalizeUrl" class="tsd-kind-icon">normalize<wbr>Url</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#normalizedtoabsolute" class="tsd-kind-icon">normalized<wbr>ToAbsolute</a>
+						<a href="../modules.html#normalizedToAbsolute" class="tsd-kind-icon">normalized<wbr>ToAbsolute</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#normalizedtoabsolutenode" class="tsd-kind-icon">normalized<wbr>ToAbsolute<wbr>Node</a>
+						<a href="../modules.html#normalizedToAbsoluteNode" class="tsd-kind-icon">normalized<wbr>ToAbsolute<wbr>Node</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#oldfromnewstatements" class="tsd-kind-icon">old<wbr>From<wbr>New<wbr>Statements</a>
+						<a href="../modules.html#oldFromNewStatements" class="tsd-kind-icon">old<wbr>From<wbr>New<wbr>Statements</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#safenode" class="tsd-kind-icon">safe<wbr>Node</a>
+						<a href="../modules.html#safeNode" class="tsd-kind-icon">safe<wbr>Node</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="../modules.html#update" class="tsd-kind-icon">update</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#updateexisting" class="tsd-kind-icon">update<wbr>Existing</a>
+						<a href="../modules.html#updateExisting" class="tsd-kind-icon">update<wbr>Existing</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="../modules.html#validatenewshape" class="tsd-kind-icon">validate<wbr>New<wbr>Shape</a>
+						<a href="../modules.html#validateNewShape" class="tsd-kind-icon">validate<wbr>New<wbr>Shape</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="../modules.html#validateshapes" class="tsd-kind-icon">validate<wbr>Shapes</a>
+						<a href="../modules.html#validateShapes" class="tsd-kind-icon">validate<wbr>Shapes</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="../modules.html#validateshex" class="tsd-kind-icon">validate<wbr>Shex</a>
+						<a href="../modules.html#validateShex" class="tsd-kind-icon">validate<wbr>Shex</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#validatedtoabsolute" class="tsd-kind-icon">validated<wbr>ToAbsolute</a>
+						<a href="../modules.html#validatedToAbsolute" class="tsd-kind-icon">validated<wbr>ToAbsolute</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#validatedtoabsolutevalue" class="tsd-kind-icon">validated<wbr>ToAbsolute<wbr>Value</a>
+						<a href="../modules.html#validatedToAbsoluteValue" class="tsd-kind-icon">validated<wbr>ToAbsolute<wbr>Value</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#validatedtodataresult" class="tsd-kind-icon">validated<wbr>ToData<wbr>Result</a>
+						<a href="../modules.html#validatedToDataResult" class="tsd-kind-icon">validated<wbr>ToData<wbr>Result</a>
 					</li>
 				</ul>
 			</nav>
