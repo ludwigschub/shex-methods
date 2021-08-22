@@ -1,6 +1,7 @@
 // import { Literal } from "rdflib";
 import { Literal } from 'rdflib';
 import { SolidNodeClient } from 'solid-node-client';
+
 import { Shape } from '../../lib';
 import { podUrl } from '../common';
 import {
@@ -11,16 +12,16 @@ import {
   chat,
   solidProfile,
   EmailShape,
-  ChatShapeCreateArgs
+  ChatShapeCreateArgs,
 } from '../resources/shex';
+
 const config = require('dotenv').config();
 
 describe('.update()', () => {
   jest.setTimeout(8000);
   const webId = podUrl('/profile/card#me');
   const testDoc = podUrl('/test/updateChat');
-  const firstChatIri =
-    podUrl('/test/updateChat#first');
+  const firstChatIri = podUrl('/test/updateChat#first');
   const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
     id: 'https://shaperepo.com/schemas/longChat#ChatShape',
     shape: chatShex,
@@ -125,7 +126,7 @@ describe('.update()', () => {
       doc: testDoc,
       data: {
         id: firstChatIri,
-        title: (['Test Chat', 'UpdatedChat'] as unknown) as string,
+        title: ['Test Chat', 'UpdatedChat'] as unknown as string,
       },
     });
     const { doc, data, errors } = shape;
@@ -165,7 +166,7 @@ describe('.update()', () => {
     expect(errors).toStrictEqual([
       `Could not find field name for: http://purl.org/dc/elements/1.1/title
 Context objects used: 
-[{\"type\":\"rdf:type\",\"author\":\"purl:author\",\"created\":\"purl:created\",\"title\":\"rdf:title\",\"participation\":\"flow:participation\",\"sharedPreferences\":\"ui:sharedPreferences\",\"message\":\"flow:message\"}]`,
+[{"type":"rdf:type","author":"purl:author","created":"purl:created","title":"rdf:title","participation":"flow:participation","sharedPreferences":"ui:sharedPreferences","message":"flow:message"}]`,
     ]);
   });
 });
