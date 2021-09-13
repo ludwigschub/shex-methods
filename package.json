@@ -39,7 +39,7 @@
     "url": "https://github.com/ludwigschubi/shex-methods/issues"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.15.0",
+    "@babel/preset-env": "7.15.6",
     "@babel/preset-typescript": "7.15.0",
     "@types/jest": "26.0.24",
     "@types/shexj": "2.1.1",
