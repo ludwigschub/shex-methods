@@ -53,7 +53,7 @@
     "husky": "7.0.2",
     "jest": "26.6.3",
     "lint-staged": "11.1.2",
-    "nodemon": "2.0.12",
+    "nodemon": "2.0.13",
     "prettier": "2.4.1",
     "rimraf": "3.0.2",
     "shex-codegen": "0.3.27",
