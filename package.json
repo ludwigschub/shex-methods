@@ -59,7 +59,7 @@
     "shex-codegen": "0.3.27",
     "solid-node-client": "2.0.4",
     "ts-node": "9.1.1",
-    "typedoc": "0.22.4",
+    "typedoc": "0.22.5",
     "typescript": "4.3.5"
   },
   "dependencies": {
