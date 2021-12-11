@@ -1,11 +1,5 @@
-import {
-  BlankNode,
-  IndexedFormula,
-  NamedNode,
-  Serializer,
-  Statement,
-  Node,
-} from 'rdflib';
+import { BlankNode, IndexedFormula, NamedNode, Statement, Node } from 'rdflib';
+import createSerializer from 'rdflib/lib/serializer';
 import { Schema } from 'shexj';
 import { Parser, Store } from 'n3';
 import { Quad_Object, Quad_Subject } from 'rdflib/lib/tf-types';
@@ -99,7 +93,7 @@ export async function validateShex<ShapeType>({
     return [allShapes, allErrors];
   } catch (err) {
     console.debug(err);
-    return [undefined, [err.message]];
+    return [undefined, [(err as { message: string }).message]];
   }
 }
 
@@ -118,18 +112,19 @@ function mapValidationResult(shapeId: string, validated: any) {
 }
 
 function getNodesFromStore(store: IndexedFormula, type?: string[]) {
-  return (type
-    ? type.reduce((allNodes: NamedNode[], type: string) => {
-        return [
-          ...allNodes,
-          ...store.each(
-            null,
-            new NamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            new NamedNode(type),
-          ),
-        ] as NamedNode[];
-      }, [])
-    : store.each(null)
+  return (
+    type
+      ? type.reduce((allNodes: NamedNode[], type: string) => {
+          return [
+            ...allNodes,
+            ...store.each(
+              null,
+              new NamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+              new NamedNode(type),
+            ),
+          ] as NamedNode[];
+        }, [])
+      : store.each(null)
   ).filter((node: Node, index: number, allNodes: Node[]) => {
     return (
       allNodes.findIndex(
@@ -169,7 +164,7 @@ function createN3DB(
   types?: string[],
 ): Promise<[any, string[]]> {
   const foundNodes = getNodesFromStore(store, types);
-  const turtle = new Serializer(store).statementsToN3(store.statements);
+  const turtle = createSerializer(store).statementsToN3(store.statements);
   const n3Store = new Store();
   return new Promise((resolve, reject) => {
     new Parser({

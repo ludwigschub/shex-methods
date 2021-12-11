@@ -4,33 +4,22 @@ PREFIX schem: <http://schema.org/>
 PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX acl: <http://www.w3.org/ns/auth/acl#>
 
 srs:SolidProfileShape EXTRA a {
   a [ schem:Person ]
     // rdfs:comment  "Defines the node as a Person" ;
   a [ foaf:Person ]
     // rdfs:comment  "Defines the node as a Person" ;
-  vcard:hasEmail @srs:EmailShape *
-    // rdfs:comment  "The person's email." ;
+  acl:trustedApp @srs:TrustedAppShape *
+    // rdfs:comment  "A list of app origins that are trusted by this user" ;
   foaf:name xsd:string ?
     // rdfs:comment  "An alternate way to define a person's name" ;
 }
 
-srs:EmailShape EXTRA a {
-  a [
-    vcard:Dom
-    vcard:Home
-    vcard:ISDN
-    vcard:Internet
-    vcard:Intl
-    vcard:Label
-    vcard:Parcel
-    vcard:Postal
-    vcard:Pref
-    vcard:Work
-    vcard:X400
-  ] ?
-    // rdfs:comment  "The type of email." ;
-  vcard:value IRI
-    // rdfs:comment  "The value of an email as a mailto link (Example <mailto:jane@example.com>)" ;
+srs:TrustedAppShape {
+  acl:mode [acl:Append acl:Control acl:Read acl:Write] +
+    // rdfs:comment  "The level of access provided to this origin" ;
+  acl:origin IRI
+    // rdfs:comment "The app origin the user trusts"
 }

@@ -7,6 +7,7 @@ import {
   Statement,
   Variable,
 } from 'rdflib';
+import { v4 as uuid } from 'uuid';
 import { Quad_Subject } from 'rdflib/lib/tf-types';
 
 import { Shape } from '../shape';
@@ -136,14 +137,14 @@ export function safeNode(
     return id as Variable;
   if (!id) {
     const newNode = new URL(doc);
-    newNode.hash = 'id' + new Number(new Date());
+    newNode.hash = 'id' + uuid();
     return new NamedNode(newNode.toString());
   }
   try {
     subject = new NamedNode(id as string);
   } catch {
     const newNode = new URL(doc);
-    newNode.hash = 'id' + new Number(new Date());
+    newNode.hash = 'id' + uuid();
     subject = new NamedNode(newNode.toString());
   }
   return subject;
@@ -188,7 +189,15 @@ export function absoluteNodeToStatements(
       try {
         valueNode = new NamedNode(value as string);
       } catch {
-        valueNode = new Literal(value as string);
+        if (typeof value === 'string') {
+          valueNode = new Literal(value as string);
+        } else if (typeof value === 'number') {
+          if (String(value).indexOf('.') !== -1) {
+            valueNode = new Literal(String(value), null, xml('decimal'));
+          } else {
+            valueNode = new Literal(String(value), null, xml('integer'));
+          }
+        }
       }
     }
     return new Statement(
@@ -200,8 +209,22 @@ export function absoluteNodeToStatements(
   } else if (Array.isArray(value)) {
     return (value as Record<string, any>[]).reduce(
       (allStatements: Statement[], value) => {
-        const statements = absoluteToStatements(store, { id, ...value }, doc);
-        return [...allStatements, ...statements];
+        if (Object.keys(value).length > 1) {
+          const newNode = safeNode(doc, (value as { id: string }).id);
+          return [
+            ...allStatements,
+            new Statement(
+              new NamedNode(id),
+              new NamedNode(prop),
+              newNode as Variable,
+              new NamedNode(doc).doc(),
+            ),
+            ...absoluteToStatements(store, { ...value, id: newNode }, doc),
+          ];
+        } else {
+          const statements = absoluteToStatements(store, { id, ...value }, doc);
+          return [...allStatements, ...statements];
+        }
       },
       [],
     );
@@ -221,25 +244,15 @@ export function absoluteNodeToStatements(
         new NamedNode(doc).doc(),
       );
     } else {
-      const targetNode = safeNode(doc, id);
-      let newOrExistingNode =
-        store.any(targetNode, new NamedNode(prop), null) ??
-        safeNode(doc, (value as { id: string })?.id);
-      if (newOrExistingNode.termType === 'BlankNode') {
-        newOrExistingNode = safeNode(doc, (value as { id: string }).id);
-      }
+      const newNode = safeNode(doc, (value as { id: string })?.id);
       return [
         new Statement(
           new NamedNode(id),
           new NamedNode(prop),
-          newOrExistingNode as Variable,
+          newNode as Variable,
           new NamedNode(doc).doc(),
         ),
-        ...absoluteToStatements(
-          store,
-          { ...value, id: newOrExistingNode },
-          doc,
-        ),
+        ...absoluteToStatements(store, { ...value, id: newNode }, doc),
       ];
     }
   }
@@ -253,10 +266,20 @@ export function normalizedToAbsolute(
   let absoluteData: Record<string, any> = {};
   Object.keys(data).map((key) => {
     if (Array.isArray(data[key])) {
-      const absoluteNodes = data[key].map((value: any) =>
-        normalizedToAbsoluteNode(key, value, contexts, prefixes),
+      const absoluteNodes = data[key].map(
+        (value: any): string | Record<string, any | PrimitiveNodeType> => {
+          if (
+            typeof value === 'object' &&
+            !(value instanceof URL) &&
+            !(value instanceof Date) &&
+            !(value.termType || value.value)
+          ) {
+            return normalizedToAbsolute(value, contexts, prefixes);
+          }
+          return normalizedToAbsoluteNode(key, value, contexts, prefixes);
+        },
       );
-      const absoluteKey = Object.keys(absoluteNodes)[0];
+      const absoluteKey = getAbsoluteKey(key, prefixes, contexts);
       absoluteData = {
         ...absoluteData,
         [absoluteKey]: Object.values(absoluteNodes),
@@ -271,15 +294,11 @@ export function normalizedToAbsolute(
   return absoluteData;
 }
 
-export function normalizedToAbsoluteNode(
+function getAbsoluteKey(
   key: string,
-  nodeValue: Record<string, any> | string,
-  contexts: Record<string, string>[],
   prefixes: Record<string, string>,
-): Record<string, any | PrimitiveNodeType> {
-  if (key === 'id') {
-    return { id: nodeValue };
-  }
+  contexts: Record<string, string>[],
+): string {
   const contextKey = (contexts.find((context) => context[key]) ?? {})[key];
   if (!contextKey)
     throw new Error(
@@ -289,17 +308,19 @@ export function normalizedToAbsoluteNode(
         JSON.stringify(contexts),
     );
   const prefix = contextKey.split(':')[0];
-  const absoluteKey = prefixes[prefix] + key;
-  if (
-    typeof nodeValue === 'object' &&
-    !nodeValue.toISOString &&
-    !nodeValue.href &&
-    !(nodeValue?.termType && nodeValue.value)
-  ) {
-    return {
-      [absoluteKey]: normalizedToAbsolute(nodeValue, contexts, prefixes),
-    };
-  } else {
-    return { [absoluteKey]: nodeValue };
+  return prefixes[prefix] + key;
+}
+
+export function normalizedToAbsoluteNode(
+  key: string,
+  nodeValue: Record<string, any> | string,
+  contexts: Record<string, string>[],
+  prefixes: Record<string, string>,
+): Record<string, any | PrimitiveNodeType> {
+  if (key === 'id') {
+    return { id: nodeValue };
   }
+  const absoluteKey = getAbsoluteKey(key, prefixes, contexts);
+
+  return { [absoluteKey]: nodeValue };
 }

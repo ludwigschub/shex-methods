@@ -1,7 +1,11 @@
-import { IndexedFormula, NamedNode, Statement, UpdateManager } from "rdflib";
+import { IndexedFormula, NamedNode, Statement, UpdateManager } from 'rdflib';
 
-import { QueryResult, Shape } from "../shape";
-import { getAllStatementsOfNode, validateShex, ValidationResult } from "../validate";
+import { QueryResult, Shape } from '../shape';
+import {
+  getAllStatementsOfNode,
+  validateShex,
+  ValidationResult,
+} from '../validate';
 
 export interface CreateArgs<CreateShapeArgs> {
   doc: string;
@@ -10,10 +14,10 @@ export interface CreateArgs<CreateShapeArgs> {
 
 export async function create<ShapeType, CreateShapeArgs>(
   shape: Shape<ShapeType, CreateShapeArgs>,
-  { doc, data }: CreateArgs<CreateShapeArgs>
+  { doc, data }: CreateArgs<CreateShapeArgs>,
 ): Promise<QueryResult<ShapeType>> {
   return new Promise(async (resolve) => {
-    let doesntExist = "";
+    let doesntExist = '';
     await shape.fetcher
       .load(doc, { clearPreviousData: true })
       .catch((err) => err.status === 404 && (doesntExist = err));
@@ -21,7 +25,7 @@ export async function create<ShapeType, CreateShapeArgs>(
     if (shape.store.any(new NamedNode(id), null, null, new NamedNode(doc))) {
       resolve({
         doc,
-        errors: ["Node with id: " + id + " already exists in doc:" + doc],
+        errors: ['Node with id: ' + id + ' already exists in doc:' + doc],
       });
     }
     const [_, ins] = await shape.dataToStatements(data, doc);
@@ -49,14 +53,30 @@ export function validateNewShape<ShapeType, CreateShapeArgs>(
   shape: Shape<ShapeType, CreateShapeArgs>,
   node: string,
   del: Statement[],
-  ins: Statement[]
+  ins: Statement[],
 ): Promise<ValidationResult<ShapeType>> {
   const updatedStore = new IndexedFormula();
-  updatedStore.add(getAllStatementsOfNode(shape.store, new NamedNode(node)));
+  const changedNodes = [...del, ...ins].reduce((allNodes, st) => {
+    const changed: string[] = [];
+    if (allNodes.indexOf(st.subject.value) === -1) {
+      changed.push(st.subject.value);
+    }
+    if (
+      allNodes.indexOf(st.object.value) === -1 &&
+      st.object.termType === 'NamedNode'
+    ) {
+      changed.push(st.object.value);
+    }
+    return [...allNodes, ...changed];
+  }, [] as string[]);
+  changedNodes.forEach((node) => {
+    updatedStore.add(getAllStatementsOfNode(shape.store, new NamedNode(node)));
+  });
   updatedStore.remove(del);
   updatedStore.add(ins);
   const { schema, context, prefixes, childContexts, type, id: shapeId } = shape;
   return validateShex<ShapeType>({
+    ids: [node],
     schema,
     type,
     shapeId,
@@ -69,7 +89,7 @@ export function validateNewShape<ShapeType, CreateShapeArgs>(
 export function updateExisting(
   updater: UpdateManager,
   del: Statement[],
-  ins: Statement[]
+  ins: Statement[],
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     updater.update(del, ins, async (_uri, ok, error) => {
@@ -81,16 +101,16 @@ export function updateExisting(
 function createNew(
   updater: UpdateManager,
   doc: string,
-  ins: Statement[]
+  ins: Statement[],
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     updater.put(
       new NamedNode(doc),
       ins,
-      "text/turtle",
+      'text/turtle',
       async (_uri, ok, error) => {
         !ok ? reject(error) : resolve();
-      }
+      },
     );
   });
 }
