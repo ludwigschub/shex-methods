@@ -1,5 +1,4 @@
-// import { Literal } from "rdflib";
-import { Fetcher, Literal } from 'rdflib';
+import { Literal } from 'rdflib';
 
 import { Shape } from '../../lib';
 import { podUrl } from '../common';
@@ -13,50 +12,50 @@ import {
   ChatShapeCreateArgs,
   ModeType,
   TrustedAppShape,
+  SolidProfileShapeType,
 } from '../resources/shex';
 import setupTests from '../setupTests';
 
-const client = setupTests()
-solidProfile.fetcher = new Fetcher(solidProfile.store, {
-  fetch: client.fetch.bind(client),
+const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
+  id: 'https://shaperepo.com/schemas/longChat#ChatShape',
+  shape: chatShex,
+  context: { ...ChatShapeContext, title: 'rdf:title' },
+  type: ChatShapeType,
 });
+
+const client = setupTests();
+chat.fetcher._fetch = client.fetch.bind(client);
+solidProfile.fetcher._fetch = client.fetch.bind(client);
+badlyConfiguredChat.fetcher._fetch = client.fetch.bind(client);
 
 describe('.update()', () => {
   jest.setTimeout(8000);
-  const webId = podUrl('/profile/card#me');
-  const testDoc = podUrl('/test/updateChat');
-  const firstChatIri = podUrl('/test/updateChat#first');
-  const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
-    id: 'https://shaperepo.com/schemas/longChat#ChatShape',
-    shape: chatShex,
-    context: { ...ChatShapeContext, title: 'rdf:title' },
-    type: ChatShapeType,
-  });
+  const profileDoc = podUrl('/test/profile.ttl');
+  const profileIri = podUrl('/test/profile.ttl');
+  const testDoc = podUrl('/test/updateChat.ttl');
+  const firstChatIri = podUrl('/test/updateChat.ttl#first');
 
   beforeAll(async () => {
-    chat.fetcher._fetch = client.fetch.bind(client);
-    solidProfile.fetcher._fetch = client.fetch.bind(client);
-    badlyConfiguredChat.fetcher._fetch = client.fetch.bind(client);
-    await chat.delete({
-      doc: testDoc,
-      where: {
-        id: firstChatIri,
-      },
-    });
-    const shape = await chat.create({
+    const chatShape = await chat.create({
       doc: testDoc,
       data: {
         id: firstChatIri,
         type: ChatShapeType.LongChat,
         title: 'Test Chat',
-        author: new URL(webId),
+        author: new URL(profileIri),
         created: new Date(),
+        sharedPreferences: new URL(podUrl('/test/settings')),
       },
     });
-    await solidProfile.update({
-      doc: webId,
+    const profileShape = await solidProfile.create({
+      doc: profileDoc,
       data: {
-        id: webId,
+        id: profileIri,
+        type: [
+          SolidProfileShapeType.FoafPerson,
+          SolidProfileShapeType.SchemPerson,
+        ],
+        name: 'Lala',
         trustedApp: [
           {
             mode: [
@@ -70,9 +69,10 @@ describe('.update()', () => {
         ],
       },
     });
-    const { data, errors } = shape;
-    expect(errors).toBeUndefined();
-    expect(data).toBeDefined();
+    expect(chatShape.errors).toBeUndefined();
+    expect(chatShape.data).toBeDefined();
+    expect(profileShape.errors).toBeUndefined();
+    expect(profileShape.data).toBeDefined();
   });
 
   it('can update one shape', async () => {
@@ -89,39 +89,43 @@ describe('.update()', () => {
     expect(data).toBeDefined();
     expect(doc).toBe(testDoc);
     expect(data.title).toBe(testString);
-    expect(data.author).toBe(webId);
+    expect(data.author).toBe(profileIri);
     expect(data.type).toBe(ChatShapeType.LongChat);
   });
 
   it('deletes values if they are empty', async () => {
-    const shape = await solidProfile.update({
-      doc: webId,
+    const shape = await chat.update({
+      doc: testDoc,
       data: {
-        id: webId,
-        trustedApp: undefined,
+        id: firstChatIri,
+        sharedPreferences: undefined,
       },
     });
     const { doc, data, errors } = shape;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
-    expect(doc).toBe(webId);
-    expect(data.trustedApp).toBeUndefined();
+    expect(doc).toBe(testDoc);
+    expect(data.sharedPreferences).toBeUndefined();
   });
 
   it('can update a shape with a nested value', async () => {
-    const testString = 'https://lalatest.org';
+    const firstTestString = 'https://lalatest.org/';
+    const secondTestString = 'https://lalatester.org/';
     const shape = await solidProfile.update({
-      doc: webId,
+      doc: profileDoc,
       data: {
-        id: webId,
-        trustedApp: [{ mode: [ModeType.Read], origin: new URL(testString) }],
+        id: profileIri,
+        trustedApp: [
+          { mode: [ModeType.Read], origin: new URL(firstTestString) },
+          { mode: [ModeType.Read], origin: new URL(secondTestString) },
+        ],
       },
     });
     const { doc, data, errors } = shape;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
-    expect(doc).toBe(webId);
-    expect((data.trustedApp as TrustedAppShape)[0].origin).toBe(testString);
+    expect(doc).toBe(profileIri);
+    expect((data.trustedApp as TrustedAppShape)[0].origin).toBeDefined();
   });
 
   it("throws error when data doesn't match cardinality", async () => {

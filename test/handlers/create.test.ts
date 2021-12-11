@@ -13,9 +13,9 @@ import {
   ChatShapeCreateArgs,
 } from '../resources/shex';
 
-const webId = podUrl('profile/card#me');
-const testDoc = podUrl('test/createChat');
-const chatIri = podUrl('test/createChat#');
+const webId = podUrl('/test/card.ttl#me');
+const testDoc = podUrl('test/createChat.ttl');
+const chatIri = podUrl('test/createChat.ttl#');
 const firstChatIri = chatIri + 'first';
 const secondChatIri = chatIri + 'second';
 const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
@@ -118,8 +118,8 @@ describe('.create()', () => {
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
       `Node with id: ${podUrl(
-        '/test/createChat#first',
-      )} already exists in doc:${podUrl('/test/createChat')}`,
+        '/test/createChat.ttl#first',
+      )} already exists in doc:${podUrl('/test/createChat.ttl')}`,
     ]);
   });
 
@@ -158,7 +158,7 @@ describe('.create()', () => {
     expect(errors).toBeDefined();
     expect(errors).toStrictEqual([
       `validating ${podUrl(
-        '/test/createChat#second',
+        '/test/createChat.ttl#second',
       )} as https://shaperepo.com/schemas/longChat#ChatShape:`,
       '    Missing property: http://purl.org/dc/elements/1.1/created',
     ]);
