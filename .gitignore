@@ -3,3 +3,4 @@ lib
 test/resources/shex.ts
 .env
 .env.*
+testdata

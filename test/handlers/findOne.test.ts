@@ -1,24 +1,17 @@
+import { Fetcher } from 'rdflib';
+
 import { solidProfile } from '../resources/shex';
-import { SolidNodeClient } from 'solid-node-client';
 import { podUrl } from '../common';
-const config = require('dotenv').config();
+import setupTests from '../setupTests';
+
+const client = setupTests()
+solidProfile.fetcher = new Fetcher(solidProfile.store, {
+  fetch: client.fetch.bind(client),
+});
 
 describe('.findOne()', () => {
   jest.setTimeout(8000);
   const testIri = podUrl('/profile/card#me');
-  beforeAll(async () => {
-    const client = new SolidNodeClient();
-    await client.login(config);
-    solidProfile.fetcher._fetch = client.fetch.bind(client);
-    await solidProfile.update({
-      doc: testIri,
-      data: {
-        id: testIri,
-        name: 'Tester',
-        hasEmail: { value: new URL('mailto:lalasepp@lalatest.com') },
-      },
-    });
-  });
 
   it('can find one shape', async () => {
     const shape = await solidProfile.findOne({
@@ -27,9 +20,9 @@ describe('.findOne()', () => {
     });
     const { doc, data } = shape;
     expect(doc).toBe(testIri);
-    expect(data.name).toBe('Tester');
-    expect(data['foaf:name']).toBe('Tester');
-    expect(data.hasEmail['vcard:value']).toBe('mailto:lalasepp@lalatest.com');
+    expect(data.name).toBe('Local Solid User');
+    expect(data['foaf:name']).toBe('Local Solid User');
+    expect(data.trustedApp['acl:origin']).toBe('http://example.org');
   });
 
   it('should return an error for finding the wrong shape', async () => {

@@ -1,6 +1,5 @@
 // import { Literal } from "rdflib";
-import { Literal } from 'rdflib';
-import { SolidNodeClient } from 'solid-node-client';
+import { Fetcher, Literal } from 'rdflib';
 
 import { Shape } from '../../lib';
 import { podUrl } from '../common';
@@ -11,11 +10,16 @@ import {
   ChatShapeContext,
   chat,
   solidProfile,
-  EmailShape,
   ChatShapeCreateArgs,
+  ModeType,
+  TrustedAppShape,
 } from '../resources/shex';
+import setupTests from '../setupTests';
 
-const config = require('dotenv').config();
+const client = setupTests()
+solidProfile.fetcher = new Fetcher(solidProfile.store, {
+  fetch: client.fetch.bind(client),
+});
 
 describe('.update()', () => {
   jest.setTimeout(8000);
@@ -30,8 +34,6 @@ describe('.update()', () => {
   });
 
   beforeAll(async () => {
-    const client = new SolidNodeClient();
-    await client.login(config);
     chat.fetcher._fetch = client.fetch.bind(client);
     solidProfile.fetcher._fetch = client.fetch.bind(client);
     badlyConfiguredChat.fetcher._fetch = client.fetch.bind(client);
@@ -51,18 +53,21 @@ describe('.update()', () => {
         created: new Date(),
       },
     });
-    const profile = await solidProfile.findOne({
-      doc: webId,
-      where: { id: webId },
-    });
     await solidProfile.update({
       doc: webId,
       data: {
         id: webId,
-        hasEmail: {
-          id: (profile.data.hasEmail as EmailShape).id,
-          value: new URL('mailto:lalasepp@lalasepp.com'),
-        },
+        trustedApp: [
+          {
+            mode: [
+              ModeType.Append,
+              ModeType.Control,
+              ModeType.Read,
+              ModeType.Write,
+            ],
+            origin: new URL('http://example.org'),
+          },
+        ],
       },
     });
     const { data, errors } = shape;
@@ -93,32 +98,30 @@ describe('.update()', () => {
       doc: webId,
       data: {
         id: webId,
-        hasEmail: undefined,
+        trustedApp: undefined,
       },
     });
     const { doc, data, errors } = shape;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(webId);
-    expect(data.hasEmail).toBeUndefined();
+    expect(data.trustedApp).toBeUndefined();
   });
 
   it('can update a shape with a nested value', async () => {
-    const testString = 'mailto:lalasepp@gmail.com';
+    const testString = 'https://lalatest.org';
     const shape = await solidProfile.update({
       doc: webId,
       data: {
         id: webId,
-        hasEmail: {
-          value: new URL(testString),
-        },
+        trustedApp: [{ mode: [ModeType.Read], origin: new URL(testString) }],
       },
     });
     const { doc, data, errors } = shape;
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(webId);
-    expect((data.hasEmail as EmailShape).value).toBe(testString);
+    expect((data.trustedApp as TrustedAppShape)[0].origin).toBe(testString);
   });
 
   it("throws error when data doesn't match cardinality", async () => {
