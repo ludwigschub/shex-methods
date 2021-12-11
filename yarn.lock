@@ -7600,7 +7600,7 @@ solid-namespace@^0.5.1:
   resolved "https://registry.yarnpkg.com/solid-namespace/-/solid-namespace-0.5.2.tgz#b53c853da28b687c30f8d5cdd741d83da90ae06b"
   integrity sha512-pmsKt9rsAOIxnmlgPFgSmWcof8ngv2Q8sx80Qq0OUA05KEtZ3iW4EYM2Ww18aMfPQZK5RdC/4KejNsDUJGrQiw==
 
-solid-node-client@^2.1.0:
+solid-node-client@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/solid-node-client/-/solid-node-client-2.1.0.tgz#108227ceea24540e68397093e116807c66e5e485"
   integrity sha512-7Exj3032vWNBXNIE90+zxH02eTuFOlESM4dOnpJOQwSK3RBY0xZ/pzaPu/mLZi2pWm2dRcBp5IbWWyPH+7uD2w==
