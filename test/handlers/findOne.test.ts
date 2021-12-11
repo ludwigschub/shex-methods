@@ -22,7 +22,7 @@ describe('.findOne()', () => {
     expect(doc).toBe(testIri);
     expect(data.name).toBe('Local Solid User');
     expect(data['foaf:name']).toBe('Local Solid User');
-    expect(data.trustedApp['acl:origin']).toBe('http://example.org');
+    expect(data.trustedApp['acl:origin']).toBe('https://solid-node-client');
   });
 
   it('should return an error for finding the wrong shape', async () => {

@@ -1,3 +1,5 @@
+import { Fetcher } from 'rdflib';
+
 import { Shape } from '../../lib';
 import { podUrl } from '../common';
 import {
@@ -9,6 +11,16 @@ import {
   basicContainer,
   ResourceShapeCreateArgs,
 } from '../resources/shex';
+import setupTests from '../setupTests';
+
+const client = setupTests()
+resource.fetcher = new Fetcher(resource.store, {
+  fetch: client.fetch.bind(client),
+});
+basicContainer.fetcher = new Fetcher(basicContainer.store, {
+  fetch: client.fetch.bind(client),
+});
+
 
 describe('.findAll()', () => {
   it('can find all instances of shape', async () => {
@@ -18,8 +30,9 @@ describe('.findAll()', () => {
       doc: testDoc,
     });
     const { doc, data, errors } = shape;
-    const card = data[2] as ResourceShape;
     expect(errors).toBeUndefined();
+
+    const card = data[2] as ResourceShape;
     expect(doc).toBe(testDoc);
     expect(card.id).toBe(testIri);
     expect(card.type).toBe('http://www.w3.org/ns/ldp#Resource');
@@ -33,9 +46,10 @@ describe('.findAll()', () => {
       doc: [testDoc1, testDoc2],
     });
     const { doc, data, errors } = shape;
+    expect(errors).toBeUndefined();
+
     const profileFolder = data?.find((folder) => folder.id === testIri);
     const card = profileFolder?.contains[0];
-    expect(errors).toBeUndefined();
     expect(data.length).toBe(2);
     expect(doc).toStrictEqual([testDoc1, testDoc2]);
     expect(profileFolder.id).toBe(testIri);

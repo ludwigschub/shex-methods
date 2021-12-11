@@ -1,6 +1,6 @@
 import { Literal } from 'rdflib';
-import { SolidNodeClient } from 'solid-node-client';
 
+import setupTests from "../setupTests"
 import { Shape } from '../../lib';
 import { podUrl } from '../common';
 import {
@@ -12,8 +12,6 @@ import {
   chatMessage,
   ChatShapeCreateArgs,
 } from '../resources/shex';
-
-const config = require('dotenv').config();
 
 const webId = podUrl('profile/card#me');
 const testDoc = podUrl('test/createChat');
@@ -27,6 +25,10 @@ const badlyConfiguredChat = new Shape<ChatShape, ChatShapeCreateArgs>({
   type: ChatShapeType,
 });
 
+const client = setupTests();
+chat.fetcher._fetch = client.fetch.bind(client);
+chatMessage.fetcher._fetch = client.fetch.bind(client);
+
 function clean() {
   return chat.delete({
     doc: testDoc,
@@ -39,10 +41,6 @@ function clean() {
 describe('.create()', () => {
   jest.setTimeout(10000);
   beforeAll(async () => {
-    const client = new SolidNodeClient();
-    await client.login(config);
-    chat.fetcher._fetch = client.fetch.bind(client);
-    chatMessage.fetcher._fetch = client.fetch.bind(client);
     await clean();
   });
 
