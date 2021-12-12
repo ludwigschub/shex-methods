@@ -34,7 +34,7 @@ const newChat = await chat.create({
     title: "Test Chat",
     author: webId,
     created: new Date(),
-  } as ChatShape,
+  },
 });
 const { data, errors } = newChat;
 ```
