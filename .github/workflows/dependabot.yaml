@@ -3,7 +3,8 @@ on:
   pull_request:
 jobs:
   worker:
-    runs-on: ubuntu-latestif: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
     steps:
       - name: automerge
         uses: actions/github-script@0.2.0
@@ -20,4 +21,4 @@ jobs:
               repo: context.payload.repository.name,
               pull_number: context.payload.pull_request.number
             })
-          github-token: ${{github.token}}
+          github-token: ${{ github.token }}
