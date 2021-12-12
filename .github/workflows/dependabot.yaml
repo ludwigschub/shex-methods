@@ -1,5 +1,7 @@
-name: "Dependabot Automerge - Action"on:
-  pull_request:jobs:
+name: "Dependabot Automerge - Action"
+on:
+  pull_request:
+jobs:
   worker:
     runs-on: ubuntu-latestif: github.actor == 'dependabot[bot]'
     steps:
