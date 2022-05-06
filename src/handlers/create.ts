@@ -40,7 +40,7 @@ export async function create<ShapeType, CreateShapeArgs>(
       ShapeType,
       CreateShapeArgs
     >(shape, id, [], ins);
-    if (!newShape || errors) {
+    if (!newShape || (errors && !doesntExist)) {
       resolve({ doc, errors });
     } else {
       if (!doesntExist) {
