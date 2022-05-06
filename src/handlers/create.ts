@@ -17,26 +17,17 @@ export async function create<ShapeType, CreateShapeArgs>(
   { doc, data }: CreateArgs<CreateShapeArgs>,
 ): Promise<QueryResult<ShapeType>> {
   return new Promise(async (resolve) => {
-    let doesntExist = '';
+    let doesntExist = false;
+    console.debug(doc);
     await shape.fetcher
       .load(doc, { clearPreviousData: true })
-      .catch((err) => {
-        doesntExist = err;
+      .then((res) => {
+        if (res.status === 404) doesntExist = true;
       })
-      .then(async (res) => {
-        console.debug(res);
-        try {
-          const body = JSON.parse(
-            (res as unknown as { responseText: string }).responseText,
-          );
-          console.debug(body);
-          if (body?.error?.code === 404) {
-            doesntExist = body.error;
-          }
-        } catch {
-          doesntExist = '';
-        }
+      .catch(() => {
+        console.debug('Creating new shape...');
       });
+    console.debug('error was catched');
     const { id } = data as { id: string };
     if (shape.store.any(new NamedNode(id), null, null, new NamedNode(doc))) {
       resolve({
