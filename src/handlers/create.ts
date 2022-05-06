@@ -20,10 +20,16 @@ export async function create<ShapeType, CreateShapeArgs>(
     let doesntExist = '';
     await shape.fetcher
       .load(doc, { clearPreviousData: true })
-      .catch((err) => (doesntExist = err))
+      .catch((err) => {
+        doesntExist = err;
+      })
       .then(async (res) => {
+        console.debug(res);
         try {
-          const body = JSON.parse(res.responseText);
+          const body = JSON.parse(
+            (res as unknown as { responseText: string }).responseText,
+          );
+          console.debug(body);
           if (body?.error?.code === 404) {
             doesntExist = body.error;
           }
