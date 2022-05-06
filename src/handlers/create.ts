@@ -20,7 +20,17 @@ export async function create<ShapeType, CreateShapeArgs>(
     let doesntExist = '';
     await shape.fetcher
       .load(doc, { clearPreviousData: true })
-      .catch((err) => err.status === 404 && (doesntExist = err));
+      .catch((err) => (doesntExist = err))
+      .then(async (res) => {
+        try {
+          const body = JSON.parse(res.responseText);
+          if (body?.error?.code === 404) {
+            doesntExist = body.error;
+          }
+        } catch {
+          doesntExist = '';
+        }
+      });
     const { id } = data as { id: string };
     if (shape.store.any(new NamedNode(id), null, null, new NamedNode(doc))) {
       resolve({
