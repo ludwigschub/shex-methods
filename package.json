@@ -5,7 +5,6 @@
   "main": "lib/index.js",
   "homepage": "https://ludwigschubi.github.io/shex-methods/",
   "scripts": {
-    "postinstall": "yarn generate:shex && yarn build",
     "generate:shex": "shex-codegen generate",
     "build": "rimraf lib && tsc",
     "develop": "nodemon --watch src --watch test",
