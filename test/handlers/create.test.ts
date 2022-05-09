@@ -1,6 +1,6 @@
 import { Literal } from 'rdflib';
 
-import setupTests from "../setupTests"
+import setupTests from '../setupTests';
 import { Shape } from '../../lib';
 import { podUrl } from '../common';
 import {
@@ -14,6 +14,8 @@ import {
 } from '../resources/shex';
 
 const webId = podUrl('/test/card.ttl#me');
+const newDoc = podUrl('test/newChat.ttl');
+const newChatIri = newDoc + '#first';
 const testDoc = podUrl('test/createChat.ttl');
 const chatIri = podUrl('test/createChat.ttl#');
 const firstChatIri = chatIri + 'first';
@@ -59,6 +61,27 @@ describe('.create()', () => {
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(testDoc);
+    expect(data.title).toBe('Test Chat');
+    expect(data.author).toBe(webId);
+    expect(data.type).toBe(ChatShapeType.LongChat);
+  });
+
+  it('can create one shape in a new doc', async () => {
+    const shape = await chat.create({
+      doc: newDoc,
+      data: {
+        id: newChatIri,
+        type: ChatShapeType.LongChat,
+        title: 'Test Chat',
+        author: new URL(webId),
+        created: new Date(),
+      },
+    });
+    const { doc, data, errors } = shape;
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(doc).toBe(newDoc);
+    expect(data.id).toBe(newChatIri);
     expect(data.title).toBe('Test Chat');
     expect(data.author).toBe(webId);
     expect(data.type).toBe(ChatShapeType.LongChat);
