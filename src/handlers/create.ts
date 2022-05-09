@@ -26,9 +26,7 @@ export async function create<ShapeType, CreateShapeArgs>(
       .catch((err) => {
         if (err.status === 404) doesntExist = true;
         shape.store.removeDocument(new NamedNode(doc));
-        console.debug('Creating new document for shape...');
       });
-    console.debug('error was catched');
     const { id } = data as { id: string };
     if (shape.store.any(new NamedNode(id), null, null, new NamedNode(doc))) {
       resolve({
@@ -36,20 +34,11 @@ export async function create<ShapeType, CreateShapeArgs>(
         errors: ['Node with id: ' + id + ' already exists in doc:' + doc],
       });
     }
-    console.debug('Transform data into statements...');
     const [_, ins] = await shape.dataToStatements(data, doc);
-    console.debug('Validating new statements...');
     const [newShape, errors] = await validateNewShape<
       ShapeType,
       CreateShapeArgs
     >(shape, id, [], ins);
-    console.debug(
-      'Creating new statements...',
-      ins,
-      newShape,
-      errors,
-      doesntExist,
-    );
     if (!newShape || (errors && !doesntExist)) {
       resolve({ doc, errors });
     } else {
