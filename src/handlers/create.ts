@@ -18,7 +18,6 @@ export async function create<ShapeType, CreateShapeArgs>(
 ): Promise<QueryResult<ShapeType>> {
   return new Promise(async (resolve) => {
     let doesntExist = false;
-    console.debug(doc);
     await shape.fetcher
       .load(doc, { clearPreviousData: true })
       .then((res) => {
@@ -36,6 +35,7 @@ export async function create<ShapeType, CreateShapeArgs>(
       });
     }
     const [_, ins] = await shape.dataToStatements(data, doc);
+    console.debug(ins);
     const [newShape, errors] = await validateNewShape<
       ShapeType,
       CreateShapeArgs
