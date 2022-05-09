@@ -42,7 +42,13 @@ export async function create<ShapeType, CreateShapeArgs>(
       ShapeType,
       CreateShapeArgs
     >(shape, id, [], ins);
-    console.debug('Creating new statements...', ins, newShape, errors);
+    console.debug(
+      'Creating new statements...',
+      ins,
+      newShape,
+      errors,
+      doesntExist,
+    );
     if (!newShape || (errors && !doesntExist)) {
       resolve({ doc, errors });
     } else {
