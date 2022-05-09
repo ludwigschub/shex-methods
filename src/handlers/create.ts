@@ -24,7 +24,8 @@ export async function create<ShapeType, CreateShapeArgs>(
         if (res.status === 404) doesntExist = true;
       })
       .catch(() => {
-        console.debug('Creating new shape...');
+        shape.store.removeDocument(new NamedNode(doc));
+        console.debug('Creating new document for shape...');
       });
     console.debug('error was catched');
     const { id } = data as { id: string };
