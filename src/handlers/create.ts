@@ -18,15 +18,12 @@ export async function create<ShapeType, CreateShapeArgs>(
 ): Promise<QueryResult<ShapeType>> {
   return new Promise(async (resolve) => {
     let doesntExist = false;
-    await shape.fetcher
-      .load(doc, { clearPreviousData: true })
-      .then((res) => {
-        if (res.status === 404) doesntExist = true;
-      })
-      .catch(() => {
-        shape.store.removeDocument(new NamedNode(doc));
-        console.debug('Creating new document for shape...');
-      });
+    await shape.fetcher.load(doc, { clearPreviousData: true }).then((res) => {
+      if (res.status === 404) doesntExist = true;
+      console.debug(res, doesntExist);
+      shape.store.removeDocument(new NamedNode(doc));
+      console.debug('Creating new document for shape...');
+    });
     console.debug('error was catched');
     const { id } = data as { id: string };
     if (shape.store.any(new NamedNode(id), null, null, new NamedNode(doc))) {
