@@ -34,12 +34,14 @@ export async function create<ShapeType, CreateShapeArgs>(
         errors: ['Node with id: ' + id + ' already exists in doc:' + doc],
       });
     }
+    console.debug('Transform data into statements...');
     const [_, ins] = await shape.dataToStatements(data, doc);
-    console.debug(ins);
+    console.debug('Validating new statements...');
     const [newShape, errors] = await validateNewShape<
       ShapeType,
       CreateShapeArgs
     >(shape, id, [], ins);
+    console.debug('Creating new statements...');
     if (!newShape || (errors && !doesntExist)) {
       resolve({ doc, errors });
     } else {
