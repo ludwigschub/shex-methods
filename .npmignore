@@ -1,5 +1,6 @@
 docs
 test
 .github
+.husky
 .env
 .env.*
