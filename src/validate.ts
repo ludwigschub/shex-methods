@@ -1,4 +1,11 @@
-import { BlankNode, IndexedFormula, NamedNode, Statement, Node } from 'rdflib';
+import {
+  BlankNode,
+  IndexedFormula,
+  NamedNode,
+  Statement,
+  Node,
+  graph,
+} from 'rdflib';
 import createSerializer from 'rdflib/lib/serializer';
 import { Schema } from 'shexj';
 import { Parser, Store } from 'n3';
@@ -10,6 +17,7 @@ import { Shape } from './shape';
 const shex = require('shex');
 
 export interface ValidateArgs {
+  doc?: string | string[];
   schema: Schema;
   store: IndexedFormula;
   statements?: Statement[];
@@ -28,6 +36,7 @@ export type ValidationResult<ShapeType> = [
 export function validateShapes<ShapeType, CreateShapeArgs>(
   shape: Shape<ShapeType, CreateShapeArgs>,
   ids: string[] | undefined,
+  doc?: string | string[],
 ): Promise<ValidationResult<ShapeType>> {
   const {
     schema,
@@ -46,6 +55,7 @@ export function validateShapes<ShapeType, CreateShapeArgs>(
     shapeId,
     contexts: [context, ...childContexts],
     ids,
+    doc,
   });
 }
 
@@ -57,11 +67,30 @@ export async function validateShex<ShapeType>({
   shapeId,
   contexts,
   prefixes,
+  doc,
 }: ValidateArgs): Promise<ValidationResult<ShapeType>> {
   const validator = shex.Validator.construct(schema, {
     results: 'api',
   });
-  const [db, potentialShapes] = await createN3DB(store, type);
+  let n3db;
+  if (doc) {
+    const docExclusiveStore = graph();
+    if (Array.isArray(doc)) {
+      doc.map((d) => {
+        docExclusiveStore.addAll(
+          store.statementsMatching(null, null, null, new NamedNode(d)),
+        );
+      });
+    } else {
+      docExclusiveStore.addAll(
+        store.statementsMatching(null, null, null, new NamedNode(doc)),
+      );
+    }
+    n3db = await createN3DB(docExclusiveStore, type);
+  } else {
+    n3db = await createN3DB(store, type);
+  }
+  const [db, potentialShapes] = n3db;
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
   if (!ids && potentialShapes.length === 0) {
