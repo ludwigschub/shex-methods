@@ -1,4 +1,10 @@
-import { Fetcher, IndexedFormula, Statement, UpdateManager } from 'rdflib';
+import {
+  Fetcher,
+  Statement,
+  UpdateManager,
+  graph,
+  IndexedFormula,
+} from 'rdflib';
 import { Schema } from 'shexj';
 
 import { dataToStatements } from './transform/dataToRdf';
@@ -53,7 +59,7 @@ export class Shape<ShapeType, CreateShapeArgs> {
     this.type = type && Object.values(type);
     this.context = context;
     this.childContexts = childContexts ?? [];
-    this.store = new IndexedFormula();
+    this.store = graph();
     this.fetcher = new Fetcher(this.store);
     this.updater = new UpdateManager(this.store);
   }
