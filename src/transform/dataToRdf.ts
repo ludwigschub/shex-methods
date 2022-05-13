@@ -36,7 +36,9 @@ export function dataToStatements<ShapeType, CreateShapeArgs>(
     absoluteData,
     doc,
   );
+  console.debug(delEmptyValues, ins);
   const delOldValues = oldFromNewStatements(shape.store, ins);
+  console.debug(delOldValues, ins);
   const del = [...delOldValues, ...delEmptyValues];
   return [del, ins];
 }
