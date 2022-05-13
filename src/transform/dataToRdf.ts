@@ -26,11 +26,7 @@ export function dataToStatements<ShapeType, CreateShapeArgs>(
     [shape.context, ...shape.childContexts],
     shape.prefixes,
   );
-  const ins = absoluteToStatements(shape.store, absoluteData, doc).filter(
-    ({ subject, predicate, object, graph }) =>
-      shape.store.statementsMatching(subject, predicate, object, graph)
-        .length === 0,
-  );
+  const ins = absoluteToStatements(shape.store, absoluteData, doc);
   const delEmptyValues = deleteStatementsForEmptyValues(
     shape.store,
     absoluteData,
@@ -40,7 +36,14 @@ export function dataToStatements<ShapeType, CreateShapeArgs>(
   const delOldValues = oldFromNewStatements(shape.store, ins);
   console.debug(delOldValues, ins);
   const del = [...delOldValues, ...delEmptyValues];
-  return [del, ins];
+  return [
+    del,
+    ins.filter(
+      ({ subject, predicate, object, graph }) =>
+        shape.store.statementsMatching(subject, predicate, object, graph)
+          .length === 0,
+    ),
+  ];
 }
 
 export function deleteStatementsForEmptyValues(
