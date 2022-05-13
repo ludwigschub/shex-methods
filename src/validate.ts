@@ -165,6 +165,7 @@ function getNodesFromStore(store: IndexedFormula, type?: string[]) {
 
 export function getAllStatementsOfNode(
   store: IndexedFormula,
+  doc: string,
   node?: Node | NamedNode | BlankNode,
 ): Statement[] {
   if (!node) {
@@ -172,7 +173,7 @@ export function getAllStatementsOfNode(
   }
   return [
     ...store
-      .statementsMatching(node as Quad_Subject)
+      .statementsMatching(node as Quad_Subject, null, null, new NamedNode(doc))
       .reduce((allStatements, statement) => {
         if (
           statement.object.termType === 'BlankNode' ||
@@ -180,6 +181,7 @@ export function getAllStatementsOfNode(
         ) {
           const allObjectStatements = getAllStatementsOfNode(
             store,
+            doc,
             statement.object,
           );
           return [...allStatements, statement, ...allObjectStatements];
@@ -187,7 +189,12 @@ export function getAllStatementsOfNode(
           return [...allStatements, statement];
         }
       }, [] as Statement[]),
-    ...store.statementsMatching(null, null, node as Quad_Object),
+    ...store.statementsMatching(
+      null,
+      null,
+      node as Quad_Object,
+      new NamedNode(doc),
+    ),
   ];
 }
 

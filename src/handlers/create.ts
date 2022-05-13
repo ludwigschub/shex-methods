@@ -38,7 +38,7 @@ export async function create<ShapeType, CreateShapeArgs>(
     const [newShape, errors] = await validateNewShape<
       ShapeType,
       CreateShapeArgs
-    >(shape, id, [], ins);
+    >(shape, id, [], ins, doc);
     if (!newShape || (errors && !doesntExist)) {
       resolve({ doc, errors });
     } else {
@@ -60,6 +60,7 @@ export function validateNewShape<ShapeType, CreateShapeArgs>(
   node: string,
   del: Statement[],
   ins: Statement[],
+  doc: string,
 ): Promise<ValidationResult<ShapeType>> {
   const updatedStore = new IndexedFormula();
   const changedNodes = [...del, ...ins].reduce((allNodes, st) => {
@@ -76,7 +77,9 @@ export function validateNewShape<ShapeType, CreateShapeArgs>(
     return [...allNodes, ...changed];
   }, [] as string[]);
   changedNodes.forEach((node) => {
-    updatedStore.add(getAllStatementsOfNode(shape.store, new NamedNode(node)));
+    updatedStore.add(
+      getAllStatementsOfNode(shape.store, doc, new NamedNode(node)),
+    );
   });
   updatedStore.remove(del);
   updatedStore.add(ins);

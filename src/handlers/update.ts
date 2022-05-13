@@ -19,7 +19,7 @@ export function update<ShapeType, CreateShapeArgs>(
     const [newShapes, errors] = await validateNewShape<
       ShapeType,
       CreateShapeArgs
-    >(shape, data.id, del, ins);
+    >(shape, data.id, del, ins, doc);
     if (!newShapes || errors) {
       resolve({ doc, errors });
     } else {
