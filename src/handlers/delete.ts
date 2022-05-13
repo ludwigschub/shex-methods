@@ -7,7 +7,7 @@ export interface DeleteArgs {
   where: { id: string };
 }
 
-export type DeleteQueryResult<ShapeType> = Omit<QueryResult<ShapeType>, 'data'>
+export type DeleteQueryResult<ShapeType> = Omit<QueryResult<ShapeType>, 'data'>;
 
 export async function deleteShape<ShapeType, CreateShapeArgs>(
   shape: Shape<ShapeType, CreateShapeArgs>,
@@ -18,7 +18,12 @@ export async function deleteShape<ShapeType, CreateShapeArgs>(
       .load(doc)
       .catch((err) => resolve({ doc, errors: [err] }));
     const { id } = where as { id: string };
-    const statementsOfId = shape.store.statementsMatching(new NamedNode(id));
+    const statementsOfId = shape.store.statementsMatching(
+      new NamedNode(id),
+      null,
+      null,
+      new NamedNode(doc),
+    );
     if (statementsOfId.length === 0) {
       resolve({ doc });
     }

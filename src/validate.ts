@@ -165,8 +165,11 @@ function getNodesFromStore(store: IndexedFormula, type?: string[]) {
 
 export function getAllStatementsOfNode(
   store: IndexedFormula,
-  node: Node | NamedNode | BlankNode,
+  node?: Node | NamedNode | BlankNode,
 ): Statement[] {
+  if (!node) {
+    return [];
+  }
   return [
     ...store
       .statementsMatching(node as Quad_Subject)
