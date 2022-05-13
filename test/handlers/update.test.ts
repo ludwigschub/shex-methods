@@ -116,8 +116,14 @@ describe('.update()', () => {
       data: {
         id: profileIri,
         trustedApp: [
-          { mode: [ModeType.Read], origin: new URL(firstTestString) },
-          { mode: [ModeType.Read], origin: new URL(secondTestString) },
+          {
+            mode: [ModeType.Read, ModeType.Write],
+            origin: new URL(firstTestString),
+          },
+          {
+            mode: [ModeType.Read, ModeType.Write],
+            origin: new URL(secondTestString),
+          },
         ],
       },
     });
