@@ -209,7 +209,7 @@ function proxyGetHandler(
   contexts: Record<string, string>[],
   prefixes: Record<string, string>,
 ): Record<string, any> {
-  if (typeof target[key] === 'object') {
+  if (typeof target[key] === 'object' && !Array.isArray(target[key])) {
     return proxifyShape(target[key], contexts, prefixes);
   } else {
     return target[key];
