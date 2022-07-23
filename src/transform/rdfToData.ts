@@ -183,21 +183,25 @@ function proxifyShape(
   prefixes: Record<string, string>,
 ): Record<string, any> {
   return new Proxy(shape, {
-    get: (target, key: string) => {
-      const directValue = proxyGetHandler(target, key, contexts, prefixes);
-      if (directValue) return directValue;
-      const [prefix, normalizedKey] = key.split(':');
-      if (!normalizedKey || !prefix) return undefined;
-      if (contexts.find((context) => context[normalizedKey])) {
-        return proxyGetHandler(target, normalizedKey, contexts, prefixes);
+    get: (target, key: string | symbol) => {
+      if (typeof key =='string') {
+        const directValue = proxyGetHandler(target, key, contexts, prefixes);
+        if (directValue) return directValue;
+        const [prefix, normalizedKey] = key.split(':');
+        if (!normalizedKey || !prefix) return undefined;
+        if (contexts.find((context) => context[normalizedKey])) {
+          return proxyGetHandler(target, normalizedKey, contexts, prefixes);
+        } else {
+          const absoluteKey = prefixes[prefix] + normalizedKey;
+          const foundKey = getNormalizedKeyFromContextOrSchemaPrefixes(
+              absoluteKey,
+              contexts,
+              prefixes,
+          );
+          return proxyGetHandler(target, foundKey, contexts, prefixes);
+        }
       } else {
-        const absoluteKey = prefixes[prefix] + normalizedKey;
-        const foundKey = getNormalizedKeyFromContextOrSchemaPrefixes(
-          absoluteKey,
-          contexts,
-          prefixes,
-        );
-        return proxyGetHandler(target, foundKey, contexts, prefixes);
+        return '[object Object]';
       }
     },
   });
