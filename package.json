@@ -8,6 +8,7 @@
     "generate:shex": "shex-codegen generate",
     "build": "rimraf lib && tsc",
     "develop": "nodemon --watch src --watch test",
+    "preversion": "yarn test",
     "generate:docs": "typedoc ./src/index.ts --name shex-methods --readme ./README.md",
     "predeploy": "yarn generate:docs",
     "deploy": "gh-pages -d docs",

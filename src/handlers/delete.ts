@@ -15,7 +15,11 @@ export async function deleteShape<ShapeType, CreateShapeArgs>(
 ): Promise<DeleteQueryResult<ShapeType>> {
   return new Promise(async (resolve) => {
     await shape.fetcher
-      .load(doc, { force: true, clearPreviousData: true })
+      .load(doc, {
+        force: true,
+        clearPreviousData: true,
+        headers: new Headers({ Accept: 'text/turtle' }),
+      })
       .catch((err) => resolve({ doc, errors: [err] }));
     const { id } = where as { id: string };
     const statementsOfId = shape.store.statementsMatching(
