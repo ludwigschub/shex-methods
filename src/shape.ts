@@ -4,6 +4,7 @@ import {
   UpdateManager,
   graph,
   IndexedFormula,
+  AutoInitOptions,
 } from 'rdflib';
 import { Schema } from 'shexj';
 
@@ -73,14 +74,16 @@ export class Shape<ShapeType, CreateShapeArgs> {
   findOne(
     this: Shape<ShapeType, CreateShapeArgs>,
     args: FindUniqueArgs,
+    reqOps?: Partial<AutoInitOptions>,
   ): Promise<QueryResult<ShapeType>> {
-    return findOne<ShapeType, CreateShapeArgs>(this, args);
+    return findOne<ShapeType, CreateShapeArgs>(this, args, reqOps);
   }
   findAll(
     this: Shape<ShapeType, CreateShapeArgs>,
     args: FindAllArgs<ShapeType>,
+    reqOps?: Partial<AutoInitOptions>,
   ): Promise<QueryResult<ShapeType[]>> {
-    return findAll<ShapeType, CreateShapeArgs>(this, args);
+    return findAll<ShapeType, CreateShapeArgs>(this, args, reqOps);
   }
   create(
     this: Shape<ShapeType, CreateShapeArgs>,
