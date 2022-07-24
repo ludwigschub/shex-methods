@@ -15,7 +15,7 @@ export function update<ShapeType, CreateShapeArgs>(
     await shape.fetcher
       .load(doc, {
         clearPreviousData: true,
-        headers: new Headers({ Accept: 'text/turtle' }),
+        headers: new Headers({ accept: 'text/turtle' }),
       })
       .catch((err) => resolve({ doc, errors: [err] }));
     const [del, ins] = await shape.dataToStatements(data, doc);

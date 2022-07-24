@@ -21,7 +21,7 @@ export async function create<ShapeType, CreateShapeArgs>(
     await shape.fetcher
       .load(doc, {
         clearPreviousData: true,
-        headers: new Headers({ Accept: 'text/turtle' }),
+        headers: new Headers({ accept: 'text/turtle' }),
       })
       .then((res) => {
         if (res.status === 404) doesntExist = true;

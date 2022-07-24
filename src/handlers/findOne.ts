@@ -15,7 +15,7 @@ export async function findOne<ShapeType, CreateShapeArgs>(
 ): Promise<QueryResult<ShapeType>> {
   const { id } = where;
   await shape.fetcher.load(doc, {
-    headers: new Headers({ Accept: 'text/turtle' }),
+    headers: new Headers({ accept: 'text/turtle' }),
     ...(reqOptions ?? {})
   });
   const [data, errors] = await validateShapes<ShapeType, CreateShapeArgs>(

@@ -18,7 +18,7 @@ export async function deleteShape<ShapeType, CreateShapeArgs>(
       .load(doc, {
         force: true,
         clearPreviousData: true,
-        headers: new Headers({ Accept: 'text/turtle' }),
+        headers: new Headers({ accept: 'text/turtle' }),
       })
       .catch((err) => resolve({ doc, errors: [err] }));
     const { id } = where as { id: string };
