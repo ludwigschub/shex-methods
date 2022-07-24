@@ -1,4 +1,4 @@
-import { Literal } from 'rdflib';
+import { Literal } from '@collaboware/rdflib';
 
 import { Shape } from '../../lib';
 import { podUrl } from '../common';

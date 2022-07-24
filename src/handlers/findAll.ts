@@ -1,4 +1,4 @@
-import { AutoInitOptions } from 'rdflib';
+import { AutoInitOptions } from '@collaboware/rdflib';
 
 import { QueryResult, Shape } from '../shape';
 import { validateShapes } from '../validate';

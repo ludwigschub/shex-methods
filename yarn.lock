@@ -1080,10 +1080,10 @@
     "@babel/helper-validator-option" "^7.14.5"
     "@babel/plugin-transform-typescript" "^7.16.0"
 
-"@babel/runtime@^7.16.0":
-  version "7.17.9"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.9.tgz#d19fbf802d01a8cb6cf053a64e472d42c434ba72"
-  integrity sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==
+"@babel/runtime@^7.17.8":
+  version "7.18.9"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.9.tgz#b4fcfce55db3d2e5e080d2490f608a3b9f407f4a"
+  integrity sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -1170,6 +1170,19 @@
   dependencies:
     exec-sh "^0.3.2"
     minimist "^1.2.0"
+
+"@collaboware/rdflib@^2.2.20":
+  version "2.2.20"
+  resolved "https://registry.yarnpkg.com/@collaboware/rdflib/-/rdflib-2.2.20.tgz#853735e890ed2656f9a8ee9f89c4d0c8ec31d338"
+  integrity sha512-y4190Yv+Ct8wOOht5DwU/ldCvGqPC1+BDdvNE3rZ8KCMUVDGZz4FN+0WIe5BF1o7Bgb9orZTA9DiGARROaRh5g==
+  dependencies:
+    "@babel/runtime" "^7.17.8"
+    "@xmldom/xmldom" "^0.8.1"
+    async "^3.2.3"
+    cross-fetch "^3.1.5"
+    jsonld "^5.2.0"
+    n3 "^1.16.0"
+    solid-namespace "^0.5.2"
 
 "@cspotcode/source-map-consumer@0.8.0":
   version "0.8.0"
@@ -1841,6 +1854,11 @@
     "@typescript-eslint/types" "5.6.0"
     eslint-visitor-keys "^3.0.0"
 
+"@xmldom/xmldom@^0.8.1":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.8.2.tgz#b695ff674e8216efa632a3d36ad51ae9843380c0"
+  integrity sha512-+R0juSseERyoPvnBQ/cZih6bpF7IpCXlWbHRoCRzYzqpz6gWHOgf8o4MOEf6KBVuOyqU+gCNLkCWVIJAro8XyQ==
+
 abab@^2.0.3, abab@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.5.tgz#c0b678fb32d60fc1219c784d6a826fe385aeb79a"
@@ -2147,10 +2165,10 @@ async@^2.6.1:
   dependencies:
     lodash "^4.17.14"
 
-async@^3.2.2:
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/async/-/async-3.2.3.tgz#ac53dafd3f4720ee9e8a160628f18ea91df196c9"
-  integrity sha512-spZRyzKL5l5BZQrr/6m/SqFdBN0q3OCI0f9rjfBzCMBIP4p75P620rR3gTmaksNOhmzgdxcaxdNfMy6anrbM0g==
+async@^3.2.3:
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/async/-/async-3.2.4.tgz#2d22e00f8cddeb5fde5dd33522b56d1cf569a81c"
+  integrity sha512-iAB+JbDEGXhyIUavoDl9WP/Jj106Kz9DEn1DPgYw5ruDn0e3Wgi3sKFm55sASdGBNOQB8F59d9qQ7deqrHA8wQ==
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -2534,9 +2552,9 @@ camelcase@^6.0.0, camelcase@^6.2.0:
   integrity sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg==
 
 caniuse-lite@^1.0.30001208, caniuse-lite@^1.0.30001251, caniuse-lite@^1.0.30001271, caniuse-lite@^1.0.30001280:
-  version "1.0.30001286"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001286.tgz"
-  integrity sha512-zaEMRH6xg8ESMi2eQ3R4eZ5qw/hJiVsO/HlLwniIwErij0JDr9P+8V4dtx1l+kLq6j3yy8l8W4fst1lBnat5wQ==
+  version "1.0.30001369"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001369.tgz"
+  integrity sha512-OY1SBHaodJc4wflDIKnlkdqWzJZd1Ls/2zbVJHBSv3AT7vgOJ58yAhd2CN4d57l2kPJrgMb7P9+N1Mhy4tNSQA==
 
 canonicalize@^1.0.1:
   version "1.0.5"
@@ -3026,7 +3044,7 @@ cross-fetch@^3.0.5, cross-fetch@^3.0.6:
   dependencies:
     node-fetch "2.6.1"
 
-cross-fetch@^3.1.4:
+cross-fetch@^3.1.5:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
   integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
@@ -6169,7 +6187,7 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-n3@0.11.3, n3@^0.10.0, n3@^0.4.5, n3@^1.11.1:
+n3@0.11.3, n3@^0.10.0, n3@^0.4.5, n3@^1.16.0:
   version "0.11.3"
   resolved "https://registry.yarnpkg.com/n3/-/n3-0.11.3.tgz#8e587495240dd21408c2c3aae385ec1651a837f8"
   integrity sha512-Hk5GSXBeAZrYoqi+NeS/U0H47Hx0Lzj7K6nLWCZpC9E04iUwEwBcrlMb/5foAli7QF4newPNQQQGgM6IAxTxGg==
@@ -6972,19 +6990,6 @@ rdf-canonize@^3.0.0:
   dependencies:
     setimmediate "^1.0.5"
 
-rdflib@2.2.12:
-  version "2.2.12"
-  resolved "https://registry.yarnpkg.com/rdflib/-/rdflib-2.2.12.tgz#a8af2ce27b5b79a4ee6b688fab54493ddd158791"
-  integrity sha512-/iO1lsTTSQDbipkFhyNSP7lMfqcDm6/snK+0kKESw0MKQPha3cjwD0WuchvucV5FPRQ2XgpAN8PgrBOollEdSw==
-  dependencies:
-    "@babel/runtime" "^7.16.0"
-    async "^3.2.2"
-    cross-fetch "^3.1.4"
-    jsonld "^5.2.0"
-    n3 "^1.11.1"
-    solid-namespace "^0.5.1"
-    xmldom "^0.6.0"
-
 react-is@^17.0.1:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
@@ -7675,7 +7680,7 @@ solid-auth-fetcher@^1.5.3:
     url-parse "^1.4.7"
     uuid "^8.2.0"
 
-solid-namespace@^0.5.1:
+solid-namespace@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/solid-namespace/-/solid-namespace-0.5.2.tgz#b53c853da28b687c30f8d5cdd741d83da90ae06b"
   integrity sha512-pmsKt9rsAOIxnmlgPFgSmWcof8ngv2Q8sx80Qq0OUA05KEtZ3iW4EYM2Ww18aMfPQZK5RdC/4KejNsDUJGrQiw==
@@ -8781,11 +8786,6 @@ xmldom@^0.1.19:
   version "0.1.31"
   resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
   integrity sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==
-
-xmldom@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.6.0.tgz#43a96ecb8beece991cef382c08397d82d4d0c46f"
-  integrity sha512-iAcin401y58LckRZ0TkI4k0VSM1Qg0KGSc3i8rU+xrxe19A/BN1zHyVSJY7uoutVlaTSzYyk/v5AmkewAP7jtg==
 
 y18n@^4.0.0:
   version "4.0.3"

@@ -1,4 +1,4 @@
-import { NamedNode } from 'rdflib';
+import { NamedNode } from '@collaboware/rdflib';
 
 import { QueryResult, Shape } from '../shape';
 

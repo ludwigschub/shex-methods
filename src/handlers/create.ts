@@ -1,4 +1,4 @@
-import { IndexedFormula, NamedNode, Statement, UpdateManager } from 'rdflib';
+import { IndexedFormula, NamedNode, Statement, UpdateManager } from '@collaboware/rdflib';
 
 import { QueryResult, Shape } from '../shape';
 import {

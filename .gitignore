@@ -4,3 +4,4 @@ test/resources/shex.ts
 .env
 .env.*
 testdata
+yarn-error.log

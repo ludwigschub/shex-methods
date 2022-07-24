@@ -1,4 +1,4 @@
-import { Fetcher } from 'rdflib';
+import { Fetcher } from '@collaboware/rdflib';
 
 import { ModeType, solidProfile, SolidProfileShapeType } from '../resources/shex';
 import { podUrl } from '../common';

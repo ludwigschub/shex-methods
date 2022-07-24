@@ -5,11 +5,11 @@ import {
   Statement,
   Node,
   graph,
-} from 'rdflib';
-import createSerializer from 'rdflib/lib/serializer';
+} from '@collaboware/rdflib';
+import createSerializer from '@collaboware/rdflib/lib/serializer';
 import { Schema } from 'shexj';
 import { Parser, Store } from 'n3';
-import { Quad_Object, Quad_Subject } from 'rdflib/lib/tf-types';
+import { Quad_Object, Quad_Subject } from '@collaboware/rdflib/lib/tf-types';
 
 import { Validated, validatedToDataResult } from './transform/rdfToData';
 import { Shape } from './shape';
