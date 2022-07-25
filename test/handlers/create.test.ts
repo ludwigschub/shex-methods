@@ -1,4 +1,4 @@
-import { Literal } from '@collaboware/rdflib';
+import { Literal } from 'rdflib';
 
 import setupTests from '../setupTests';
 import { Shape } from '../../lib';

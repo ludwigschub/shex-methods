@@ -6,9 +6,9 @@ import {
   Namespace,
   Statement,
   Variable,
-} from '@collaboware/rdflib';
+} from 'rdflib';
 import { v4 as uuid } from 'uuid';
-import { Quad_Subject } from '@collaboware/rdflib/lib/tf-types';
+import { Quad_Subject } from 'rdflib/lib/tf-types';
 
 import { Shape } from '../shape';
 

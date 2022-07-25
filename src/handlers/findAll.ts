@@ -1,4 +1,4 @@
-import { AutoInitOptions } from '@collaboware/rdflib';
+import { AutoInitOptions } from 'rdflib';
 
 import { QueryResult, Shape } from '../shape';
 import { validateShapes } from '../validate';
@@ -15,7 +15,7 @@ export async function findAll<ShapeType, CreateShapeArgs>(
 ): Promise<QueryResult<ShapeType[]>> {
   const ids = where?.id;
   await shape.fetcher.load(doc, {
-    headers: new Headers({ accept: 'text/turtle' }),
+    headers: new Headers({ Accept: 'text/turtle' }),
     ...(reqOptions ?? {})
   });
   const [data, errors] = await validateShapes<ShapeType, CreateShapeArgs>(

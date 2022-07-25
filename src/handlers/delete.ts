@@ -1,4 +1,4 @@
-import { NamedNode } from '@collaboware/rdflib';
+import { NamedNode } from 'rdflib';
 
 import { QueryResult, Shape } from '../shape';
 
@@ -18,7 +18,7 @@ export async function deleteShape<ShapeType, CreateShapeArgs>(
       .load(doc, {
         force: true,
         clearPreviousData: true,
-        headers: new Headers({ accept: 'text/turtle' }),
+        headers: new Headers({ Accept: 'text/turtle' }),
       })
       .catch((err) => resolve({ doc, errors: [err] }));
     const { id } = where as { id: string };

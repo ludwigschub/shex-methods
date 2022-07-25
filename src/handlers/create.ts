@@ -1,4 +1,4 @@
-import { IndexedFormula, NamedNode, Statement, UpdateManager } from '@collaboware/rdflib';
+import { IndexedFormula, NamedNode, Statement, UpdateManager } from 'rdflib';
 
 import { QueryResult, Shape } from '../shape';
 import {
@@ -21,7 +21,7 @@ export async function create<ShapeType, CreateShapeArgs>(
     await shape.fetcher
       .load(doc, {
         clearPreviousData: true,
-        headers: new Headers({ accept: 'text/turtle' }),
+        headers: new Headers({ Accept: 'text/turtle' }),
       })
       .then((res) => {
         if (res.status === 404) doesntExist = true;

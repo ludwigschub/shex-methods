@@ -1,4 +1,4 @@
-import { Fetcher } from '@collaboware/rdflib';
+import { Fetcher } from 'rdflib';
 
 import { Shape } from '../../lib';
 import { podUrl } from '../common';

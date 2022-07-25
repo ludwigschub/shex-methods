@@ -5,7 +5,7 @@ import {
   graph,
   IndexedFormula,
   AutoInitOptions,
-} from '@collaboware/rdflib';
+} from 'rdflib';
 import { Schema } from 'shexj';
 
 import { dataToStatements } from './transform/dataToRdf';
