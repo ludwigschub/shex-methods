@@ -61,7 +61,7 @@ export class Shape<ShapeType, CreateShapeArgs> {
     this.context = context;
     this.childContexts = childContexts ?? [];
     this.store = graph();
-    this.fetcher = new Fetcher(this.store);
+    this.fetcher = new Fetcher(this.store, { withCredentials: false });
     this.updater = new UpdateManager(this.store);
   }
   dataToStatements(
