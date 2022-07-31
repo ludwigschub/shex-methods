@@ -8,13 +8,16 @@ import {
 } from 'rdflib';
 import createSerializer from 'rdflib/lib/serializer';
 import { Schema } from 'shexj';
+import * as ShExUtil from '@shexjs/util';
+import {
+  construct as ShExValidator,
+  ValidationResult as ShExValidationResult,
+} from '@shexjs/validator';
 import { Parser, Store } from 'n3';
 import { Quad_Object, Quad_Subject } from 'rdflib/lib/tf-types';
 
 import { Validated, validatedToDataResult } from './transform/rdfToData';
 import { Shape } from './shape';
-
-const shex = require('shex');
 
 export interface ValidateArgs {
   doc?: string | string[];
@@ -69,9 +72,6 @@ export async function validateShex<ShapeType>({
   prefixes,
   doc,
 }: ValidateArgs): Promise<ValidationResult<ShapeType>> {
-  const validator = shex.Validator.construct(schema, {
-    results: 'api',
-  });
   let n3db;
   if (doc) {
     const docExclusiveStore = graph();
@@ -91,6 +91,9 @@ export async function validateShex<ShapeType>({
     n3db = await createN3DB(store, type);
   }
   const [db, potentialShapes] = n3db;
+  const validator = ShExValidator(schema, db, {
+    results: 'api',
+  });
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
   if (!ids && potentialShapes.length === 0) {
@@ -98,14 +101,10 @@ export async function validateShex<ShapeType>({
   }
   try {
     const validated = validator.validate(
-      db,
       (ids ?? potentialShapes).map((id) => ({ node: id, shape: shapeId })),
     );
-    validated.forEach((validation: any) => {
-      const [foundShape, foundErrors] = mapValidationResult(
-        shapeId,
-        validation,
-      );
+    (validated as any[]).forEach((validation: ShExValidationResult) => {
+      const [foundShape, foundErrors] = mapValidationResult(validation);
       if (!foundErrors)
         allShapes = [
           ...(allShapes ?? []),
@@ -121,19 +120,18 @@ export async function validateShex<ShapeType>({
     });
     return [allShapes, allErrors];
   } catch (err) {
-    console.debug(err);
     return [undefined, [(err as { message: string }).message]];
   }
 }
 
-function mapValidationResult(shapeId: string, validated: any) {
+function mapValidationResult(validated: any) {
   const foundErrors =
     validated.status === 'nonconformant' &&
-    shex.Util.errsToSimple(validated.appinfo, validated.node, shapeId);
+    ShExUtil.errsToSimple(validated.appinfo);
   const foundShapes =
     validated.status === 'conformant' &&
     ({
-      validated: shex.Util.valToValues(validated.appinfo),
+      validated: ShExUtil.valToValues(validated.appinfo),
       baseUrl: validated.node,
       shapeUrl: validated.shape,
     } as Validated);
@@ -210,14 +208,14 @@ function createN3DB(
       baseIRI: null,
       blankNodePrefix: '',
       format: 'text/turtle',
-    }).parse(turtle as string, function (error: string, triple: any) {
+    }).parse(turtle as string, function (error: string, quad: any) {
       if (error) {
         reject(error);
-      } else if (triple) {
-        n3Store.addTriple(triple);
+      } else if (quad) {
+        n3Store.addQuad(quad);
       } else {
         resolve([
-          shex.Util.makeN3DB(n3Store),
+          ShExUtil.rdfjsDB(n3Store),
           foundNodes.map((node) => node.value),
         ]);
       }

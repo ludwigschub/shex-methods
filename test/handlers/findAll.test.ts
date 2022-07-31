@@ -1,16 +1,8 @@
 import { Fetcher } from 'rdflib';
 
-import { Shape } from '../../lib';
 import { podUrl } from '../common';
 import {
-  ResourceShape,
-  ldpShapesShex,
-  ResourceShapeContext,
-  ResourceShapeType,
-  resource,
-  basicContainer,
-  ResourceShapeCreateArgs,
-  BasicContainerShapeType,
+  basicContainer, BasicContainerShapeType, resource, ResourceShape, ResourceShapeType
 } from '../resources/shex';
 import setupTests from '../setupTests';
 
@@ -96,7 +88,7 @@ describe('.findAll()', () => {
     expect(doc).toBe(testDoc);
     expect(card.id).toBe(cardIri);
     expect(card.type).toBe('http://www.w3.org/ns/ldp#Resource');
-  });
+  }, 10000);
 
   it('can find all instances of shape in multiple files', async () => {
     const shape = await basicContainer.findAll({

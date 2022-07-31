@@ -161,7 +161,7 @@ describe('.update()', () => {
     expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
-    expect(errors.join('\n')).toContain('mismatched datatype');
+    expect(errors.join('\n')).toContain('Missing property');
   });
 
   it("throws error when transforming and context doesn't match", async () => {

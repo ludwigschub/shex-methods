@@ -7,6 +7,7 @@ import {
   AutoInitOptions,
 } from 'rdflib';
 import { Schema } from 'shexj';
+import { construct as ShExParser } from '@shexjs/parser';
 
 import { dataToStatements } from './transform/dataToRdf';
 import { create, CreateArgs } from './handlers/create';
@@ -14,8 +15,6 @@ import { findAll, FindAllArgs } from './handlers/findAll';
 import { findOne, FindUniqueArgs } from './handlers/findOne';
 import { update, UpdateArgs } from './handlers/update';
 import { DeleteArgs, DeleteQueryResult, deleteShape } from './handlers/delete';
-
-const shex = require('shex');
 
 export interface QueryResult<Type> {
   errors?: string[];
@@ -51,11 +50,11 @@ export class Shape<ShapeType, CreateShapeArgs> {
   }: ShapeConstructorArgs) {
     this.id = id;
     this.shape = shape;
-    this.schema = shex.Parser.construct(this.id).parse(this.shape);
+    this.schema = ShExParser(this.id, undefined, { index: true }).parse(this.shape);
     this.prefixes = {
       rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-      ...(this.schema as Schema & { prefixes: Record<string, string> })
-        .prefixes,
+      ...(this.schema as Schema & { _prefixes: Record<string, string> })
+        ._prefixes,
     };
     this.type = type && Object.values(type);
     this.context = context;

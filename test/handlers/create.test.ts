@@ -152,7 +152,7 @@ describe('.create()', () => {
       data: {
         id: secondChatIri,
         type: ChatShapeType.LongChat,
-        title: 'Test Chat',
+        title: 0,
         author: new URL(webId),
         created: new Literal(new Date().toISOString()),
       },
@@ -161,7 +161,7 @@ describe('.create()', () => {
     expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
-    expect(errors.join('\n')).toContain('mismatched datatype');
+    expect(errors.join('\n')).toContain('Missing property');
   });
 
   it("throws error when validating and context doesn't match", async () => {
