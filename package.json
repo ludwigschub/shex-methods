@@ -64,7 +64,7 @@
     "@shexjs/parser": "1.0.0-alpha.21",
     "@shexjs/util": "1.0.0-alpha.21",
     "@shexjs/validator": "1.0.0-alpha.21",
-    "camelcase": "^6.2.0",
+    "camelcase": "^7.0.0",
     "n3": "^1.16.2",
     "own-namespace": "^0.4.5",
     "rdflib": "2.2.12",
