@@ -16,6 +16,7 @@ export async function findAll<ShapeType, CreateShapeArgs>(
   const ids = where?.id;
   await shape.fetcher.load(doc, {
     headers: new Headers({ Accept: 'text/turtle' }),
+    credentials: "omit",
     ...(reqOptions ?? {})
   });
   const [data, errors] = await validateShapes<ShapeType, CreateShapeArgs>(
