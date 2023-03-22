@@ -1,24 +1,25 @@
-import {
-  BlankNode,
-  IndexedFormula,
-  NamedNode,
-  Statement,
-  Node,
-  graph,
-} from 'rdflib';
-import createSerializer from 'rdflib/lib/serializer';
-import { Schema } from 'shexj';
+import { InternalSchema } from '@shexjs/term';
 import * as ShExUtil from '@shexjs/util';
 import {
-  construct as ShExValidator,
-  ValidationResult as ShExValidationResult,
+  ShExJsResultMap as ShExValidationResult, ShExJsResultMapEntry, ShExValidator
 } from '@shexjs/validator';
-import { Parser, Store } from 'n3';
+import { Quad, Parser, Store } from 'n3';
+import { Term } from "rdf-js";
+import { NeighborhoodDb } from "@shexjs/neighborhood-api"
+import {
+  BlankNode, graph, IndexedFormula,
+  NamedNode, Node, Statement
+} from 'rdflib';
+import createSerializer from 'rdflib/lib/serializer';
 import { Quad_Object, Quad_Subject } from 'rdflib/lib/tf-types';
+import { Schema } from 'shexj';
+import { Failure, NodeTest, ShapeTest, SolutionList } from '@shexjs/term/shexv';
 
-import { Validated, validatedToDataResult } from './transform/rdfToData';
 import { Shape } from './shape';
+import { Validated, validatedToDataResult } from './transform/rdfToData';
 
+
+const { ctor: RdfJsDb } = require("@shexjs/neighborhood-rdfjs")
 export interface ValidateArgs {
   doc?: string | string[];
   schema: Schema;
@@ -91,21 +92,18 @@ export async function validateShex<ShapeType>({
     n3db = await createN3DB(store, type);
   }
   const [db, potentialShapes] = n3db;
-  const validator = ShExValidator(schema, db, {
-    results: 'api',
-  });
+  const validator = new ShExValidator(schema as InternalSchema, db, { coverage: { firstError: "eval-simple-1err", exhaustive: "" } });
   let allErrors: string[] | undefined = undefined;
   let allShapes: ShapeType[] | undefined = undefined;
   if (!ids && potentialShapes.length === 0) {
     return [undefined, ['No shapes found of type ' + shapeId]];
   }
   try {
-    const validated = validator.validate(
-      (ids ?? potentialShapes).map((id) => ({ node: id, shape: shapeId })),
-    );
-    (validated as any[]).forEach((validation: ShExValidationResult) => {
+    const validated =
+      (ids ?? potentialShapes).map((id) => (validator.validateNodeShapePair(new NamedNode(id) as Term, shapeId))) as ShapeTest[]
+    validated.forEach((validation) => {
       const [foundShape, foundErrors] = mapValidationResult(validation);
-      if (!foundErrors)
+      if (!foundErrors && foundShape)
         allShapes = [
           ...(allShapes ?? []),
           validatedToDataResult({
@@ -124,14 +122,14 @@ export async function validateShex<ShapeType>({
   }
 }
 
-function mapValidationResult(validated: any) {
+function mapValidationResult(validated: ShapeTest) {
   const foundErrors =
-    validated.status === 'nonconformant' &&
-    ShExUtil.errsToSimple(validated.appinfo);
+    !validated.solution &&
+    ShExUtil.errsToSimple(validated);
   const foundShapes =
-    validated.status === 'conformant' &&
+    validated.solution &&
     ({
-      validated: ShExUtil.valToValues(validated.appinfo),
+      validated: ShExUtil.valToValues(validated.solution),
       baseUrl: validated.node,
       shapeUrl: validated.shape,
     } as Validated);
@@ -142,15 +140,15 @@ function getNodesFromStore(store: IndexedFormula, type?: string[]) {
   return (
     type
       ? type.reduce((allNodes: NamedNode[], type: string) => {
-          return [
-            ...allNodes,
-            ...store.each(
-              null,
-              new NamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-              new NamedNode(type),
-            ),
-          ] as NamedNode[];
-        }, [])
+        return [
+          ...allNodes,
+          ...store.each(
+            null,
+            new NamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            new NamedNode(type),
+          ),
+        ] as NamedNode[];
+      }, [])
       : store.each(null)
   ).filter((node: Node, index: number, allNodes: Node[]) => {
     return (
@@ -199,23 +197,23 @@ export function getAllStatementsOfNode(
 function createN3DB(
   store: IndexedFormula,
   types?: string[],
-): Promise<[any, string[]]> {
+): Promise<[NeighborhoodDb, string[]]> {
   const foundNodes = getNodesFromStore(store, types);
   const turtle = createSerializer(store).statementsToN3(store.statements);
   const n3Store = new Store();
   return new Promise((resolve, reject) => {
     new Parser({
-      baseIRI: null,
+      baseIRI: undefined,
       blankNodePrefix: '',
       format: 'text/turtle',
-    }).parse(turtle as string, function (error: string, quad: any) {
+    }).parse(turtle as string, function (error: Error, quad: Quad) {
       if (error) {
-        reject(error);
+        reject(error.toString());
       } else if (quad) {
         n3Store.addQuad(quad);
       } else {
         resolve([
-          ShExUtil.rdfjsDB(n3Store),
+          RdfJsDb(n3Store),
           foundNodes.map((node) => node.value),
         ]);
       }

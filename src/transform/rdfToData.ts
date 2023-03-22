@@ -1,3 +1,4 @@
+
 import camelcase from 'camelcase';
 
 export interface Validated {

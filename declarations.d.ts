@@ -1,2 +1,2 @@
 declare module "shex";
-declare module "n3";
+declare module 'hierarchy-closure'

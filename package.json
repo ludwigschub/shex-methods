@@ -7,7 +7,7 @@
   "scripts": {
     "generate:shex": "shex-codegen generate",
     "build": "rimraf lib && tsc",
-    "develop": "nodemon --watch src --watch test",
+    "develop": "nodemon --watch src --watch test --exec \"yarn test\"",
     "preversion": "yarn test",
     "generate:docs": "typedoc ./src/index.ts --name shex-methods --readme ./README.md",
     "predeploy": "yarn generate:docs",
@@ -22,6 +22,12 @@
   },
   "lint-staged": {
     "*.{tsx,ts}": "yarn lint --cache"
+  },
+  "nodemonConfig": {
+    "ext": "*.ts",
+    "ignore": [
+      "test/resources"
+    ]
   },
   "repository": {
     "type": "git",
@@ -40,8 +46,11 @@
   "devDependencies": {
     "@babel/preset-env": "7.16.4",
     "@babel/preset-typescript": "7.16.0",
+    "@shexjs/neighborhood-api": "^1.0.0-alpha.25",
     "@types/jest": "26.0.24",
-    "@types/shexj": "2.1.1",
+    "@types/n3": "^1.10.4",
+    "@types/rdf-js": "^4.0.2",
+    "@types/shexj": "^2.1.4",
     "@typescript-eslint/eslint-plugin": "5.6.0",
     "@typescript-eslint/parser": "5.6.0",
     "eslint": "8.4.1",
@@ -61,12 +70,15 @@
     "typescript": "4.5.3"
   },
   "dependencies": {
-    "@shexjs/parser": "1.0.0-alpha.21",
-    "@shexjs/util": "1.0.0-alpha.21",
-    "@shexjs/validator": "1.0.0-alpha.21",
+    "@shexjs/neighborhood-rdfjs": "^1.0.0-alpha.25",
+    "@shexjs/parser": "1.0.0-alpha.25",
+    "@shexjs/term": "^1.0.0-alpha.25",
+    "@shexjs/util": "1.0.0-alpha.25",
+    "@shexjs/validator": "1.0.0-alpha.25",
     "camelcase": "^6.2.0",
-    "n3": "^1.16.2",
+    "n3": "^1.16.3",
     "own-namespace": "^0.4.5",
+    "rdf-js": "^4.0.2",
     "rdflib": "2.2.12",
     "uuid": "^8.3.2"
   }
