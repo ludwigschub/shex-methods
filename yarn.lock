@@ -1485,13 +1485,6 @@
   dependencies:
     "@types/node" "*"
 
-"@shexjs/core@^1.0.0-alpha.10":
-  version "1.0.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/@shexjs/core/-/core-1.0.0-alpha.10.tgz#d68970b452b8b49de209f1502c3bb650c1436726"
-  integrity sha512-FyqSMoa5Wm/AG9ehnz11ma3jnP35Xd2yggXUMhyt+/1ihca9wtys8qRScVDqdi6AFMpIQqzzhLRQRmEIv0B1pg==
-  dependencies:
-    hierarchy-closure "^1.2.1"
-
 "@shexjs/eval-simple-1err@^1.0.0-alpha.25":
   version "1.0.0-alpha.25"
   resolved "https://registry.yarnpkg.com/@shexjs/eval-simple-1err/-/eval-simple-1err-1.0.0-alpha.25.tgz#83b943527aadd03f47206966b380cac3a17a7695"
@@ -1530,20 +1523,13 @@
     "@shexjs/eval-validator-api" "^1.0.0-alpha.25"
     "@shexjs/term" "^1.0.0-alpha.25"
 
-"@shexjs/parser@1.0.0-alpha.25":
+"@shexjs/parser@1.0.0-alpha.25", "@shexjs/parser@^1.0.0-alpha.25":
   version "1.0.0-alpha.25"
   resolved "https://registry.yarnpkg.com/@shexjs/parser/-/parser-1.0.0-alpha.25.tgz#93bd3ec5b50756a0e052a1313500b4af19df9df1"
   integrity sha512-NlXa6E+b/hMVHWXo8ke/r12EudlWOSGQERLvC0UMLgrRmHzXUxL1A0ol1Tpi4xpAOzuHB9RDEEPXgbEw6+Ji7A==
   dependencies:
     "@shexjs/util" "^1.0.0-alpha.25"
     "@ts-jison/parser" "^0.3.0"
-
-"@shexjs/parser@^1.0.0-alpha.10":
-  version "1.0.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/@shexjs/parser/-/parser-1.0.0-alpha.10.tgz#1e2d69d44c8ac6de04939dcffecc9bc483a907c6"
-  integrity sha512-HU7iwesqmQWN0uxKIXmcMNIcQ5Tf267G52ykCTcswvHTODDdXksHMwKhEWdZ+iLpkHGJLZ+NZ5P6MaCenjHikg==
-  dependencies:
-    "@shexjs/core" "^1.0.0-alpha.10"
 
 "@shexjs/term@^1.0.0-alpha.25":
   version "1.0.0-alpha.25"
@@ -5361,18 +5347,16 @@ json-stringify-safe@~5.0.1:
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
 
 json5@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/json5/-/json5-1.0.1.tgz#779fb0018604fa854eacbf6252180d83543e3dbe"
-  integrity sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-1.0.2.tgz#63d98d60f21b313b77c4d6da18bfa69d80e1d593"
+  integrity sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==
   dependencies:
     minimist "^1.2.0"
 
 json5@^2.1.2:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.0.tgz#2dfefe720c6ba525d9ebd909950f0515316c89a3"
-  integrity sha512-f+8cldu7X/y7RAJurMEJmdoKXGB/X550w2Nr3tTbezL6RwEE/iMcm+tZnXeoZtKuOq6ft8+CqzEkrIgx1fPoQA==
-  dependencies:
-    minimist "^1.2.5"
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz#78cd6f1a19bdc12b73db5ad0c61efd66c1e29283"
+  integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
 
 jsonc-parser@^3.0.0:
   version "3.0.0"
@@ -7279,13 +7263,13 @@ shellwords@^0.1.1:
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
-shex-codegen@0.3.27:
-  version "0.3.27"
-  resolved "https://registry.yarnpkg.com/shex-codegen/-/shex-codegen-0.3.27.tgz#ed3cca699e9531c543006ef109841d37eb9470c6"
-  integrity sha512-bOdv8UhkFjnqL02JPspnkkt8eip5Trv8jJlonGEo2WKU5Uh7bJD9iEK5fsm9FirpPjcO/nRAPCAGGhSzfyNc8A==
+shex-codegen@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/shex-codegen/-/shex-codegen-0.4.3.tgz#e41dd7802b214486a5c34abf0f87fdd3de9f702d"
+  integrity sha512-qEvt94TigrSyVHCPdnHbTyeA/KnsSjmfQbeGq9nKLh7rOgQZ0uMIeyV35PYeWlGIqsxaVSezqaz1XOw15MqY6w==
   dependencies:
-    "@shexjs/core" "^1.0.0-alpha.10"
-    "@shexjs/parser" "^1.0.0-alpha.10"
+    "@shexjs/parser" "^1.0.0-alpha.25"
+    "@shexjs/visitor" "^1.0.0-alpha.25"
     "@types/shexj" "^2.1.0"
     camelcase "^6.2.0"
     chalk "^4.1.0"
@@ -7295,6 +7279,7 @@ shex-codegen@0.3.27:
     nodemon "^2.0.7"
     own-namespace "^0.4.5"
     prettier "^2.2.1"
+    rdf-js "^4.0.2"
 
 shiki@^0.9.12:
   version "0.9.12"
