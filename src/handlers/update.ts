@@ -1,10 +1,10 @@
-import { QueryResult, Shape } from '../shape';
+import { QueryResult, Shape } from '../shape'
 
-import { updateExisting, validateNewShape } from './create';
+import { updateExisting, validateNewShape } from './create'
 
 export interface UpdateArgs<CreateShapeArgs> {
-  doc: string;
-  data: Partial<CreateShapeArgs> & { id: string };
+  doc: string
+  data: Partial<CreateShapeArgs> & { id: string }
 }
 
 export function update<ShapeType, CreateShapeArgs>(
@@ -17,20 +17,20 @@ export function update<ShapeType, CreateShapeArgs>(
         clearPreviousData: true,
         headers: new Headers({ Accept: 'text/turtle' }),
       })
-      .catch((err) => resolve({ doc, errors: [err] }));
-    const [del, ins] = await shape.dataToStatements(data, doc);
+      .catch((err) => resolve({ doc, errors: [err] }))
+    const [del, ins] = await shape.dataToStatements(data, doc)
     const [newShapes, errors] = await validateNewShape<
       ShapeType,
       CreateShapeArgs
-    >(shape, data.id, del, ins, doc);
+    >(shape, data.id, del, ins, doc)
     if (!newShapes || errors) {
-      resolve({ doc, errors });
+      resolve({ doc, errors })
     } else {
-      await updateExisting(shape.updater, del, ins)
+      await updateExisting(shape.store, doc, del, ins)
         .catch((err) => resolve({ doc, errors: [...(errors ?? []), err] }))
         .then(() => {
-          resolve({ doc, data: newShapes[0], errors });
-        });
+          resolve({ doc, data: newShapes[0], errors })
+        })
     }
-  });
+  })
 }

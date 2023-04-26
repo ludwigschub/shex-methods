@@ -46,7 +46,7 @@ export async function create<ShapeType, CreateShapeArgs>(
       resolve({ doc, errors })
     } else {
       if (!doesntExist) {
-        await updateExisting(shape.updater, [], ins)
+        await updateExisting(shape.store, doc, [], ins)
           .catch((err) => resolve({ doc, errors: [err] }))
           .then(() => resolve({ doc, data: newShape[0], errors }))
       } else {
@@ -99,14 +99,20 @@ export function validateNewShape<ShapeType, CreateShapeArgs>(
 }
 
 export function updateExisting(
-  updater: UpdateManager,
+  store: IndexedFormula,
+  doc: string,
   del: Statement[],
   ins: Statement[],
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    updater.update(del, ins, async (_uri, ok, error) => {
-      !ok ? reject(error) : resolve()
-    })
+    store.remove(del)
+    store.add(ins)
+    store.fetcher
+      ?.putBack(new NamedNode(doc), { withCredentials: false })
+      .then((res) => {
+        if (res.ok) resolve()
+        else reject()
+      })
   })
 }
 
