@@ -1,6 +1,6 @@
 {
   "name": "shex-methods",
-  "version": "0.2.8",
+  "version": "0.2.11",
   "description": "",
   "main": "lib/index.js",
   "homepage": "https://ludwigschubi.github.io/shex-methods/",
@@ -63,7 +63,7 @@
     "nodemon": "2.0.15",
     "prettier": "2.5.1",
     "rimraf": "3.0.2",
-    "shex-codegen": "0.3.27",
+    "shex-codegen": "^0.4.3",
     "solid-node-client": "2.1.0",
     "ts-node": "10.4.0",
     "typedoc": "0.22.10",
