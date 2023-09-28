@@ -1,5 +1,6 @@
 
 import camelcase from 'camelcase';
+import { NamedNode } from 'rdflib';
 
 export interface Validated {
   validated: any;
@@ -20,7 +21,7 @@ export function validatedToDataResult({
   const absoluteData = validatedToAbsolute(validated, baseUrl);
   const data = absoluteToNormalized(absoluteData, contexts, prefixes);
   return proxifyShape(
-    { __shapeName: shapeUrl, id: validated.node, ...data },
+    { __shapeName: shapeUrl, __doc: new NamedNode(baseUrl).doc().uri, id: validated.node, ...data },
     contexts,
     prefixes,
   );
@@ -185,7 +186,7 @@ function proxifyShape(
 ): Record<string, any> {
   return new Proxy(shape, {
     get: (target, key: string | symbol) => {
-      if (typeof key =='string') {
+      if (typeof key == 'string') {
         const directValue = proxyGetHandler(target, key, contexts, prefixes);
         if (directValue) return directValue;
         const [prefix, normalizedKey] = key.split(':');
@@ -195,9 +196,9 @@ function proxifyShape(
         } else {
           const absoluteKey = prefixes[prefix] + normalizedKey;
           const foundKey = getNormalizedKeyFromContextOrSchemaPrefixes(
-              absoluteKey,
-              contexts,
-              prefixes,
+            absoluteKey,
+            contexts,
+            prefixes,
           );
           return proxyGetHandler(target, foundKey, contexts, prefixes);
         }

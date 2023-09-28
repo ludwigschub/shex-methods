@@ -52,6 +52,15 @@ describe('.findOne()', () => {
     expect(data['foaf:name']).toBe('Local Solid User');
     expect(data.trustedApp['acl:origin']).toBe('http://example.org/');
   });
+  
+  it('can display document of one shape', async () => {
+    const shape = await solidProfile.findOne({
+      doc: profileIri,
+      where: { id: profileIri },
+    });
+    const { data } = shape;
+    expect(data.__doc).toBe(profileIri);
+  });
 
   it('should return an error for finding the wrong shape', async () => {
     const profileIri = podUrl('/test');
