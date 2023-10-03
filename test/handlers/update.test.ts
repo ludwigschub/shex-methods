@@ -1,6 +1,6 @@
 import { Literal } from 'rdflib';
 
-import { Shape } from '../../lib';
+import { Shape } from '../../src';
 import { podUrl } from '../common';
 import {
   chatShex,
@@ -88,9 +88,9 @@ describe('.update()', () => {
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(testDoc);
-    expect(data.title).toBe(testString);
-    expect(data.author).toBe(profileIri);
-    expect(data.type).toBe(ChatShapeType.LongChat);
+    expect(data?.title).toBe(testString);
+    expect(data?.author).toBe(profileIri);
+    expect(data?.type).toBe(ChatShapeType.LongChat);
   });
 
   it('deletes values if they are empty', async () => {
@@ -105,7 +105,7 @@ describe('.update()', () => {
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(testDoc);
-    expect(data.sharedPreferences).toBeUndefined();
+    expect(data?.sharedPreferences).toBeUndefined();
   });
 
   it('can update a shape with a nested value', async () => {
@@ -131,7 +131,7 @@ describe('.update()', () => {
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(profileIri);
-    expect((data.trustedApp as TrustedAppShape)[0].origin).toBeDefined();
+    expect((data?.trustedApp as TrustedAppShape)[0].origin).toBeDefined();
   });
 
   it("throws error when data doesn't match cardinality", async () => {
@@ -146,7 +146,7 @@ describe('.update()', () => {
     expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
-    expect(errors.join('\n')).toContain('exceeds cardinality');
+    expect(errors?.join('\n')).toContain('exceeds cardinality');
   });
 
   it("throws error when data doesn't match shex", async () => {
@@ -161,7 +161,7 @@ describe('.update()', () => {
     expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
-    expect(errors.join('\n')).toContain('Missing property');
+    expect(errors?.join('\n')).toContain('Missing property');
   });
 
   it("throws error when transforming and context doesn't match", async () => {

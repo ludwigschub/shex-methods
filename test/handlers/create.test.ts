@@ -1,7 +1,7 @@
 import { Literal } from 'rdflib';
 
 import setupTests from '../setupTests';
-import { Shape } from '../../lib';
+import { Shape } from '../../src';
 import { podUrl } from '../common';
 import {
   chatShex,
@@ -61,9 +61,9 @@ describe('.create()', () => {
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(testDoc);
-    expect(data.title).toBe('Test Chat');
-    expect(data.author).toBe(webId);
-    expect(data.type).toBe(ChatShapeType.LongChat);
+    expect(data?.title).toBe('Test Chat');
+    expect(data?.author).toBe(webId);
+    expect(data?.type).toBe(ChatShapeType.LongChat);
   });
 
   it('can create one shape in a new doc', async () => {
@@ -81,10 +81,10 @@ describe('.create()', () => {
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(newDoc);
-    expect(data.id).toBe(newChatIri);
-    expect(data.title).toBe('Test Chat');
-    expect(data.author).toBe(webId);
-    expect(data.type).toBe(ChatShapeType.LongChat);
+    expect(data?.id).toBe(newChatIri);
+    expect(data?.title).toBe('Test Chat');
+    expect(data?.author).toBe(webId);
+    expect(data?.type).toBe(ChatShapeType.LongChat);
   });
 
   it('can create one shape without type', async () => {
@@ -102,8 +102,8 @@ describe('.create()', () => {
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
     expect(doc).toBe(testDoc);
-    expect(data.content).toBe('Test Message');
-    expect(data.maker).toBe(webId);
+    expect(data?.content).toBe('Test Message');
+    expect(data?.maker).toBe(webId);
   });
 
   it("throws error when data doesn't match cardinality", async () => {
@@ -121,7 +121,7 @@ describe('.create()', () => {
     expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
-    expect(errors.join('\n')).toContain('exceeds cardinality');
+    expect(errors?.join('\n')).toContain('exceeds cardinality');
   });
 
   it('throws error when shape with id already exists in doc', async () => {
@@ -152,7 +152,7 @@ describe('.create()', () => {
       data: {
         id: secondChatIri,
         type: ChatShapeType.LongChat,
-        title: 0,
+        title: 0 as unknown as string,
         author: new URL(webId),
         created: new Literal(new Date().toISOString()),
       },
@@ -161,7 +161,7 @@ describe('.create()', () => {
     expect(doc).toBe(testDoc);
     expect(data).toBeUndefined();
     expect(errors).toBeDefined();
-    expect(errors.join('\n')).toContain('Missing property');
+    expect(errors?.join('\n')).toContain('Missing property');
   });
 
   it("throws error when validating and context doesn't match", async () => {

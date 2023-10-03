@@ -1,10 +1,10 @@
-import { IndexedFormula, NamedNode, Statement, UpdateManager } from 'rdflib'
+import { IndexedFormula, NamedNode, Statement } from 'rdflib'
 
 import { QueryResult, Shape } from '../shape'
 import {
+  ValidationResult,
   getAllStatementsOfNode,
   validateShex,
-  ValidationResult,
 } from '../validate'
 
 export interface CreateArgs<CreateShapeArgs> {

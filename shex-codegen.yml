@@ -1,8 +1,9 @@
 # path to the folder or file with shape expressions
-schema: "test/resources"
+schema: 'test/resources'
 generates:
   # this will be the path of the generated file. It has to end with .ts
   test/resources/shex.ts:
     # the visitors to visit the schema with
     - typescript
     - typescript-methods
+customMethodsImport: '../../src'
